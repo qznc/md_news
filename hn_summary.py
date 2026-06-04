@@ -182,5 +182,5 @@ def generate_hn_summary() -> str:
 if __name__ == "__main__":
     summary = generate_hn_summary()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    footer = f"\n---\n\nGenerated at {timestamp} from [Hacker News]({HN_FRONTPAGE_URL})"
+    footer = f"\n---\n\nGenerated at {timestamp} from [Hacker News]({HN_FRONTPAGE_URL})\n\nLicensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
     print(summary + footer)
