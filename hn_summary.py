@@ -182,5 +182,5 @@ def generate_hn_summary() -> str:
 if __name__ == "__main__":
     summary = generate_hn_summary()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    footer = f"\n---\n*Generated at {timestamp} from [{HN_FRONTPAGE_URL}]({HN_FRONTPAGE_URL})*"
+    footer = f"\n---\n\nGenerated at {timestamp} from [Hacker News]({HN_FRONTPAGE_URL})"
     print(summary + footer)
