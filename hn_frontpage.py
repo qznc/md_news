@@ -10,6 +10,9 @@ import requests
 import json
 from typing import List, Dict, Any
 
+# Configuration
+COMMENT_MAX_LENGTH = 500
+
 
 def fetch_top_stories(limit: int = 50) -> List[int]:
     """Fetch the top stories IDs from HN API."""
@@ -19,12 +22,35 @@ def fetch_top_stories(limit: int = 50) -> List[int]:
     return response.json()[:limit]
 
 
-def fetch_story(story_id: int) -> Dict[str, Any]:
-    """Fetch details for a single story."""
-    url = f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json"
+def fetch_item(item_id: int) -> Dict[str, Any]:
+    """Fetch details for a single item (story or comment)."""
+    url = f"https://hacker-news.firebaseio.com/v0/item/{item_id}.json"
     response = requests.get(url, timeout=30)
     response.raise_for_status()
     return response.json()
+
+
+def fetch_story(story_id: int) -> Dict[str, Any]:
+    """Fetch details for a single story."""
+    return fetch_item(story_id)
+
+
+def fetch_top_comment(story: Dict[str, Any]) -> Dict[str, Any]:
+    """Fetch the first top-level comment for a story."""
+    kids = story.get('kids', [])
+    if not kids:
+        return None
+    
+    # Take the first kid
+    for comment_id in kids:
+        try:
+            comment = fetch_item(comment_id)
+            if comment and not comment.get('deleted') and not comment.get('dead'):
+                return comment
+        except (requests.RequestException, json.JSONDecodeError):
+            continue
+    
+    return None
 
 
 def get_frontpage_stories(limit: int = 50) -> List[Dict[str, Any]]:
@@ -43,8 +69,8 @@ def get_frontpage_stories(limit: int = 50) -> List[Dict[str, Any]]:
     return stories
 
 
-def print_story(story: Dict[str, Any], index: int = None) -> None:
-    """Print a story in a formatted way."""
+def print_story(story: Dict[str, Any], index: int = None, top_comment: Dict[str, Any] = None) -> None:
+    """Print a story in a formatted way, optionally with its top comment."""
     prefix = f"{index}. " if index is not None else ""
     title = story.get('title', 'No title')
     url = story.get('url', 'No URL')
@@ -55,6 +81,15 @@ def print_story(story: Dict[str, Any], index: int = None) -> None:
     print(f"{prefix}{title}")
     print(f"   URL: {url}")
     print(f"   Score: {score} | Comments: {comments} | By: {author}")
+    
+    if top_comment:
+        comment_text = top_comment.get('text', 'No text')
+        comment_author = top_comment.get('by', 'Anonymous')
+        # Truncate long comments
+        if len(comment_text) > COMMENT_MAX_LENGTH:
+            comment_text = comment_text[:COMMENT_MAX_LENGTH] + "..."
+        print(f"   Top comment by {comment_author}:")
+        print(f"   {comment_text}")
     print()
 
 
@@ -75,19 +110,22 @@ def main():
     print("Top 3:")
     top_3 = stories[:3]
     for i, story in enumerate(top_3, 1):
-        print_story(story, i)
+        top_comment = fetch_top_comment(story)
+        print_story(story, i, top_comment)
     
     # Most commented article
     most_commented = max(stories, key=lambda s: s.get('descendants', 0))
     print("Most commented:")
     print(f"Comments: {most_commented.get('descendants', 0)}")
-    print_story(most_commented)
+    top_comment = fetch_top_comment(most_commented)
+    print_story(most_commented, top_comment=top_comment)
     
     # Most upvoted article
     most_upvoted = max(stories, key=lambda s: s.get('score', 0))
     print("Most upvoted:")
     print(f"Score: {most_upvoted.get('score', 0)}")
-    print_story(most_upvoted)
+    top_comment = fetch_top_comment(most_upvoted)
+    print_story(most_upvoted, top_comment=top_comment)
 
 
 if __name__ == "__main__":
