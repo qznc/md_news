@@ -11,8 +11,7 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-# Configuration
-COMMENT_MAX_LENGTH = 500
+COMMENT_MAX_LENGTH = 1000
 
 
 def fetch_top_stories(limit: int = 50) -> List[int]:
@@ -78,6 +77,7 @@ def format_story(
     prefix = f"{index}. " if index is not None else ""
     title = story.get("title", "No title")
     url = story.get("url", "No URL")
+    story_id = story.get("id", "")
     score = story.get("score", 0)
     comments = story.get("descendants", 0)
     author = story.get("by", "Anonymous")
@@ -85,6 +85,7 @@ def format_story(
     lines = []
     lines.append(f"{prefix}{title}")
     lines.append(f"   URL: {url}")
+    lines.append(f"   HN: https://news.ycombinator.com/item?id={story_id}")
     lines.append(f"   Score: {score} | Comments: {comments} | By: {author}")
 
     if top_comment:
@@ -102,13 +103,6 @@ def format_story(
 def get_frontpage_output(limit: int = 50) -> str:
     """
     API function to fetch and return HN frontpage data as a formatted string.
-
-    Returns:
-        str: Formatted string containing:
-            - Top 3 articles
-            - Most commented article
-            - Most upvoted article
-            - Other stories as titles
     """
     output_lines = []
 
@@ -158,11 +152,6 @@ def get_frontpage_output(limit: int = 50) -> str:
     return "\n".join(output_lines) + "\n"
 
 
-def main():
-    """Main function to fetch and display HN frontpage data (CLI)."""
+if __name__ == "__main__":
     output = get_frontpage_output(limit=50)
     print(output)
-
-
-if __name__ == "__main__":
-    main()
