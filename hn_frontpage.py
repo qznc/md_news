@@ -120,6 +120,21 @@ def main():
     top_comment = fetch_top_comment(most_commented)
     print_story(most_commented, top_comment=top_comment)
     
+    # Other stories (4-50) as titles only
+    other_stories = stories[3:]
+    print("Other stories:")
+    for story in other_stories:
+        title = story.get('title', 'No title')
+        print(f"   {title}")
+    print()
+
+    # Most commented article
+    most_commented = max(stories, key=lambda s: s.get('descendants', 0))
+    print("Most commented:")
+    print(f"Comments: {most_commented.get('descendants', 0)}")
+    top_comment = fetch_top_comment(most_commented)
+    print_story(most_commented, top_comment=top_comment)
+
     # Most upvoted article
     most_upvoted = max(stories, key=lambda s: s.get('score', 0))
     print("Most upvoted:")
