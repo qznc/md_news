@@ -152,6 +152,13 @@ def process_inline_markdown(text):
 
 def process_file(md_path, out_dir):
     """Process a single markdown file and create its HTML counterpart."""
+    html_path = md_path.with_suffix(".html")
+
+    # Skip if HTML file already exists
+    if html_path.exists():
+        print(f"Skipped (already exists): {html_path}")
+        return
+
     # Read the markdown file
     with open(md_path, "r", encoding="utf-8") as f:
         markdown_content = f.read()
@@ -187,7 +194,6 @@ def process_file(md_path, out_dir):
 """
 
     # Write HTML file
-    html_path = md_path.with_suffix(".html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_wrapper)
 
