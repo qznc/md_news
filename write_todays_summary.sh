@@ -9,3 +9,4 @@ mkdir -p "$OUTPUT_DIR"
 echo "Output written to: $OUTPUT_DIR/$OUTPUT_FILE" >&2
 
 ./to_html.py
+./gen_index.py
