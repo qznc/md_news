@@ -100,13 +100,12 @@ def format_story(
     return "\n".join(lines) + "\n"
 
 
-def get_frontpage_output(limit: int = 50) -> str:
+def get_frontpage_output(limit: int = 30) -> str:
     """
     API function to fetch and return HN frontpage data as a formatted string.
     """
     output_lines = []
 
-    # Fetch stories
     try:
         stories = get_frontpage_stories(limit=limit)
     except requests.RequestException as e:
@@ -121,7 +120,6 @@ def get_frontpage_output(limit: int = 50) -> str:
     if not valid_stories:
         return "No stories found!"
 
-    # Top 3 articles
     output_lines.append("Top 3:")
     top_3 = valid_stories[:3]
     for i, story in enumerate(top_3, 1):
@@ -135,14 +133,12 @@ def get_frontpage_output(limit: int = 50) -> str:
         title = story.get("title", "No title")
         output_lines.append(f"   {title}")
 
-    # Most commented article
     most_commented = max(valid_stories, key=lambda s: s.get("descendants", 0))
     output_lines.append("Most commented:")
     output_lines.append(f"Comments: {most_commented.get('descendants', 0)}")
     top_comment = fetch_top_comment(most_commented)
     output_lines.append(format_story(most_commented, top_comment=top_comment))
 
-    # Most upvoted article
     most_upvoted = max(valid_stories, key=lambda s: s.get("score", 0))
     output_lines.append("Most upvoted:")
     output_lines.append(f"Score: {most_upvoted.get('score', 0)}")
@@ -153,5 +149,5 @@ def get_frontpage_output(limit: int = 50) -> str:
 
 
 if __name__ == "__main__":
-    output = get_frontpage_output(limit=50)
+    output = get_frontpage_output(limit=30)
     print(output)

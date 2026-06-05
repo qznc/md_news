@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
 Generate a Markdown article from HN frontpage data using LLM.
-Two-step process:
-1. LLM picks a topic and which URLs are relevant.
-2. Fetch URL contents (lynx -dump) and do the summary.
 """
 
 import json
@@ -61,9 +58,11 @@ Use the fetched content from these URLs as your source material:
 
 <multiple paragraphs expanding the summary providing context, explanation, and assessing the general relevance of the topic>
 
-Grumpy's commentary: <sarcastic biting commentary with a touch of cynicism>
+---
 
-Bubbles's commentary: <an overly cheerful optimistic commentary with emojis>
+Grumpy's commentary: <short sarcastic biting commentary with a touch of cynicism>
+
+Bubbles's commentary: <overly cheerful optimistic commentary with emojis>
 ```
 
 Respond with only the article and nothing else.
@@ -88,7 +87,7 @@ def fetch_url_content(url: str) -> str:
     """Fetch URL content using lynx -dump, limited to MAX_LINES_PER_URL lines."""
     try:
         result = subprocess.run(
-            ["lynx", "-dump", "-nolist", url],
+            ["lynx", "-dump", url],
             capture_output=True,
             text=True,
             timeout=60,
@@ -125,41 +124,48 @@ def run_llm(prompt: str) -> str:
 def generate_hn_summary() -> str:
     """
     Generate a Markdown article from HN frontpage data using the LLM.
-    Two-step process:
-    1. LLM picks a topic and which URLs are relevant.
-    2. Fetch URL contents (lynx -dump) and do the summary.
     """
-
-    # Step 1: Get stories and have LLM pick topic and URLs
-    stories_text = get_frontpage_output(limit=50)
+    stories_text = get_frontpage_output()
     select_prompt = SELECT_PROMPT.format(hn_stories=stories_text)
-    with open("_1_select_prompt.txt", "w") as f:
-        f.write(select_prompt)
-    select_response = run_llm(select_prompt)
-    with open("_2_select_response.txt", "w") as f:
-        f.write(select_response)
 
-    json_match = re.search(r"\{[^}]*\}", select_response, re.DOTALL)
-    if not json_match:
-        print(
-            "Error: Could not find JSON in LLM response. Response was:",
-            select_response,
-            file=sys.stderr,
-        )
-        return "Error: Invalid response from LLM in step 1"
+    selection = None
+    for attempt in range(1, 4):
+        print(f"Step 1 attempt {attempt}/3", file=sys.stderr)
+        with open("_1_select_prompt.txt", "w") as f:
+            f.write(select_prompt)
+        select_response = run_llm(select_prompt)
+        with open("_2_select_response.txt", "w") as f:
+            f.write(select_response)
 
-    try:
-        selection = json.loads(json_match.group(0))
-        topic = selection.get("topic", "Untitled Topic")
-        urls = selection.get("urls", [])
-    except json.JSONDecodeError as e:
-        print(
-            f"Error parsing JSON: {e}. Response was: {select_response}", file=sys.stderr
-        )
-        return "Error: Invalid JSON from LLM in step 1"
+        json_match = re.search(r"\{[^}]*\}", select_response, re.DOTALL)
+        if not json_match:
+            print(
+                f"Error: Could not find JSON in LLM response on attempt {attempt}. Response was:",
+                select_response,
+                file=sys.stderr,
+            )
+            continue
 
-    if not urls:
-        return "Error: No URLs selected by LLM"
+        try:
+            selection = json.loads(json_match.group(0))
+            topic = selection.get("topic", "Untitled Topic")
+            urls = selection.get("urls", [])
+        except json.JSONDecodeError as e:
+            print(
+                f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}",
+                file=sys.stderr,
+            )
+            continue
+
+        if urls:
+            break
+        else:
+            print(
+                f"Error: No URLs selected by LLM on attempt {attempt}", file=sys.stderr
+            )
+
+    if selection is None or not urls:
+        return "Error: Invalid response from LLM in step 1 after 3 attempts"
 
     # Step 2: Fetch URL contents
     url_contents = []
