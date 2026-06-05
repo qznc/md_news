@@ -130,8 +130,11 @@ def get_frontpage_output(limit: int = 30) -> str:
     other_stories = valid_stories[3:]
     output_lines.append("Other stories:")
     for story in other_stories:
-        title = story.get("title", "No title")
-        output_lines.append(f"   {title}")
+        title = story.get("title", None)
+        url = story.get("url", "")
+        if title:
+            output_lines.append(f"   {title} ({url})")
+    output_lines.append("")
 
     most_commented = max(valid_stories, key=lambda s: s.get("descendants", 0))
     output_lines.append("Most commented:")

@@ -21,7 +21,7 @@ HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 SELECT_PROMPT = """
 Analyze the HN frontpage stories below and pick ONE topic that is most generally relevant and would make for an interesting article.
 
-For your chosen topic, select 2-4 most relevant URLs from the stories that relate to that topic.
+For your chosen topic, select 3-5 most relevant URLs from the stories that relate to that topic.
 
 Respond ONLY with a JSON object in this exact format:
 {{
