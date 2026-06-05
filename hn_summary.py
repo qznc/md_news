@@ -49,7 +49,7 @@ Use the fetched content from these URLs as your source material:
 - Use line breaks after each sentence.
 - Keep the tone terse, professional, and informative.
 - Use simple language, avoid jargon, and explain terms.
-- Use hyperlinks to reference sources.
+- Use hyperlinks to reference your source material above.
 
 ```Article template:
 # <Attention-grabbing title (do not reuse any HN title!)>

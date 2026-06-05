@@ -116,6 +116,26 @@ def markdown_to_html(markdown_text):
     return "\n".join(html_lines)
 
 
+def extract_first_headline(markdown_text):
+    """Extract the first headline from markdown text."""
+    lines = markdown_text.split("\n")
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("# "):
+            return stripped[2:].strip()
+        elif stripped.startswith("## "):
+            return stripped[3:].strip()
+        elif stripped.startswith("### "):
+            return stripped[4:].strip()
+        elif stripped.startswith("#### "):
+            return stripped[5:].strip()
+        elif stripped.startswith("##### "):
+            return stripped[6:].strip()
+        elif stripped.startswith("###### "):
+            return stripped[7:].strip()
+    return None
+
+
 def process_inline_markdown(text):
     """Process inline markdown: links, em, strong."""
     # Process **strong** first
@@ -136,6 +156,11 @@ def process_file(md_path, out_dir):
     with open(md_path, "r", encoding="utf-8") as f:
         markdown_content = f.read()
 
+    # Extract first headline for title
+    title = extract_first_headline(markdown_content)
+    if title is None:
+        title = Path(md_path).stem
+
     # Convert to HTML
     html_content = markdown_to_html(markdown_content)
 
@@ -147,7 +172,7 @@ def process_file(md_path, out_dir):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{md_stem}</title>
+    <title>{title}</title>
     <link rel="canonical" href="{md_relative}">
     <link rel="alternate" type="text/markdown" href="{md_relative}" title="Original Markdown source">
     <style>
