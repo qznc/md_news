@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run hn_summary.py and save output to YYYY-MM/DD-hn.md
 
-OUTPUT_DIR=$(date +"%Y-%m")
+OUTPUT_DIR="_out/$(date +"%Y-%m")"
 OUTPUT_FILE="$(date +"%d")-hn.md"
 
 mkdir -p "$OUTPUT_DIR"
