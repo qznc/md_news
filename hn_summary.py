@@ -19,9 +19,11 @@ MAX_LINES_PER_URL = 200
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
 SELECT_PROMPT = """
-Analyze the HN frontpage stories below and pick ONE topic that is most generally relevant and would make for an interesting article.
+Analyze the HN frontpage stories below.
+Consider upvotes, comments, and order.
+Then pick ONE SPECIFIC TOPIC that would make for an interesting article.
 
-For your chosen topic, select 3-4 most relevant URLs from the stories that relate to that topic.
+For your chosen topic, select 3-4 most relevant URLs of relevant sources.
 
 Respond ONLY with a JSON object in this exact format:
 {{
@@ -48,15 +50,15 @@ Use the fetched content from these URLs as your source material:
 - Use proper Markdown formatting.
 - Use line breaks after each sentence.
 - Keep the tone terse, professional, and informative.
-- Use simple language, avoid jargon, and explain terms.
-- Use hyperlinks to reference your source material above.
 
 ```Article template:
 # <Attention-grabbing title (do not reuse any HN title!)>
 
-<one paragraph: short summary integrating the article URL>
+<one paragraph: summary explaining the relevance of the topic and why it's interesting, without repeating the title.>
 
-<multiple paragraphs expanding the summary providing context, explanation, and assessing the general relevance of the topic>
+<multiple paragraphs expanding the summary providing context and explanation.
+Use simple language, avoid jargon, and explain terms.
+[Reference sources from above](some url) with Markdown links.>
 
 ---
 
