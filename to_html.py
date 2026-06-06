@@ -7,7 +7,7 @@ Supports: headlines (#, ##, ###), paragraphs, links, em, strong, hr (---).
 from pathlib import Path
 
 from lib.html_utils import extract_first_headline, html_header, html_footer
-from lib.markdown import markdown_to_html, process_inline_markdown
+from lib.markdown import markdown_to_html
 
 
 def process_file(md_path, out_dir):
@@ -32,7 +32,6 @@ def process_file(md_path, out_dir):
     html_content = markdown_to_html(markdown_content)
 
     # Create HTML wrapper
-    md_stem = Path(md_path).stem
     md_relative = md_path.name
     extra_head = f'\n    <link rel="canonical" href="{md_relative}">\n    <link rel="alternate" type="text/markdown" href="{md_relative}" title="Original Markdown source">'
     html_wrapper = f"""{html_header(title, extra_head)}

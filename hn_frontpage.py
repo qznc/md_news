@@ -6,14 +6,11 @@ Script to fetch Hacker News frontpage and report:
 - Most upvoted article
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from lib.hn_utils import (
     COMMENT_MAX_LENGTH,
-    fetch_item,
-    fetch_story,
     fetch_top_comment,
-    fetch_top_stories,
     get_frontpage_stories,
 )
 
@@ -58,7 +55,7 @@ def get_frontpage_output(limit: int = 30) -> str:
 
     try:
         stories = get_frontpage_stories(limit=limit)
-    except requests.RequestException as e:
+    except Exception as e:
         return f"Error fetching stories: {e}"
 
     if not stories:
