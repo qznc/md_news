@@ -8,7 +8,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from hn_frontpage import get_frontpage_output
 
@@ -105,7 +105,7 @@ def fetch_url_content(url: str) -> str:
         return f"Error: lynx not found. Cannot fetch {url}"
 
 
-def is_valid_summary(summary: str, topic: str = None) -> bool:
+def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
     """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
     if not summary.strip():
         return False

@@ -2,6 +2,7 @@
 """Common utilities for HTML generation in md-news."""
 
 from pathlib import Path
+from typing import Optional
 
 
 # Common CSS for all generated HTML pages
@@ -17,7 +18,7 @@ def get_common_style_tag():
     return f"<style>{COMMON_CSS}</style>"
 
 
-def extract_first_headline(markdown_text: str) -> str:
+def extract_first_headline(markdown_text: str) -> Optional[str]:
     """Extract the first headline from markdown text."""
     lines = markdown_text.split("\n")
     for line in lines:
