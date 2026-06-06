@@ -21,7 +21,7 @@ HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 SELECT_PROMPT = """
 Analyze the HN frontpage stories below and pick ONE topic that is most generally relevant and would make for an interesting article.
 
-For your chosen topic, select 3-5 most relevant URLs from the stories that relate to that topic.
+For your chosen topic, select 3-4 most relevant URLs from the stories that relate to that topic.
 
 Respond ONLY with a JSON object in this exact format:
 {{
@@ -91,6 +91,7 @@ def fetch_url_content(url: str) -> str:
             capture_output=True,
             text=True,
             timeout=60,
+            errors="replace",
         )
         if result.returncode != 0:
             return f"Error fetching {url}: {result.stderr}"
@@ -102,16 +103,41 @@ def fetch_url_content(url: str) -> str:
         return f"Error: lynx not found. Cannot fetch {url}"
 
 
+def is_valid_summary(summary: str, topic: str = None) -> bool:
+    """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
+    if not summary.strip():
+        return False
+    if len(summary) < 200:
+        return False
+    if not summary.lstrip().startswith("# "):
+        return False
+    if "[" not in summary or "](" not in summary:
+        return False
+    if "---" not in summary:
+        return False
+    if "Grumpy's commentary:" not in summary:
+        return False
+    if "Bubbles's commentary:" not in summary:
+        return False
+    if summary.count("\n\n") < 2:
+        return False
+    return True
+
+
 def run_llm(prompt: str) -> str:
     """Run the LLM with the given prompt."""
     try:
         result = subprocess.run(
-            ["vibe", "-p"], input=prompt, text=True, capture_output=True, check=True
+            ["vibe", "-p"],
+            input=prompt,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=sys.stderr,
+            check=True,
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f"Error running llm: {e}", file=sys.stderr)
-        print(f"stderr: {e.stderr}", file=sys.stderr)
         return f"Error generating summary: {e}"
     except FileNotFoundError:
         print(
@@ -180,7 +206,13 @@ def generate_hn_summary() -> str:
     summary_prompt = SUMMARY_PROMPT_TEMPLATE.format(topic=topic, url_contents=urls_text)
     with open("_3_summary_prompt.txt", "w") as f:
         f.write(summary_prompt)
-    summary = run_llm(summary_prompt)
+    summary = ""
+    for attempt in range(1, 4):
+        print(f"Step 2 attempt {attempt}/3", file=sys.stderr)
+        summary = run_llm(summary_prompt)
+        if is_valid_summary(summary, topic):
+            break
+        print(f"Error: Invalid summary on attempt {attempt}", file=sys.stderr)
 
     return summary
 
