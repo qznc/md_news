@@ -4,12 +4,10 @@
 from pathlib import Path
 from typing import Optional
 
-
-# Common CSS for all generated HTML pages
 COMMON_CSS = """
-    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; background-color: rgb(246, 246, 239); }
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6f6ef; }
+    h1 { line-height: 1.2; }
     footer { font-size: 12pt; }
-    hr { border: 0; border-top: 1px solid #ccc; margin: 20px 0; }
 """
 
 

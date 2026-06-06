@@ -7,6 +7,7 @@ from pathlib import Path
 from lib.html_utils import extract_title, html_header, html_footer
 
 OUT_DIR = Path("_out")
+TITLE = "Md News"
 
 
 def extract_date_from_path(file_path: Path) -> str:
@@ -48,8 +49,8 @@ def generate_html_index(articles):
         )
 
     items_list = "\n        ".join(items)
-    return f"""{html_header("Articles Index")}
-    <h1>Articles Index</h1>
+    return f"""{html_header(TITLE)}
+    <h1>{TITLE}</h1>
     <ul>
         {items_list}
     </ul>
