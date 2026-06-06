@@ -120,6 +120,18 @@ def get_frontpage_output(limit: int = 30) -> str:
     if not valid_stories:
         return "No stories found!"
 
+    most_upvoted = max(valid_stories, key=lambda s: s.get("score", 0))
+    output_lines.append("Most upvoted:")
+    output_lines.append(f"Score: {most_upvoted.get('score', 0)}")
+    top_comment = fetch_top_comment(most_upvoted)
+    output_lines.append(format_story(most_upvoted, top_comment=top_comment))
+
+    most_commented = max(valid_stories, key=lambda s: s.get("descendants", 0))
+    output_lines.append("Most commented:")
+    output_lines.append(f"Comments: {most_commented.get('descendants', 0)}")
+    top_comment = fetch_top_comment(most_commented)
+    output_lines.append(format_story(most_commented, top_comment=top_comment))
+
     output_lines.append("Top 3:")
     top_3 = valid_stories[:3]
     for i, story in enumerate(top_3, 1):
@@ -133,20 +145,8 @@ def get_frontpage_output(limit: int = 30) -> str:
         title = story.get("title", None)
         url = story.get("url", "")
         if title:
-            output_lines.append(f"   {title} ({url})")
+            output_lines.append(f"   {title} {url}")
     output_lines.append("")
-
-    most_commented = max(valid_stories, key=lambda s: s.get("descendants", 0))
-    output_lines.append("Most commented:")
-    output_lines.append(f"Comments: {most_commented.get('descendants', 0)}")
-    top_comment = fetch_top_comment(most_commented)
-    output_lines.append(format_story(most_commented, top_comment=top_comment))
-
-    most_upvoted = max(valid_stories, key=lambda s: s.get("score", 0))
-    output_lines.append("Most upvoted:")
-    output_lines.append(f"Score: {most_upvoted.get('score', 0)}")
-    top_comment = fetch_top_comment(most_upvoted)
-    output_lines.append(format_story(most_upvoted, top_comment=top_comment))
 
     return "\n".join(output_lines) + "\n"
 

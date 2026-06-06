@@ -89,7 +89,7 @@ def fetch_url_content(url: str) -> str:
     """Fetch URL content using lynx -dump, limited to MAX_LINES_PER_URL lines."""
     try:
         result = subprocess.run(
-            ["lynx", "-dump", url],
+            ["lynx", "-dump", "-list_inline", url],
             capture_output=True,
             text=True,
             timeout=60,
