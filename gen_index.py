@@ -4,19 +4,9 @@
 import re
 from pathlib import Path
 
+from lib.html_utils import extract_title, html_header, html_footer
+
 OUT_DIR = Path("_out")
-
-
-def extract_title(md_path: Path) -> str:
-    """Extract the first heading from a markdown file as the title."""
-    try:
-        with open(md_path, "r", encoding="utf-8") as f:
-            for line in f:
-                if line.startswith("# "):
-                    return line[2:].strip()
-    except Exception:
-        pass
-    return md_path.stem.replace("-", " ").title()
 
 
 def extract_date_from_path(file_path: Path) -> str:
@@ -58,25 +48,12 @@ def generate_html_index(articles):
         )
 
     items_list = "\n        ".join(items)
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Articles Index</title>
-    <style>
-    body {{ font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; background-color: rgb(246, 246, 239); }}
-    footer {{ font-size: 12pt; }}
-    hr {{ border: 0; border-top: 1px solid #ccc; margin: 20px 0; }}
-    </style>
-</head>
-<body>
+    return f"""{html_header("Articles Index")}
     <h1>Articles Index</h1>
     <ul>
         {items_list}
     </ul>
-</body>
-</html>
+{html_footer()}
 """
 
 

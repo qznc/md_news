@@ -7,6 +7,8 @@ Supports: headlines (#, ##, ###), paragraphs, links, em, strong, hr (---).
 import re
 from pathlib import Path
 
+from lib.html_utils import extract_first_headline, html_header, html_footer
+
 
 def markdown_to_html(markdown_text):
     """Convert markdown text to HTML with support for headlines, paragraphs, links, em, strong."""
@@ -116,26 +118,6 @@ def markdown_to_html(markdown_text):
     return "\n".join(html_lines)
 
 
-def extract_first_headline(markdown_text):
-    """Extract the first headline from markdown text."""
-    lines = markdown_text.split("\n")
-    for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("# "):
-            return stripped[2:].strip()
-        elif stripped.startswith("## "):
-            return stripped[3:].strip()
-        elif stripped.startswith("### "):
-            return stripped[4:].strip()
-        elif stripped.startswith("#### "):
-            return stripped[5:].strip()
-        elif stripped.startswith("##### "):
-            return stripped[6:].strip()
-        elif stripped.startswith("###### "):
-            return stripped[7:].strip()
-    return None
-
-
 def process_inline_markdown(text):
     """Process inline markdown: links, em, strong."""
     # Process **strong** first
@@ -174,23 +156,11 @@ def process_file(md_path, out_dir):
     # Create HTML wrapper
     md_stem = Path(md_path).stem
     md_relative = md_path.name
-    html_wrapper = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <link rel="canonical" href="{md_relative}">
-    <link rel="alternate" type="text/markdown" href="{md_relative}" title="Original Markdown source">
-    <style>
-        body {{ font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; background-color: rgb(246, 246, 239); }}
-        footer {{ font-size: 12pt; }}
-        hr {{ border: 0; border-top: 1px solid #ccc; margin: 20px 0; }}
-    </style>
-</head><body>
+    extra_head = f'\n    <link rel="canonical" href="{md_relative}">\n    <link rel="alternate" type="text/markdown" href="{md_relative}" title="Original Markdown source">'
+    html_wrapper = f"""{html_header(title, extra_head)}
 {html_content}
 <footer>Markdown original: <a href="{md_relative}">{md_relative}</a></footer>
-</body></html>
+{html_footer()}
 """
 
     # Write HTML file
