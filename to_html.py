@@ -183,7 +183,7 @@ def process_file(md_path, out_dir):
     <link rel="canonical" href="{md_relative}">
     <link rel="alternate" type="text/markdown" href="{md_relative}" title="Original Markdown source">
     <style>
-        body {{ font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; }}
+        body {{ font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; background-color: rgb(246, 246, 239); }}
         footer {{ font-size: 12pt; }}
         hr {{ border: 0; border-top: 1px solid #ccc; margin: 20px 0; }}
     </style>

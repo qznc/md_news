@@ -65,7 +65,7 @@ def generate_html_index(articles):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Articles Index</title>
     <style>
-    body {{ font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; }}
+    body {{ font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; background-color: rgb(246, 246, 239); }}
     footer {{ font-size: 12pt; }}
     hr {{ border: 0; border-top: 1px solid #ccc; margin: 20px 0; }}
     </style>
