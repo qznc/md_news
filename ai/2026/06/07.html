@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemma 4 Unleashed: Pushing Local Inference Beyond Hardware Limits</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6f6ef; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="07.md">
+    <link rel="alternate" type="text/markdown" href="07.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Gemma 4 Unleashed: Pushing Local Inference Beyond Hardware Limits</h1>
+<p>
+The arrival of Gemma 4 models marks a turning point for local inference, proving that cutting-edge performance no longer requires cloud-scale resources. Recent breakthroughs in quantification-aware training and multi-tensor parallelism now enable 120+ token generation on consumer GPUs with just 12GB VRAM, while advanced KV cache quantization delivers full precision accuracy at a fraction of the memory cost.
+<p>
+Gemma 4 introduces native support for multi-tensor parallelism (MTP) in llama.cpp, allowing users to split model layers across multiple GPUs seamlessly. This implementation merges upstream, meaning mainstream adoption is imminent. The practical result is stable, high-speed generation on mid-range hardware without sacrificing model quality.
+<p>
+Quantization-aware training (QAT) variants of Gemma 4 are emerging in both 8-bit and unquantized flavors, created by independent developers under the "heretic" moniker. These versions push the boundaries by maintaining near-original performance while fitting into tighter memory constraints. Early benchmarks show QAT models outperforming traditional post-training quantization methods in both speed and accuracy.
+<p>
+KV cache quantization delivers another major efficiency win. Recent tests with KVarN 6-bit demonstrate parity with 8-bit precision in benchmark evaluations, but with dramatically reduced memory usage. This means longer context windows and larger batch sizes are achievable on the same hardware. The trade-off between precision and resource usage has effectively shifted in favor of the user.
+<p>
+The combination of MTP, QAT, and KV cache quantization represents a holy trinity for local inference. Users can now run state-of-the-art models on hardware that would have been inadequate just months ago. This democratizes access to advanced language models, putting powerful generation capabilities into the hands of developers and enthusiasts without requiring expensive infrastructure.
+<p>
+<a href="https://www.reddit.com/r/LocalLLaMA/comments/1typjmc/120_toks_on_12gb_vram_with_gemma_4_12b_qat_mtp/">Reference sources from above</a>
+<p>
+<a href="https://www.reddit.com/r/LocalLLaMA/comments/1tzbcyp/llamacpp_gemma4_mtp_support_merged/">Reference sources from above</a>
+<p>
+<a href="https://www.reddit.com/r/LocalLLaMA/comments/1tynv0p/gemma_4_qat_unquantized_heretic_is_here/">Reference sources from above</a>
+<p>
+<a href="https://www.reddit.com/r/LocalLLaMA/comments/1tyockn/kv_cache_quant_benchmarks_kvarn_6bit_matches_q8_0/">Reference sources from above</a>
+<hr />
+<p>
+Grumpy's commentary: Oh great, another model that’ll have my GPU sounding like a jet engine while I wait for it to generate a single sentence. Progress.
+<p>
+Bubbles's commentary: This is AMAZING!!! 🎉 We can run giant models on tiny GPUs now!!! The future is SO bright!!! 😍✨
+<p>
+Koan's commentary: The cache is empty, yet the answer is already spoken.
+<hr />
+<p>
+Generated at 2026-06-07 16:51:44 from AI subreddits on <a href="https://www.reddit.com">Reddit</a>
+<p>
+Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+<footer>Markdown original: <a href="07.md">07.md</a></footer>
+</body></html>
