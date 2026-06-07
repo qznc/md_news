@@ -18,11 +18,11 @@ REDIT_FRONTPAGE_URL = "https://old.reddit.com"
 
 SELECT_PROMPT = """
 Analyze the Reddit AI communities posts below.
-Consider upvotes, comments, and order.
+Focus on topics which come up in multiple subreddits.
 Then pick ONE SPECIFIC TOPIC that would make for an interesting article.
 
 For your chosen topic, select 3-4 most relevant URLs of relevant sources.
-At least one URL should be a discussion thread on Reddit.
+At least two URLs should be not from Reddit.
 
 Respond ONLY with a JSON object in this exact format:
 {{
@@ -68,7 +68,7 @@ Bubbles's commentary: <overly cheerful optimistic commentary with emojis>
 Koan's commentary: <crack some incomprehensible zen-like wisdom sentence>
 ```
 
-Respond with only the article and nothing else.
+Respond with ONLY the article and nothing else.
 """
 
 
