@@ -6,8 +6,7 @@ from pathlib import Path
 
 from lib.html_utils import extract_title, html_header, html_footer
 
-OUT_DIR = Path("_out/hn")
-TITLE = "Md News"
+OUT_PREFIX = Path("_out")
 
 
 def extract_date_from_path(file_path: Path) -> str:
@@ -51,22 +50,22 @@ def find_articles(out_dir: Path):
     return sorted(articles, key=lambda x: (x[2] or "", str(x[0])), reverse=True)
 
 
-def generate_html_index(articles):
+def generate_html_index(articles, title: str):
     """Generate the HTML content for the index page."""
     items = []
-    for rel_path, title, _ in articles:
+    for rel_path, md_title, _ in articles:
         dir_part = str(rel_path.parent) if rel_path.parent != Path(".") else "."
         md_name = rel_path.name
         html_name = rel_path.with_suffix(".html").name
         md_href = f"{dir_part}/{md_name}" if dir_part != "." else md_name
         html_href = f"{dir_part}/{html_name}" if dir_part != "." else html_name
         items.append(
-            f'<li><a href="{html_href}">{title}</a> (<a href="{md_href}">{md_href}</a>)</li>'
+            f'<li><a href="{html_href}">{md_title}</a> (<a href="{md_href}">{md_href}</a>)</li>'
         )
 
     items_list = "\n        ".join(items)
-    return f"""{html_header(TITLE)}
-    <h1>{TITLE}</h1>
+    return f"""{html_header(title)}
+    <h1>{title}</h1>
     <ul>
         {items_list}
     </ul>
@@ -75,11 +74,18 @@ def generate_html_index(articles):
 
 
 def main():
-    print(f"Scanning for articles in {OUT_DIR}...")
-    articles = find_articles(OUT_DIR)
-    print(f"Found {len(articles)} article(s)")
-    with open(OUT_DIR / "index.html", "w", encoding="utf-8") as f:
-        f.write(generate_html_index(articles))
+    # Find all subdirectories in _out/ (excluding .git and hidden dirs)
+    out_dirs = [d for d in OUT_PREFIX.iterdir() if d.is_dir() and not d.name.startswith(".")]
+    
+    for out_dir in out_dirs:
+        title = out_dir.name.upper().replace("-", " ")
+        print(f"Scanning for articles in {out_dir}...")
+        articles = find_articles(out_dir)
+        print(f"Found {len(articles)} article(s)")
+        with open(out_dir / "index.html", "w", encoding="utf-8") as f:
+            f.write(generate_html_index(articles, title))
+        print(f"Generated index for {out_dir}")
+    
     print("Done!")
 
 
