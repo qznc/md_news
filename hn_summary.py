@@ -12,10 +12,10 @@ from typing import Any, Dict, List, Optional
 
 from hn_frontpage import get_frontpage_output
 
-# Maximum lines to fetch from each URL
 MAX_LINES_PER_URL = 200
+# LLM_COMMAND = ["llm"]
+LLM_COMMAND = ["vibe", "-p"]
 
-# HN frontpage URL for footer
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
 SELECT_PROMPT = """
@@ -24,6 +24,7 @@ Consider upvotes, comments, and order.
 Then pick ONE SPECIFIC TOPIC that would make for an interesting article.
 
 For your chosen topic, select 3-4 most relevant URLs of relevant sources.
+At least one URL should be a discussion thread on HN.
 
 Respond ONLY with a JSON object in this exact format:
 {{
@@ -54,11 +55,11 @@ Use the fetched content from these URLs as your source material:
 ```Article template:
 # <Attention-grabbing title (do not reuse any HN title!)>
 
-<one paragraph: summary explaining the relevance of the topic and why it's interesting, without repeating the title.>
+<one paragraph: summary explaining the relevance of [the topic](central url) and why it's interesting, without repeating the title.>
 
 <multiple paragraphs expanding the summary providing context and explanation.
-Use simple language, avoid jargon, and explain terms.
-[Reference sources from above](some url) with Markdown links.>
+[Reference sources from above](some url) with Markdown links.
+Use simple language, avoid jargon, and explain terms.>
 
 ---
 
@@ -132,7 +133,7 @@ def run_llm(prompt: str) -> str:
     """Run the LLM with the given prompt."""
     try:
         result = subprocess.run(
-            ["vibe", "-p"],
+            LLM_COMMAND,
             input=prompt,
             text=True,
             stdout=subprocess.PIPE,
