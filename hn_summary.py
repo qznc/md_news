@@ -3,14 +3,12 @@
 Generate a Markdown article from HN frontpage data using LLM.
 """
 
-import json
-import re
 import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from hn_frontpage import get_frontpage_output
-from lib.summary import generate_summary
+from lib.summary import generate_summary, select_topic_and_urls
 from lib.web import fetch_url_content, fetch_url_contents
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
@@ -32,7 +30,7 @@ Respond ONLY with a JSON object in this exact format:
 Do NOT include any other text, explanations, or markdown. Just the JSON.
 
 ```HN Frontpage Stories:
-{hn_stories}
+{posts_text}
 ```
 """
 
@@ -95,45 +93,9 @@ def generate_hn_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
     
     stories_text = get_frontpage_output()
-    select_prompt = SELECT_PROMPT.format(hn_stories=stories_text)
+    topic, urls = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
 
-    selection = None
-    for attempt in range(1, 4):
-        print(f"Step 1 attempt {attempt}/3", file=sys.stderr)
-        with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
-            f.write(select_prompt)
-        select_response = run_llm(select_prompt)
-        with open(f"{tmp_dir}/_2_select_response.txt", "w") as f:
-            f.write(select_response)
-
-        json_match = re.search(r"\{[^}]*\}", select_response, re.DOTALL)
-        if not json_match:
-            print(
-                f"Error: Could not find JSON in LLM response on attempt {attempt}. Response was:",
-                select_response,
-                file=sys.stderr,
-            )
-            continue
-
-        try:
-            selection = json.loads(json_match.group(0))
-            topic = selection.get("topic", "Untitled Topic")
-            urls = selection.get("urls", [])
-        except json.JSONDecodeError as e:
-            print(
-                f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}",
-                file=sys.stderr,
-            )
-            continue
-
-        if urls:
-            break
-        else:
-            print(
-                f"Error: No URLs selected by LLM on attempt {attempt}", file=sys.stderr
-            )
-
-    if selection is None or not urls:
+    if not topic or not urls:
         return "Error: Invalid response from LLM in step 1 after 3 attempts"
 
     # Step 2: Fetch URL contents

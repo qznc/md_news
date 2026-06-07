@@ -3,13 +3,10 @@
 Generate a Markdown article from AI subreddits data using LLM.
 """
 
-import json
-import re
 import sys
 from datetime import datetime
-from typing import Optional
 
-from lib.summary import generate_summary
+from lib.summary import generate_summary, select_topic_and_urls
 from lib.web import fetch_url_content, fetch_url_contents
 from reddit_ai import get_ai_subreddits_output
 
@@ -32,7 +29,7 @@ Respond ONLY with a JSON object in this exact format:
 Do NOT include any other text, explanations, or markdown. Just the JSON.
 
 ```Reddit AI Posts:
-{ai_posts}
+{posts_text}
 ```
 """
 
@@ -71,52 +68,6 @@ Respond with ONLY the article and nothing else.
 """
 
 
-def _select_topic_and_urls(tmp_dir: str, posts_text: str) -> tuple[Optional[str], list[str]]:
-    """
-    Use LLM to select a topic and URLs from AI subreddit posts.
-    Retries up to 3 times if the response is invalid.
-    Returns (topic, urls) tuple.
-    """
-    select_prompt = SELECT_PROMPT.format(ai_posts=posts_text)
-
-    for attempt in range(1, 4):
-        print(f"Step 1 attempt {attempt}/3", file=sys.stderr)
-        with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
-            f.write(select_prompt)
-        select_response = run_llm(select_prompt)
-        with open(f"{tmp_dir}/_2_select_response.txt", "w") as f:
-            f.write(select_response)
-
-        json_match = re.search(r"\{[^\}]*\}", select_response, re.DOTALL)
-        if not json_match:
-            print(
-                f"Error: Could not find JSON in LLM response on attempt {attempt}. Response was:",
-                select_response,
-                file=sys.stderr,
-            )
-            continue
-
-        try:
-            selection = json.loads(json_match.group(0))
-            topic = selection.get("topic", "Untitled Topic")
-            urls = selection.get("urls", [])
-        except json.JSONDecodeError as e:
-            print(
-                f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}",
-                file=sys.stderr,
-            )
-            continue
-
-        if urls:
-            return topic, urls
-        else:
-            print(
-                f"Error: No URLs selected by LLM on attempt {attempt}", file=sys.stderr
-            )
-
-    return None, []
-
-
 
 
 def generate_ai_summary() -> str:
@@ -134,7 +85,7 @@ def generate_ai_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     posts_text = get_ai_subreddits_output()
-    topic, urls = _select_topic_and_urls(tmp_dir, posts_text)
+    topic, urls = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir)
 
     if not topic or not urls:
         return "Error: Invalid response from LLM in step 1 after 3 attempts"
