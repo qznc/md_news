@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 from hn_frontpage import get_frontpage_output
 from lib.summary import generate_summary, select_topic_and_urls
 from lib.web import fetch_url_content, fetch_url_contents
+from lib.logging import logger
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
@@ -111,4 +112,5 @@ if __name__ == "__main__":
     summary = generate_hn_summary()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     footer = f"\n---\n\nGenerated at {timestamp} from [Hacker News]({HN_FRONTPAGE_URL})\n\nLicensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
+    logger.info(f"Generated summary:\n{summary + footer}")
     print(summary + footer)

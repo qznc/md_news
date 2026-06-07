@@ -4,6 +4,8 @@
 import subprocess
 import sys
 
+from lib.logging import logger
+
 LLM_COMMAND = ["vibe", "-p"]
 
 
@@ -23,11 +25,8 @@ def run_llm(prompt: str) -> str:
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"Error running llm: {e}", file=sys.stderr)
+        logger.error(f"Error running llm: {e}")
         return f"Error generating summary: {e}"
     except FileNotFoundError:
-        print(
-            "Error: 'vibe' executable not found. Make sure it's installed and in PATH.",
-            file=sys.stderr,
-        )
+        logger.error("Error: 'vibe' executable not found. Make sure it's installed and in PATH.")
         return "Error: vibe executable not found"

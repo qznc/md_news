@@ -7,6 +7,7 @@ import sys
 from typing import List, Optional, Tuple
 
 from lib.llm import run_llm
+from lib.logging import logger
 
 
 def select_topic_and_urls(
@@ -25,7 +26,7 @@ def select_topic_and_urls(
     select_prompt = select_prompt_template.format(posts_text=posts_text)
 
     for attempt in range(1, 4):
-        print(f"Step 1 attempt {attempt}/3", file=sys.stderr)
+        logger.info(f"Step 1 attempt {attempt}/3")
         with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
             f.write(select_prompt)
         select_response = run_llm(select_prompt)
@@ -34,11 +35,7 @@ def select_topic_and_urls(
 
         json_match = re.search(r"\{[^\}]*\}", select_response, re.DOTALL)
         if not json_match:
-            print(
-                f"Error: Could not find JSON in LLM response on attempt {attempt}. Response was:",
-                select_response,
-                file=sys.stderr,
-            )
+            logger.error(f"Could not find JSON in LLM response on attempt {attempt}. Response was: {select_response}")
             continue
 
         try:
@@ -46,18 +43,13 @@ def select_topic_and_urls(
             topic = selection.get("topic", "Untitled Topic")
             urls = selection.get("urls", [])
         except json.JSONDecodeError as e:
-            print(
-                f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}",
-                file=sys.stderr,
-            )
+            logger.error(f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}")
             continue
 
         if urls:
             return topic, urls
         else:
-            print(
-                f"Error: No URLs selected by LLM on attempt {attempt}", file=sys.stderr
-            )
+            logger.error(f"No URLs selected by LLM on attempt {attempt}")
 
     return None, []
 
@@ -102,13 +94,13 @@ def generate_summary(
     summary_prompt = summary_prompt_template.format(topic=topic, url_contents=urls_text)
 
     for attempt in range(1, 4):
-        print(f"Step 2 attempt {attempt}/3", file=sys.stderr)
+        logger.info(f"Step 2 attempt {attempt}/3")
         with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
             f.write(summary_prompt)
         summary = run_llm(summary_prompt)
         if is_valid_summary(summary, topic):
             return summary
-        print(f"Error: Invalid summary on attempt {attempt}", file=sys.stderr)
+        logger.error(f"Invalid summary on attempt {attempt}")
 
         if attempt < 3:
             appendix = "\n\n(This is attempt {attempt}. The previous summary was invalid. Try harder!)"

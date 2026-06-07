@@ -9,6 +9,7 @@ import time
 from typing import Any, Dict
 
 from lib.reddit_utils import REQUEST_DELAY, get_subreddit_top
+from lib.logging import logger
 
 # List of AI/LLM-related subreddits to fetch
 AI_SUBREDDITS = [
@@ -89,4 +90,5 @@ def get_ai_subreddits_output(limit: int = 10) -> str:
 
 if __name__ == "__main__":
     output = get_ai_subreddits_output(limit=10)
+    logger.info(f"Reddit AI output:\n{output}")
     print(output)

@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from lib.html_utils import extract_title, html_header, html_footer
+from lib.logging import logger
 
 OUT_PREFIX = Path("_out")
 
@@ -79,14 +80,14 @@ def main():
     
     for out_dir in out_dirs:
         title = out_dir.name.upper().replace("-", " ")
-        print(f"Scanning for articles in {out_dir}...")
+        logger.info(f"Scanning for articles in {out_dir}...")
         articles = find_articles(out_dir)
-        print(f"Found {len(articles)} article(s)")
+        logger.info(f"Found {len(articles)} article(s)")
         with open(out_dir / "index.html", "w", encoding="utf-8") as f:
             f.write(generate_html_index(articles, title))
-        print(f"Generated index for {out_dir}")
+        logger.info(f"Generated index for {out_dir}")
     
-    print("Done!")
+    logger.info("Done!")
 
 
 if __name__ == "__main__":

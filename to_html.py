@@ -8,6 +8,7 @@ from pathlib import Path
 
 from lib.html_utils import extract_first_headline, html_header, html_footer
 from lib.markdown import markdown_to_html
+from lib.logging import logger
 
 
 def process_file(md_path, out_dir):
@@ -16,7 +17,7 @@ def process_file(md_path, out_dir):
 
     # Skip if HTML file already exists
     if html_path.exists():
-        print(f"Skipped (already exists): {html_path}")
+        logger.info(f"Skipped (already exists): {html_path}")
         return
 
     # Read the markdown file
@@ -44,7 +45,7 @@ def process_file(md_path, out_dir):
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_wrapper)
 
-    print(f"Converted: {md_path} -> {html_path}")
+    logger.info(f"Converted: {md_path} -> {html_path}")
 
 
 def main():
@@ -52,22 +53,22 @@ def main():
     out_dir = Path("_out")
 
     if not out_dir.exists():
-        print(f"Directory '{out_dir}' does not exist.")
+        logger.info(f"Directory '{out_dir}' does not exist.")
         return
 
     # Find all .md files recursively
     md_files = list(out_dir.rglob("*.md"))
 
     if not md_files:
-        print("No .md files found in _out/")
+        logger.info("No .md files found in _out/")
         return
 
-    print(f"Found {len(md_files)} .md file(s) to convert")
+    logger.info(f"Found {len(md_files)} .md file(s) to convert")
 
     for md_file in md_files:
         process_file(md_file, out_dir)
 
-    print("Done!")
+    logger.info("Done!")
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ from datetime import datetime
 from lib.summary import generate_summary, select_topic_and_urls
 from lib.web import fetch_url_content, fetch_url_contents
 from reddit_ai import get_ai_subreddits_output
+from lib.logging import logger
 
 REDIT_FRONTPAGE_URL = "https://old.reddit.com"
 
@@ -100,4 +101,5 @@ if __name__ == "__main__":
     summary = generate_ai_summary()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     footer = f"\n---\n\nGenerated at {timestamp} from AI subreddits on [Reddit]({REDIT_FRONTPAGE_URL})\n\nLicensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
+    logger.info(f"Generated summary:\n{summary + footer}")
     print(summary + footer)

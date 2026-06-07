@@ -5,6 +5,8 @@ import subprocess
 import sys
 from typing import Optional
 
+from lib.logging import logger
+
 
 def fetch_url_content(url: str, max_lines: Optional[int] = None) -> str:
     """Fetch URL content using lynx -dump, limited to max_lines lines.
@@ -49,7 +51,7 @@ def fetch_url_contents(urls: list[str]) -> str:
     """
     url_contents = []
     for url in urls:
-        print(f"Fetching: {url}", file=sys.stderr)
+        logger.info(f"Fetching: {url}")
         content = fetch_url_content(url)
         url_contents.append(f"URL: {url}\nContent:\n{content}\n")
 

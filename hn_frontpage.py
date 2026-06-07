@@ -13,6 +13,7 @@ from lib.hn_utils import (
     fetch_top_comment,
     get_frontpage_stories,
 )
+from lib.logging import logger
 
 
 def format_story(
@@ -100,4 +101,5 @@ def get_frontpage_output(limit: int = 30) -> str:
 
 if __name__ == "__main__":
     output = get_frontpage_output(limit=30)
+    logger.info(f"HN frontpage output:\n{output}")
     print(output)
