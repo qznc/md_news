@@ -9,9 +9,9 @@ import sys
 from datetime import datetime
 from typing import Optional
 
+from lib.llm import run_llm
 from lib.web import fetch_url_content
 from reddit_ai import get_ai_subreddits_output
-LLM_COMMAND = ["vibe", "-p"]
 
 REDIT_FRONTPAGE_URL = "https://old.reddit.com"
 
@@ -90,28 +90,6 @@ def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
     if summary.count("\n\n") < 2:
         return False
     return True
-
-
-def run_llm(prompt: str) -> str:
-    """Run the LLM with the given prompt."""
-    try:
-        result = subprocess.run(
-            LLM_COMMAND + [prompt],
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=sys.stderr,
-            check=True,
-        )
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error running llm: {e}", file=sys.stderr)
-        return f"Error generating summary: {e}"
-    except FileNotFoundError:
-        print(
-            "Error: 'vibe' executable not found. Make sure it's installed and in PATH.",
-            file=sys.stderr,
-        )
-        return "Error: vibe executable not found"
 
 
 def generate_ai_summary() -> str:
