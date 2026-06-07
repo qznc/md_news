@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate a Markdown article from HN frontpage data using LLM.
+Generate a Markdown article from AI subreddits data using LLM.
 """
 
 import json
@@ -8,23 +8,22 @@ import re
 import subprocess
 import sys
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
-from hn_frontpage import get_frontpage_output
+from reddit_ai import get_ai_subreddits_output
 
 MAX_LINES_PER_URL = 200
-# LLM_COMMAND = ["llm"]
 LLM_COMMAND = ["vibe", "-p"]
 
-HN_FRONTPAGE_URL = "https://news.ycombinator.com"
+REDIT_FRONTPAGE_URL = "https://old.reddit.com"
 
 SELECT_PROMPT = """
-Analyze the HN frontpage stories below.
+Analyze the Reddit AI communities posts below.
 Consider upvotes, comments, and order.
 Then pick ONE SPECIFIC TOPIC that would make for an interesting article.
 
 For your chosen topic, select 3-4 most relevant URLs of relevant sources.
-At least one URL should be a discussion thread on HN.
+At least one URL should be a discussion thread on Reddit.
 
 Respond ONLY with a JSON object in this exact format:
 {{
@@ -34,8 +33,8 @@ Respond ONLY with a JSON object in this exact format:
 
 Do NOT include any other text, explanations, or markdown. Just the JSON.
 
-```HN Frontpage Stories:
-{hn_stories}
+```Reddit AI Posts:
+{ai_posts}
 ```
 """
 
@@ -53,7 +52,7 @@ Use the fetched content from these URLs as your source material:
 - Keep the tone terse, professional, and informative.
 
 ```Article template:
-# <Attention-grabbing title (do not reuse any HN title!)>
+# <Attention-grabbing title (do not reuse any Reddit title!)>
 
 <one paragraph: summary explaining the relevance of [the topic](central url) and why it's interesting, without repeating the title.>
 
@@ -74,18 +73,9 @@ Respond with only the article and nothing else.
 """
 
 
-def format_stories_for_prompt(stories: List[Dict[str, Any]]) -> str:
-    """Format stories for the LLM prompt."""
-    lines = []
-    for i, story in enumerate(stories, 1):
-        title = story.get("title", "No title")
-        url = story.get("url", "No URL")
-        score = story.get("score", 0)
-        comments = story.get("descendants", 0)
-        lines.append(f"{i}. {title}")
-        lines.append(f"   URL: {url}")
-        lines.append(f"   Score: {score} | Comments: {comments}")
-    return "\n".join(lines)
+def format_posts_for_prompt(posts: str) -> str:
+    """Format Reddit posts for the LLM prompt."""
+    return posts
 
 
 def fetch_url_content(url: str) -> str:
@@ -151,18 +141,19 @@ def run_llm(prompt: str) -> str:
         return "Error: vibe executable not found"
 
 
-def generate_hn_summary() -> str:
+def generate_ai_summary() -> str:
     """
-    Generate a Markdown article from HN frontpage data using the LLM.
+    Generate a Markdown article from AI subreddits data using the LLM.
     """
     import os
-    tmp_dir = "_tmp/hn"
+    tmp_dir = "_tmp/ai"
     os.makedirs(tmp_dir, exist_ok=True)
     
-    stories_text = get_frontpage_output()
-    select_prompt = SELECT_PROMPT.format(hn_stories=stories_text)
+    posts_text = get_ai_subreddits_output()
+    select_prompt = SELECT_PROMPT.format(ai_posts=posts_text)
 
     selection = None
+    urls = []
     for attempt in range(1, 4):
         print(f"Step 1 attempt {attempt}/3", file=sys.stderr)
         with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
@@ -171,7 +162,7 @@ def generate_hn_summary() -> str:
         with open(f"{tmp_dir}/_2_select_response.txt", "w") as f:
             f.write(select_response)
 
-        json_match = re.search(r"\{[^}]*\}", select_response, re.DOTALL)
+        json_match = re.search(r"\{[^\}]*\}", select_response, re.DOTALL)
         if not json_match:
             print(
                 f"Error: Could not find JSON in LLM response on attempt {attempt}. Response was:",
@@ -226,7 +217,7 @@ def generate_hn_summary() -> str:
 
 
 if __name__ == "__main__":
-    summary = generate_hn_summary()
+    summary = generate_ai_summary()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    footer = f"\n---\n\nGenerated at {timestamp} from [Hacker News]({HN_FRONTPAGE_URL})\n\nLicensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
+    footer = f"\n---\n\nGenerated at {timestamp} from AI subreddits on [Reddit]({REDIT_FRONTPAGE_URL})\n\nLicensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
     print(summary + footer)

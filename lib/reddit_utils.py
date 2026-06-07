@@ -65,8 +65,12 @@ def _parse_rss_feed(xml_content: str) -> List[Dict[str, Any]]:
         # Main URL (first link found - Reddit RSS only has one link per entry)
         for link in entry.findall('atom:link', namespaces):
             if 'href' in link.attrib:
-                story['url'] = link.attrib['href']
-                story['comments_url'] = link.attrib['href']  # Reddit link IS the comments URL
+                url = link.attrib['href']
+                # Rewrite www.reddit.com URLs to old.reddit.com for better lynx parsing
+                if 'www.reddit.com' in url:
+                    url = url.replace('www.reddit.com', 'old.reddit.com')
+                story['url'] = url
+                story['comments_url'] = url  # Reddit link IS the comments URL
                 break
         
         # Post ID
@@ -97,7 +101,7 @@ def _parse_rss_feed(xml_content: str) -> List[Dict[str, Any]]:
         # Fallback: extract from url
         if not story['subreddit'] and story['url']:
             parts = story['url'].split('/')
-            if len(parts) >= 4 and parts[2] == 'www.reddit.com' and len(parts) >= 5 and parts[3].startswith('r/'):
+            if len(parts) >= 4 and parts[2] in ('www.reddit.com', 'old.reddit.com') and len(parts) >= 5 and parts[3].startswith('r/'):
                 story['subreddit'] = parts[3][2:]  # Remove 'r/' prefix
         
         # Content
