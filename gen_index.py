@@ -6,13 +6,29 @@ from pathlib import Path
 
 from lib.html_utils import extract_title, html_header, html_footer
 
-OUT_DIR = Path("_out")
+OUT_DIR = Path("_out/hn")
 TITLE = "Md News"
 
 
 def extract_date_from_path(file_path: Path) -> str:
-    """Extract date from path like 2026-06/05-hn.md -> 2026-06-05."""
-    parts = file_path.parts
+    """Extract date from path like _out/hn/2026/06/05.md -> 2026-06-05."""
+    parts = list(file_path.parts)
+    year_part = None
+    month_part = None
+    day_part = None
+    
+    for part in parts:
+        if re.match(r"^\d{4}$", part):
+            year_part = part
+        elif re.match(r"^\d{2}$", part):
+            if year_part and month_part is None:
+                month_part = part
+            elif year_part and month_part and day_part is None:
+                day_part = part
+    
+    if year_part and month_part and day_part:
+        return f"{year_part}-{month_part}-{day_part}"
+    
     for part in parts:
         if re.match(r"^\d{4}-\d{2}$", part):
             filename = file_path.name
