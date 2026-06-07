@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 
 from hn_frontpage import get_frontpage_output
 from lib.llm import run_llm
+from lib.summary import is_valid_summary
 from lib.web import fetch_url_content
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
@@ -84,26 +85,6 @@ def format_stories_for_prompt(stories: List[Dict[str, Any]]) -> str:
         lines.append(f"   Score: {score} | Comments: {comments}")
     return "\n".join(lines)
 
-
-def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
-    """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
-    if not summary.strip():
-        return False
-    if len(summary) < 200:
-        return False
-    if not summary.lstrip().startswith("# "):
-        return False
-    if "[" not in summary or "](" not in summary:
-        return False
-    if "---" not in summary:
-        return False
-    if "Grumpy's commentary:" not in summary:
-        return False
-    if "Bubbles's commentary:" not in summary:
-        return False
-    if summary.count("\n\n") < 2:
-        return False
-    return True
 
 
 def generate_hn_summary() -> str:

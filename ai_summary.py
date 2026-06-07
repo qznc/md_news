@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Optional
 
 from lib.llm import run_llm
+from lib.summary import is_valid_summary
 from lib.web import fetch_url_content
 from reddit_ai import get_ai_subreddits_output
 
@@ -70,26 +71,6 @@ Koan's commentary: <crack some incomprehensible zen-like wisdom sentence>
 Respond with only the article and nothing else.
 """
 
-
-def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
-    """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
-    if not summary.strip():
-        return False
-    if len(summary) < 200:
-        return False
-    if not summary.lstrip().startswith("# "):
-        return False
-    if "[" not in summary or "](" not in summary:
-        return False
-    if "---" not in summary:
-        return False
-    if "Grumpy's commentary:" not in summary:
-        return False
-    if "Bubbles's commentary:" not in summary:
-        return False
-    if summary.count("\n\n") < 2:
-        return False
-    return True
 
 
 def generate_ai_summary() -> str:
