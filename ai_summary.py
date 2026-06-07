@@ -5,14 +5,12 @@ Generate a Markdown article from AI subreddits data using LLM.
 
 import json
 import re
-import subprocess
 import sys
 from datetime import datetime
 from typing import Optional
 
+from lib.web import fetch_url_content
 from reddit_ai import get_ai_subreddits_output
-
-MAX_LINES_PER_URL = 200
 LLM_COMMAND = ["vibe", "-p"]
 
 REDIT_FRONTPAGE_URL = "https://old.reddit.com"
@@ -73,31 +71,6 @@ Respond with only the article and nothing else.
 """
 
 
-def format_posts_for_prompt(posts: str) -> str:
-    """Format Reddit posts for the LLM prompt."""
-    return posts
-
-
-def fetch_url_content(url: str) -> str:
-    """Fetch URL content using lynx -dump, limited to MAX_LINES_PER_URL lines."""
-    try:
-        result = subprocess.run(
-            ["lynx", "-dump", "-list_inline", url],
-            capture_output=True,
-            text=True,
-            timeout=60,
-            errors="replace",
-        )
-        if result.returncode != 0:
-            return f"Error fetching {url}: {result.stderr}"
-        lines = result.stdout.splitlines()
-        return "\n".join(lines[:MAX_LINES_PER_URL])
-    except subprocess.TimeoutExpired:
-        return f"Timeout fetching {url}"
-    except FileNotFoundError:
-        return f"Error: lynx not found. Cannot fetch {url}"
-
-
 def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
     """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
     if not summary.strip():
@@ -146,9 +119,10 @@ def generate_ai_summary() -> str:
     Generate a Markdown article from AI subreddits data using the LLM.
     """
     import os
+
     tmp_dir = "_tmp/ai"
     os.makedirs(tmp_dir, exist_ok=True)
-    
+
     posts_text = get_ai_subreddits_output()
     select_prompt = SELECT_PROMPT.format(ai_posts=posts_text)
 
