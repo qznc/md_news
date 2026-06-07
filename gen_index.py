@@ -4,7 +4,7 @@
 import re
 from pathlib import Path
 
-from lib.html_utils import extract_title, html_header, html_footer
+from lib.html_utils import extract_title, html_footer, html_header
 from lib.logging import logger
 
 OUT_PREFIX = Path("_out")
@@ -70,6 +70,7 @@ def generate_html_index(articles, title: str):
     <ul>
         {items_list}
     </ul>
+    <footer><a href="../index.html">Main index</a></footer>
 {html_footer()}
 """
 

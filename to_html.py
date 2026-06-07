@@ -6,9 +6,9 @@ Supports: headlines (#, ##, ###), paragraphs, links, em, strong, hr (---).
 
 from pathlib import Path
 
-from lib.html_utils import extract_first_headline, html_header, html_footer
-from lib.markdown import markdown_to_html
+from lib.html_utils import extract_first_headline, html_footer, html_header
 from lib.logging import logger
+from lib.markdown import markdown_to_html
 
 
 def process_file(md_path, out_dir):
@@ -37,7 +37,7 @@ def process_file(md_path, out_dir):
     extra_head = f'\n    <link rel="canonical" href="{md_relative}">\n    <link rel="alternate" type="text/markdown" href="{md_relative}" title="Original Markdown source">'
     html_wrapper = f"""{html_header(title, extra_head)}
 {html_content}
-<footer>Markdown original: <a href="{md_relative}">{md_relative}</a></footer>
+<footer>Markdown original: <a href="{md_relative}">{md_relative}</a>, <a href="../../index.html">index</a></footer>
 {html_footer()}
 """
 
