@@ -11,7 +11,7 @@ from typing import Optional
 
 from lib.llm import run_llm
 from lib.summary import is_valid_summary
-from lib.web import fetch_url_content
+from lib.web import fetch_url_content, fetch_url_contents
 from reddit_ai import get_ai_subreddits_output
 
 REDIT_FRONTPAGE_URL = "https://old.reddit.com"
@@ -72,21 +72,14 @@ Respond with only the article and nothing else.
 """
 
 
-
-def generate_ai_summary() -> str:
+def _select_topic_and_urls(tmp_dir: str, posts_text: str) -> tuple[Optional[str], list[str]]:
     """
-    Generate a Markdown article from AI subreddits data using the LLM.
+    Use LLM to select a topic and URLs from AI subreddit posts.
+    Retries up to 3 times if the response is invalid.
+    Returns (topic, urls) tuple.
     """
-    import os
-
-    tmp_dir = "_tmp/ai"
-    os.makedirs(tmp_dir, exist_ok=True)
-
-    posts_text = get_ai_subreddits_output()
     select_prompt = SELECT_PROMPT.format(ai_posts=posts_text)
 
-    selection = None
-    urls = []
     for attempt in range(1, 4):
         print(f"Step 1 attempt {attempt}/3", file=sys.stderr)
         with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
@@ -116,35 +109,57 @@ def generate_ai_summary() -> str:
             continue
 
         if urls:
-            break
+            return topic, urls
         else:
             print(
                 f"Error: No URLs selected by LLM on attempt {attempt}", file=sys.stderr
             )
 
-    if selection is None or not urls:
-        return "Error: Invalid response from LLM in step 1 after 3 attempts"
+    return None, []
 
-    # Step 2: Fetch URL contents
-    url_contents = []
-    for url in urls:
-        print(f"Fetching: {url}", file=sys.stderr)
-        content = fetch_url_content(url)
-        url_contents.append(f"URL: {url}\nContent:\n{content}\n")
 
-    urls_text = "\n\n".join(url_contents)
 
-    # Step 3: Generate summary with fetched content
+def _generate_summary(tmp_dir: str, topic: str, urls_text: str) -> str:
+    """
+    Generate the final summary article using the LLM.
+    Retries up to 3 times if the summary is invalid.
+    """
     summary_prompt = SUMMARY_PROMPT_TEMPLATE.format(topic=topic, url_contents=urls_text)
     with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
         f.write(summary_prompt)
-    summary = ""
+
     for attempt in range(1, 4):
         print(f"Step 2 attempt {attempt}/3", file=sys.stderr)
         summary = run_llm(summary_prompt)
         if is_valid_summary(summary, topic):
-            break
+            return summary
         print(f"Error: Invalid summary on attempt {attempt}", file=sys.stderr)
+
+    return ""
+
+
+def generate_ai_summary() -> str:
+    """
+    Generate a Markdown article from AI subreddits data using the LLM.
+    
+    Steps:
+    1. Get AI subreddit posts and use LLM to select a topic and URLs
+    2. Fetch content from the selected URLs
+    3. Generate the final summary article using the fetched content
+    """
+    import os
+
+    tmp_dir = "_tmp/ai"
+    os.makedirs(tmp_dir, exist_ok=True)
+
+    posts_text = get_ai_subreddits_output()
+    topic, urls = _select_topic_and_urls(tmp_dir, posts_text)
+
+    if not topic or not urls:
+        return "Error: Invalid response from LLM in step 1 after 3 attempts"
+
+    urls_text = fetch_url_contents(urls)
+    summary = _generate_summary(tmp_dir, topic, urls_text)
 
     return summary
 

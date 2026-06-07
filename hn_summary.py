@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 from hn_frontpage import get_frontpage_output
 from lib.llm import run_llm
 from lib.summary import is_valid_summary
-from lib.web import fetch_url_content
+from lib.web import fetch_url_content, fetch_url_contents
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
@@ -138,13 +138,7 @@ def generate_hn_summary() -> str:
         return "Error: Invalid response from LLM in step 1 after 3 attempts"
 
     # Step 2: Fetch URL contents
-    url_contents = []
-    for url in urls:
-        print(f"Fetching: {url}", file=sys.stderr)
-        content = fetch_url_content(url)
-        url_contents.append(f"URL: {url}\nContent:\n{content}\n")
-
-    urls_text = "\n\n".join(url_contents)
+    urls_text = fetch_url_contents(urls)
 
     # Step 3: Generate summary with fetched content
     summary_prompt = SUMMARY_PROMPT_TEMPLATE.format(topic=topic, url_contents=urls_text)
