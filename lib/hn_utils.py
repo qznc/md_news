@@ -14,7 +14,7 @@ def fetch_top_stories(limit: int = 50) -> List[int]:
     url = "https://hacker-news.firebaseio.com/v0/topstories.json"
     req = Request(url)
     with urlopen(req, timeout=30) as response:
-        data = response.read().decode('utf-8')
+        data = response.read().decode("utf-8")
         return json.loads(data)[:limit]
 
 
@@ -23,7 +23,7 @@ def fetch_item(item_id: int) -> Dict[str, Any]:
     url = f"https://hacker-news.firebaseio.com/v0/item/{item_id}.json"
     req = Request(url)
     with urlopen(req, timeout=30) as response:
-        data = response.read().decode('utf-8')
+        data = response.read().decode("utf-8")
         return json.loads(data)
 
 

@@ -2,7 +2,6 @@
 """Web utilities for md-news."""
 
 import subprocess
-import sys
 from typing import Optional
 
 from lib.logging import logger

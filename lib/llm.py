@@ -11,7 +11,7 @@ LLM_COMMAND = ["vibe", "-p"]
 
 def run_llm(prompt: str) -> str:
     """Run the LLM with the given prompt.
-    
+
     Returns:
         The LLM output as a string, or an error message if it fails.
     """
@@ -28,5 +28,7 @@ def run_llm(prompt: str) -> str:
         logger.error(f"Error running llm: {e}")
         return f"Error generating summary: {e}"
     except FileNotFoundError:
-        logger.error("Error: 'vibe' executable not found. Make sure it's installed and in PATH.")
+        logger.error(
+            "Error: 'vibe' executable not found. Make sure it's installed and in PATH."
+        )
         return "Error: vibe executable not found"

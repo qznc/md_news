@@ -3,7 +3,6 @@
 
 import json
 import re
-import sys
 from typing import List, Optional, Tuple
 
 from lib.llm import run_llm
@@ -35,7 +34,9 @@ def select_topic_and_urls(
 
         json_match = re.search(r"\{[^\}]*\}", select_response, re.DOTALL)
         if not json_match:
-            logger.error(f"Could not find JSON in LLM response on attempt {attempt}. Response was: {select_response}")
+            logger.error(
+                f"Could not find JSON in LLM response on attempt {attempt}. Response was: {select_response}"
+            )
             continue
 
         try:
@@ -43,7 +44,9 @@ def select_topic_and_urls(
             topic = selection.get("topic", "Untitled Topic")
             urls = selection.get("urls", [])
         except json.JSONDecodeError as e:
-            logger.error(f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}")
+            logger.error(
+                f"Error parsing JSON on attempt {attempt}: {e}. Response was: {select_response}"
+            )
             continue
 
         if urls:

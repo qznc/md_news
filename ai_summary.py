@@ -3,11 +3,10 @@
 Generate a Markdown article from AI subreddits data using LLM.
 """
 
-import sys
 from datetime import datetime
 
 from lib.summary import generate_summary, select_topic_and_urls
-from lib.web import fetch_url_content, fetch_url_contents
+from lib.web import fetch_url_contents
 from reddit_ai import get_ai_subreddits_output
 from lib.logging import logger
 
@@ -69,12 +68,10 @@ Respond with ONLY the article and nothing else.
 """
 
 
-
-
 def generate_ai_summary() -> str:
     """
     Generate a Markdown article from AI subreddits data using the LLM.
-    
+
     Steps:
     1. Get AI subreddit posts and use LLM to select a topic and URLs
     2. Fetch content from the selected URLs

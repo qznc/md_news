@@ -3,13 +3,12 @@
 Generate a Markdown article from HN frontpage data using LLM.
 """
 
-import sys
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from hn_frontpage import get_frontpage_output
 from lib.summary import generate_summary, select_topic_and_urls
-from lib.web import fetch_url_content, fetch_url_contents
+from lib.web import fetch_url_contents
 from lib.logging import logger
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
@@ -84,15 +83,15 @@ def format_stories_for_prompt(stories: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
-
 def generate_hn_summary() -> str:
     """
     Generate a Markdown article from HN frontpage data using the LLM.
     """
     import os
+
     tmp_dir = "_tmp/hn"
     os.makedirs(tmp_dir, exist_ok=True)
-    
+
     stories_text = get_frontpage_output()
     topic, urls = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
 

@@ -16,7 +16,7 @@ def extract_date_from_path(file_path: Path) -> str:
     year_part = None
     month_part = None
     day_part = None
-    
+
     for part in parts:
         if re.match(r"^\d{4}$", part):
             year_part = part
@@ -25,10 +25,10 @@ def extract_date_from_path(file_path: Path) -> str:
                 month_part = part
             elif year_part and month_part and day_part is None:
                 day_part = part
-    
+
     if year_part and month_part and day_part:
         return f"{year_part}-{month_part}-{day_part}"
-    
+
     for part in parts:
         if re.match(r"^\d{4}-\d{2}$", part):
             filename = file_path.name
@@ -76,8 +76,10 @@ def generate_html_index(articles, title: str):
 
 def main():
     # Find all subdirectories in _out/ (excluding .git and hidden dirs)
-    out_dirs = [d for d in OUT_PREFIX.iterdir() if d.is_dir() and not d.name.startswith(".")]
-    
+    out_dirs = [
+        d for d in OUT_PREFIX.iterdir() if d.is_dir() and not d.name.startswith(".")
+    ]
+
     for out_dir in out_dirs:
         title = out_dir.name.upper().replace("-", " ")
         logger.info(f"Scanning for articles in {out_dir}...")
@@ -86,7 +88,7 @@ def main():
         with open(out_dir / "index.html", "w", encoding="utf-8") as f:
             f.write(generate_html_index(articles, title))
         logger.info(f"Generated index for {out_dir}")
-    
+
     logger.info("Done!")
 
 

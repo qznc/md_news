@@ -5,7 +5,6 @@ This module sets up logging that writes to both stderr and _tmp/logs directory.
 """
 
 import logging
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
