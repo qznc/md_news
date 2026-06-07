@@ -100,14 +100,18 @@ def generate_summary(
     Retries up to 3 times if the summary is invalid.
     """
     summary_prompt = summary_prompt_template.format(topic=topic, url_contents=urls_text)
-    with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
-        f.write(summary_prompt)
 
     for attempt in range(1, 4):
         print(f"Step 2 attempt {attempt}/3", file=sys.stderr)
+        with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
+            f.write(summary_prompt)
         summary = run_llm(summary_prompt)
         if is_valid_summary(summary, topic):
             return summary
         print(f"Error: Invalid summary on attempt {attempt}", file=sys.stderr)
+
+        if attempt < 3:
+            appendix = "\n\n(This is attempt {attempt}. The previous summary was invalid. Try harder!)"
+            summary_prompt += appendix.format(attempt=attempt + 1)
 
     return ""
