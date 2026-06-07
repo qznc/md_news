@@ -9,8 +9,7 @@ import sys
 from datetime import datetime
 from typing import Optional
 
-from lib.llm import run_llm
-from lib.summary import is_valid_summary
+from lib.summary import generate_summary
 from lib.web import fetch_url_content, fetch_url_contents
 from reddit_ai import get_ai_subreddits_output
 
@@ -119,24 +118,6 @@ def _select_topic_and_urls(tmp_dir: str, posts_text: str) -> tuple[Optional[str]
 
 
 
-def _generate_summary(tmp_dir: str, topic: str, urls_text: str) -> str:
-    """
-    Generate the final summary article using the LLM.
-    Retries up to 3 times if the summary is invalid.
-    """
-    summary_prompt = SUMMARY_PROMPT_TEMPLATE.format(topic=topic, url_contents=urls_text)
-    with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
-        f.write(summary_prompt)
-
-    for attempt in range(1, 4):
-        print(f"Step 2 attempt {attempt}/3", file=sys.stderr)
-        summary = run_llm(summary_prompt)
-        if is_valid_summary(summary, topic):
-            return summary
-        print(f"Error: Invalid summary on attempt {attempt}", file=sys.stderr)
-
-    return ""
-
 
 def generate_ai_summary() -> str:
     """
@@ -159,7 +140,7 @@ def generate_ai_summary() -> str:
         return "Error: Invalid response from LLM in step 1 after 3 attempts"
 
     urls_text = fetch_url_contents(urls)
-    summary = _generate_summary(tmp_dir, topic, urls_text)
+    summary = generate_summary(SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text)
 
     return summary
 

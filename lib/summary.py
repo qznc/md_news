@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Summary validation utilities for md-news."""
 
+import sys
 from typing import Optional
+
+from lib.llm import run_llm
 
 
 def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
@@ -23,3 +26,33 @@ def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
     if summary.count("\n\n") < 2:
         return False
     return True
+
+
+def generate_summary(
+    summary_prompt_template: str,
+    tmp_dir: str,
+    topic: str,
+    urls_text: str,
+) -> str:
+    """Generate the final summary article using the LLM.
+
+    Args:
+        summary_prompt_template: The template string for the summary prompt
+        tmp_dir: Temporary directory for debugging files
+        topic: The topic for the summary
+        urls_text: Formatted URL contents
+
+    Retries up to 3 times if the summary is invalid.
+    """
+    summary_prompt = summary_prompt_template.format(topic=topic, url_contents=urls_text)
+    with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
+        f.write(summary_prompt)
+
+    for attempt in range(1, 4):
+        print(f"Step 2 attempt {attempt}/3", file=sys.stderr)
+        summary = run_llm(summary_prompt)
+        if is_valid_summary(summary, topic):
+            return summary
+        print(f"Error: Invalid summary on attempt {attempt}", file=sys.stderr)
+
+    return ""
