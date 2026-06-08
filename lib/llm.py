@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LLM utilities for md-news using Mistral REST API."""
+"""LLM utilities for md-news."""
 
 import json
 import os
@@ -111,7 +111,7 @@ def _make_api_request(
         return json.loads(response.read().decode("utf-8"))
 
 
-def run_llm(
+def run_llm_mistral(
     prompt: str,
     model: str = DEFAULT_MODEL,
     max_tokens: int = DEFAULT_MAX_TOKENS,
@@ -204,3 +204,39 @@ def run_llm(
     except Exception as e:
         logger.error(f"Error running Mistral API: {e}")
         return f"Error generating text: {e}"
+
+
+def run_llm_openrouter(prompt: str, thinking: bool = False) -> str:
+    """Openrouter API"""
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "OPENROUTER_API_KEY not found. Set it in environment variable. "
+            "Get one at https://openrouter.ai"
+        )
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    data = {
+        "model": "openrouter/free",
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": DEFAULT_MAX_TOKENS,
+        "reasoning": {"enabled": thinking},
+    }
+    logger.debug(f"Prepared Openrouter API request data: {data}")
+    req = urllib.request.Request(
+        url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST"
+    )
+    logger.debug(f"Sending Openrouter API request {repr(req)}")
+    with urllib.request.urlopen(req, timeout=60) as response:
+        res = json.loads(response.read().decode("utf-8"))
+    res_model = res.get("model", "unknown")
+    res_provider = res.get("provider", "unknown")
+    logger.debug(f"Openrouter API response from {res_model} (provider: {res_provider})")
+    res_usage = res.get("usage", {})
+    res_prompt_tokens = res_usage.get("prompt_tokens", "unknown")
+    res_completion_tokens = res_usage.get("completion_tokens", "unknown")
+    logger.debug(f"prompt={res_prompt_tokens}, completion={res_completion_tokens}")
+    return res["choices"][0]["message"]["content"]
+
+
+run_llm = run_llm_openrouter

@@ -3,7 +3,7 @@
 
 import json
 import re
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from lib.llm import run_llm
 from lib.logging import logger
