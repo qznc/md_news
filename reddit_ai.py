@@ -8,8 +8,8 @@ Uses reddit_utils.py to fetch and format posts from the biggest AI subreddits.
 import time
 from typing import Any, Dict
 
-from lib.reddit_utils import REQUEST_DELAY, get_subreddit_top
 from lib.logging import logger
+from lib.reddit_utils import REQUEST_DELAY, get_subreddit_top
 
 # List of AI/LLM-related subreddits to fetch
 AI_SUBREDDITS = [

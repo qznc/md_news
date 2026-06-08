@@ -89,13 +89,17 @@ def select_topic_and_urls(
                 url = url_line[5:]  # Remove "URL: " prefix
                 content = parts[1]
 
-                # Check for error messages - filter out failed URLs
+                # Check for error messages or empty content - filter out failed URLs
                 if (
                     "Error fetching" in content
                     or "Timeout fetching" in content
                     or "lynx not found" in content
+                    or not content.strip()
+                    or len(content.strip()) < 50  # Too short to be meaningful
                 ):
-                    logger.warning(f"URL failed to load, filtering out: {url}")
+                    logger.warning(
+                        f"URL failed to load or has empty content, filtering out: {url}"
+                    )
                     continue
                 else:
                     url_contents_dict[url] = content
