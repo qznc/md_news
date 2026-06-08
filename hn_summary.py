@@ -7,8 +7,7 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 from hn_frontpage import get_frontpage_output
-from lib.summary import generate_summary, select_topic_and_urls
-from lib.web import fetch_url_contents
+from lib.summary import generate_summary, select_topic_and_urls, format_url_contents
 from lib.logging import logger
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
@@ -93,13 +92,16 @@ def generate_hn_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     stories_text = get_frontpage_output()
-    topic, urls = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
+    try:
+        selection = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
+    except RuntimeError as e:
+        return f"Error: {e}"
 
-    if not topic or not urls:
-        return "Error: Invalid response from LLM in step 1 after 3 attempts"
+    topic = selection.get("topic")
+    urls_dict = selection.get("urls", {})
 
-    # Step 2: Fetch URL contents
-    urls_text = fetch_url_contents(urls)
+    # Step 2: Format URL contents
+    urls_text = format_url_contents(urls_dict)
 
     # Step 3: Generate summary with fetched content
     summary = generate_summary(

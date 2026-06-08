@@ -137,9 +137,13 @@ def run_llm(
         effective_model = model
         if thinking and model not in REASONING_MODELS:
             effective_model = "mistral-medium-3.5"
-            logger.info(f"Switching from {model} to {effective_model} for reasoning support")
-        
-        response = _make_api_request(prompt, effective_model, max_tokens, temperature, thinking)
+            logger.info(
+                f"Switching from {model} to {effective_model} for reasoning support"
+            )
+
+        response = _make_api_request(
+            prompt, effective_model, max_tokens, temperature, thinking
+        )
 
         if "choices" not in response or not response["choices"]:
             logger.error(f"Invalid API response: {response}")

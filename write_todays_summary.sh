@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # HN Summary
 OUTPUT_DIR="_out/hn/$(date +"%Y")/$(date +"%m")"

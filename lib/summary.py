@@ -3,15 +3,31 @@
 
 import json
 import re
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from lib.llm import run_llm
 from lib.logging import logger
+from lib.web import fetch_url_contents
+
+
+def format_url_contents(urls_dict: Dict[str, str]) -> str:
+    """Format URL contents dict into the string format expected by generate_summary.
+
+    Args:
+        urls_dict: Dict mapping URLs to their fetched content
+
+    Returns:
+        Formatted string in the format "URL: {url}\nContent:\n{content}\n\n" for each URL
+    """
+    url_contents = []
+    for url, content in urls_dict.items():
+        url_contents.append(f"URL: {url}\nContent:\n{content}")
+    return "\n\n".join(url_contents)
 
 
 def select_topic_and_urls(
     select_prompt_template: str, posts_text: str, tmp_dir: str
-) -> Tuple[Optional[str], List[str]]:
+) -> Dict[str, object]:
     """Use LLM to select a topic and URLs from posts.
 
     Args:
@@ -20,8 +36,14 @@ def select_topic_and_urls(
         tmp_dir: Temporary directory for debugging files
 
     Retries up to 3 times if the response is invalid.
-    Returns (topic, urls) tuple.
+    Failed URLs are filtered out as long as at least 3 successful URLs remain.
+    Returns a dict with 'topic' and 'urls' keys, where 'urls' is a dict mapping
+    URLs to their fetched content.
+
+    Raises:
+        RuntimeError: If all attempts fail or if fewer than 3 URLs can be fetched.
     """
+
     select_prompt = select_prompt_template.format(posts_text=posts_text)
 
     for attempt in range(1, 4):
@@ -49,12 +71,47 @@ def select_topic_and_urls(
             )
             continue
 
-        if urls:
-            return topic, urls
-        else:
+        if not urls:
             logger.error(f"No URLs selected by LLM on attempt {attempt}")
+            continue
 
-    return None, []
+        # Fetch and filter URLs - keep successful ones
+        urls_text = fetch_url_contents(urls)
+        url_contents_dict = {}
+
+        for url_block in urls_text.split("\n\n"):
+            if not url_block.startswith("URL: "):
+                continue
+            # Parse the URL and content
+            parts = url_block.split("\nContent:", 1)
+            if len(parts) == 2:
+                url_line = parts[0]
+                url = url_line[5:]  # Remove "URL: " prefix
+                content = parts[1]
+
+                # Check for error messages - filter out failed URLs
+                if (
+                    "Error fetching" in content
+                    or "Timeout fetching" in content
+                    or "lynx not found" in content
+                ):
+                    logger.warning(f"URL failed to load, filtering out: {url}")
+                    continue
+                else:
+                    url_contents_dict[url] = content
+
+        # If we have at least 3 successful URLs, return the result
+        if len(url_contents_dict) >= 3:
+            return {"topic": topic, "urls": url_contents_dict}
+        else:
+            logger.error(
+                f"Fewer than 3 URLs succeeded (got {len(url_contents_dict)}) on attempt {attempt}"
+            )
+            continue
+
+    raise RuntimeError(
+        "Failed to select topic and URLs with at least 3 fetchable URLs after 3 attempts"
+    )
 
 
 def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:

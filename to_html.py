@@ -17,7 +17,7 @@ def process_file(md_path, out_dir):
 
     # Skip if HTML file already exists
     if html_path.exists():
-        logger.info(f"Skipped (already exists): {html_path}")
+        logger.debug(f"Skipped (already exists): {html_path}")
         return
 
     # Read the markdown file

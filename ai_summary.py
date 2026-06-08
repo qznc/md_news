@@ -5,8 +5,7 @@ Generate a Markdown article from AI subreddits data using LLM.
 
 from datetime import datetime
 
-from lib.summary import generate_summary, select_topic_and_urls
-from lib.web import fetch_url_contents
+from lib.summary import generate_summary, select_topic_and_urls, format_url_contents
 from reddit_ai import get_ai_subreddits_output
 from lib.logging import logger
 
@@ -83,12 +82,15 @@ def generate_ai_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     posts_text = get_ai_subreddits_output()
-    topic, urls = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir)
+    try:
+        selection = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir)
+    except RuntimeError as e:
+        return f"Error: {e}"
 
-    if not topic or not urls:
-        return "Error: Invalid response from LLM in step 1 after 3 attempts"
+    topic = selection.get("topic")
+    urls_dict = selection.get("urls", {})
 
-    urls_text = fetch_url_contents(urls)
+    urls_text = format_url_contents(urls_dict)
     summary = generate_summary(SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text)
 
     return summary
