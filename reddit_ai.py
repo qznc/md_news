@@ -54,14 +54,11 @@ def get_ai_subreddits_output(limit: int = 10) -> str:
         Formatted string with top posts from each subreddit
     """
     output_lines = []
-    output_lines.append("=" * 80)
     output_lines.append("Top AI/LLM Reddit Communities - Latest Posts")
-    output_lines.append("=" * 80)
     output_lines.append("")
 
     for subreddit in AI_SUBREDDITS:
         output_lines.append(f"\n--- r/{subreddit} ---")
-        output_lines.append("")
 
         try:
             posts = get_subreddit_top(subreddit, limit)
