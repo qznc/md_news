@@ -2,14 +2,12 @@
 """LLM utilities for md-news."""
 
 import json
-import os
 import urllib.error
 import urllib.request
 from typing import Any
 
 from lib.logging import logger
 
-# Configuration
 MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 DEFAULT_MODEL = "mistral-medium-latest"
 DEFAULT_MAX_TOKENS = 512
@@ -17,6 +15,20 @@ DEFAULT_TEMPERATURE = 0.3
 
 # Models that support reasoning_effort
 REASONING_MODELS = ["mistral-small-latest", "mistral-medium-3.5", "mistral-medium-3-5"]
+
+
+def _load_env():
+    kv = {}
+    with open(".env") as fh:
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            k, v = line.split("=")
+            kv[k] = v.strip().strip('"')
+    return kv
+
+
+_ENV = _load_env()
 
 
 def _get_api_key() -> str:
@@ -28,31 +40,7 @@ def _get_api_key() -> str:
     Raises:
         ValueError: If API key is not found.
     """
-    # Try to read from .env file first
-    env_path = ".env"
-    api_key = None
-
-    try:
-        with open(env_path) as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    if "=" in line:
-                        key, value = line.split("=", 1)
-                        if key.strip() == "MISTRAL_API_KEY":
-                            api_key = value.strip()
-                            # Remove surrounding quotes if present
-                            if (api_key.startswith('"') and api_key.endswith('"')) or (
-                                api_key.startswith("'") and api_key.endswith("'")
-                            ):
-                                api_key = api_key[1:-1]
-                            break
-    except FileNotFoundError:
-        pass
-
-    # Fall back to environment variable
-    if not api_key:
-        api_key = os.environ.get("MISTRAL_API_KEY")
+    api_key = _ENV.get("MISTRAL_API_KEY")
 
     if not api_key:
         raise ValueError(
@@ -208,27 +196,34 @@ def run_llm_mistral(
 
 def run_llm_openrouter(prompt: str, thinking: bool = False) -> str:
     """Openrouter API"""
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    api_key = _ENV.get("OPENROUTER_API_KEY")
     if not api_key:
         raise ValueError(
-            "OPENROUTER_API_KEY not found. Set it in environment variable. "
+            "OPENROUTER_API_KEY not found. Set it in .env. "
             "Get one at https://openrouter.ai"
         )
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     data = {
         "model": "openrouter/free",
-        "messages": [{"role": "user", "content": prompt}],
+        "input": prompt,
         "max_tokens": DEFAULT_MAX_TOKENS,
         "reasoning": {"enabled": thinking},
     }
     logger.debug(f"Prepared Openrouter API request data: {data}")
+    url = "https://openrouter.ai/api/v1/responses"
+    logger.debug(f"Prepared Openrouter API request to: {url}")
     req = urllib.request.Request(
         url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST"
     )
-    logger.debug(f"Sending Openrouter API request {repr(req)}")
-    with urllib.request.urlopen(req, timeout=60) as response:
-        res = json.loads(response.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            res = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if 400 <= e.code <= 499:
+            body = e.fp.read()
+            decoded = json.loads(body.decode("utf-8"))
+            logger.error(f"Openrouter API {decoded}")
+        raise e
     res_model = res.get("model", "unknown")
     res_provider = res.get("provider", "unknown")
     logger.debug(f"Openrouter API response from {res_model} (provider: {res_provider})")

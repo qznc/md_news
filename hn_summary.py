@@ -7,8 +7,8 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 from hn_frontpage import get_frontpage_output
-from lib.summary import generate_summary, select_topic_and_urls, format_url_contents
 from lib.logging import logger
+from lib.summary import format_url_contents, generate_summary, select_topic_and_urls
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
@@ -92,10 +92,7 @@ def generate_hn_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     stories_text = get_frontpage_output()
-    try:
-        selection = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
-    except RuntimeError as e:
-        return f"Error: {e}"
+    selection = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
 
     topic = selection.get("topic")
     urls_dict = selection.get("urls", {})

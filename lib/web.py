@@ -39,22 +39,20 @@ def _fetch_url_content2(url: str, max_lines: Optional[int] = None) -> str:
     if max_lines is None:
         max_lines = 200
 
-    try:
-        result = subprocess.run(
-            ["lynx", "-dump", "-list_inline", url],
-            capture_output=True,
-            text=True,
-            timeout=60,
-            errors="replace",
+    result = subprocess.run(
+        ["lynx", "-dump", "-list_inline", url],
+        capture_output=True,
+        text=True,
+        timeout=60,
+        errors="replace",
+    )
+    if result.returncode != 0:
+        logger.warning(
+            f"lynx returned {result.returncode} for {url}. stderr: {result.stderr}"
         )
-        if result.returncode != 0:
-            return f"Error fetching {url}: {result.stderr}"
-        lines = result.stdout.splitlines()
-        return "\n".join(lines[:max_lines])
-    except subprocess.TimeoutExpired:
-        return f"Timeout fetching {url}"
-    except FileNotFoundError:
-        return f"Error: lynx not found. Cannot fetch {url}"
+        raise HTTPError(url, result.returncode, "lynx error", None, None)
+    lines = result.stdout.splitlines()
+    return "\n".join(lines[:max_lines])
 
 
 def fetch_url_contents(urls: list[str]) -> str:
@@ -69,7 +67,6 @@ def fetch_url_contents(urls: list[str]) -> str:
     """
     url_contents = []
     for url in urls:
-        logger.info(f"Fetching: {url}")
         try:
             content = _fetch_url_content2(url)
         except HTTPError as e:
@@ -78,3 +75,16 @@ def fetch_url_contents(urls: list[str]) -> str:
         url_contents.append(f"URL: {url}\nContent:\n{content}\n")
 
     return "\n\n".join(url_contents)
+
+
+def fetch_urls(urls: list[str]) -> dict[str, str]:
+    ret = {}
+    for url in urls:
+        logger.info(f"Fetching: {url}")
+        try:
+            content = _fetch_url_content2(url)
+            ret[url] = content
+        except HTTPError as e:
+            logger.debug(f"Skipping {url} cause {e}")
+            continue
+    return ret

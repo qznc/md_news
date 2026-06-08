@@ -7,7 +7,7 @@ from typing import Dict, Optional
 
 from lib.llm import run_llm
 from lib.logging import logger
-from lib.web import fetch_url_contents
+from lib.web import fetch_urls
 
 
 def format_url_contents(urls_dict: Dict[str, str]) -> str:
@@ -50,7 +50,11 @@ def select_topic_and_urls(
         logger.info(f"Step 1 attempt {attempt}/3")
         with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
             f.write(select_prompt)
-        select_response = run_llm(select_prompt)
+        try:
+            select_response = run_llm(select_prompt)
+        except Exception as e:
+            logger.warning(f"LLM Select failed: {e}")
+            continue
         with open(f"{tmp_dir}/_2_select_response.txt", "w") as f:
             f.write(select_response)
 
@@ -75,34 +79,7 @@ def select_topic_and_urls(
             logger.error(f"No URLs selected by LLM on attempt {attempt}")
             continue
 
-        # Fetch and filter URLs - keep successful ones
-        urls_text = fetch_url_contents(urls)
-        url_contents_dict = {}
-
-        for url_block in urls_text.split("\n\n"):
-            if not url_block.startswith("URL: "):
-                continue
-            # Parse the URL and content
-            parts = url_block.split("\nContent:", 1)
-            if len(parts) == 2:
-                url_line = parts[0]
-                url = url_line[5:]  # Remove "URL: " prefix
-                content = parts[1]
-
-                # Check for error messages or empty content - filter out failed URLs
-                if (
-                    "Error fetching" in content
-                    or "Timeout fetching" in content
-                    or "lynx not found" in content
-                    or not content.strip()
-                    or len(content.strip()) < 50  # Too short to be meaningful
-                ):
-                    logger.warning(
-                        f"URL failed to load or has empty content, filtering out: {url}"
-                    )
-                    continue
-                else:
-                    url_contents_dict[url] = content
+        url_contents_dict = fetch_urls(urls)
 
         # If we have at least 3 successful URLs, return the result
         if len(url_contents_dict) >= 3:
@@ -120,6 +97,8 @@ def select_topic_and_urls(
 
 def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
     """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
+    if not summary:
+        return False
     if not summary.strip():
         return False
     if len(summary) < 200:
@@ -161,15 +140,16 @@ def generate_summary(
 
     for attempt in range(1, 4):
         logger.info(f"Step 2 attempt {attempt}/3")
+        appendix = (
+            "\n\n(This is attempt {attempt}. The previous summary was invalid. Try harder!)"
+            if attempt >= 2
+            else ""
+        )
+        p = summary_prompt + appendix
         with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
-            f.write(summary_prompt)
-        summary = run_llm(summary_prompt, thinking=thinking)
+            f.write(p)
+        summary = run_llm(p, thinking=thinking)
         if is_valid_summary(summary, topic):
             return summary
         logger.error(f"Invalid summary on attempt {attempt}")
-
-        if attempt < 3:
-            appendix = "\n\n(This is attempt {attempt}. The previous summary was invalid. Try harder!)"
-            summary_prompt += appendix.format(attempt=attempt + 1)
-
-    return ""
+    raise Exception("No more attempts")

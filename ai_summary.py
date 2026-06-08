@@ -5,9 +5,9 @@ Generate a Markdown article from AI subreddits data using LLM.
 
 from datetime import datetime
 
-from lib.summary import generate_summary, select_topic_and_urls, format_url_contents
-from reddit_ai import get_ai_subreddits_output
 from lib.logging import logger
+from lib.summary import format_url_contents, generate_summary, select_topic_and_urls
+from reddit_ai import get_ai_subreddits_output
 
 REDIT_FRONTPAGE_URL = "https://old.reddit.com"
 
@@ -82,10 +82,7 @@ def generate_ai_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     posts_text = get_ai_subreddits_output()
-    try:
-        selection = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir)
-    except RuntimeError as e:
-        return f"Error: {e}"
+    selection = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir)
 
     topic = selection.get("topic")
     urls_dict = selection.get("urls", {})
