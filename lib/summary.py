@@ -83,6 +83,7 @@ def generate_summary(
     tmp_dir: str,
     topic: str,
     urls_text: str,
+    thinking: bool = True,
 ) -> str:
     """Generate the final summary article using the LLM.
 
@@ -91,6 +92,7 @@ def generate_summary(
         tmp_dir: Temporary directory for debugging files
         topic: The topic for the summary
         urls_text: Formatted URL contents
+        thinking: Whether to enable reasoning effort (default: True for ai_summary)
 
     Retries up to 3 times if the summary is invalid.
     """
@@ -100,7 +102,7 @@ def generate_summary(
         logger.info(f"Step 2 attempt {attempt}/3")
         with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
             f.write(summary_prompt)
-        summary = run_llm(summary_prompt)
+        summary = run_llm(summary_prompt, thinking=thinking)
         if is_valid_summary(summary, topic):
             return summary
         logger.error(f"Invalid summary on attempt {attempt}")

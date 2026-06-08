@@ -15,6 +15,9 @@ DEFAULT_MODEL = "mistral-medium-latest"
 DEFAULT_MAX_TOKENS = 512
 DEFAULT_TEMPERATURE = 0.3
 
+# Models that support reasoning_effort
+REASONING_MODELS = ["mistral-small-latest", "mistral-medium-3.5", "mistral-medium-3-5"]
+
 
 def _get_api_key() -> str:
     """Get the Mistral API key from .env file.
@@ -60,7 +63,9 @@ def _get_api_key() -> str:
     return api_key
 
 
-def _make_api_request(prompt: str, model: str, max_tokens: int, temperature: float) -> Any:
+def _make_api_request(
+    prompt: str, model: str, max_tokens: int, temperature: float, thinking: bool = False
+) -> Any:
     """Make a request to the Mistral API.
 
     Args:
@@ -68,6 +73,7 @@ def _make_api_request(prompt: str, model: str, max_tokens: int, temperature: flo
         model: Model ID to use.
         max_tokens: Maximum tokens to generate.
         temperature: Sampling temperature.
+        thinking: Whether to enable reasoning_effort (default: False).
 
     Returns:
         Parsed JSON response from the API.
@@ -90,6 +96,10 @@ def _make_api_request(prompt: str, model: str, max_tokens: int, temperature: flo
         "temperature": temperature,
     }
 
+    # Add reasoning_effort if thinking is enabled
+    if thinking:
+        payload["reasoning_effort"] = "high"
+
     request = urllib.request.Request(
         MISTRAL_API_URL,
         data=json.dumps(payload).encode("utf-8"),
@@ -106,6 +116,7 @@ def run_llm(
     model: str = DEFAULT_MODEL,
     max_tokens: int = DEFAULT_MAX_TOKENS,
     temperature: float = DEFAULT_TEMPERATURE,
+    thinking: bool = False,
 ) -> str:
     """Run the LLM with the given prompt.
 
@@ -114,12 +125,21 @@ def run_llm(
         model: Model ID to use (default: mistral-medium-latest).
         max_tokens: Maximum tokens to generate (default: 512).
         temperature: Sampling temperature (default: 0.3).
+        thinking: Whether to enable reasoning_effort (default: False).
+                  When True, thinking traces are logged but never returned.
+                  Automatically uses a reasoning-compatible model if needed.
 
     Returns:
         The LLM output as a string, or an error message if it fails.
     """
     try:
-        response = _make_api_request(prompt, model, max_tokens, temperature)
+        # If thinking is enabled and current model doesn't support reasoning, switch to a compatible one
+        effective_model = model
+        if thinking and model not in REASONING_MODELS:
+            effective_model = "mistral-medium-3.5"
+            logger.info(f"Switching from {model} to {effective_model} for reasoning support")
+        
+        response = _make_api_request(prompt, effective_model, max_tokens, temperature, thinking)
 
         if "choices" not in response or not response["choices"]:
             logger.error(f"Invalid API response: {response}")
@@ -131,6 +151,40 @@ def run_llm(
         if not content:
             logger.error(f"Empty response from API: {response}")
             return "Error: Empty response from API"
+
+        # Handle reasoning response format
+        if thinking and isinstance(content, list):
+            # Extract thinking and final answer from chunks
+            thinking_text = ""
+            final_text = ""
+
+            for chunk in content:
+                if isinstance(chunk, dict):
+                    chunk_type = chunk.get("type", "")
+                    if chunk_type == "thinking":
+                        # Extract thinking content
+                        chunk_thinking = chunk.get("thinking", [])
+                        if isinstance(chunk_thinking, list):
+                            for inner in chunk_thinking:
+                                if (
+                                    isinstance(inner, dict)
+                                    and inner.get("type") == "text"
+                                ):
+                                    thinking_text += inner.get("text", "")
+                    elif chunk_type == "text":
+                        final_text += chunk.get("text", "")
+                elif isinstance(content, str):
+                    final_text = content
+
+            # Log thinking traces
+            if thinking_text:
+                logger.info(f"LLM thinking: {thinking_text}")
+
+            return final_text
+        elif isinstance(content, list):
+            # Handle non-thinking list format (shouldn't happen but be safe)
+            logger.error(f"Unexpected list content without thinking: {content}")
+            return "Error: Unexpected response format"
 
         return content
 

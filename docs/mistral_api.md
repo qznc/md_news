@@ -153,6 +153,17 @@ The `run_llm()` function accepts:
 - `model` (default: `mistral-medium-latest`): Model ID
 - `max_tokens` (default: 512): Maximum tokens to generate
 - `temperature` (default: 0.3): Sampling temperature
+- `thinking` (default: `False`): Enable reasoning effort. When True, uses `reasoning_effort="high"` and logs thinking traces (never returned in the output).
+
+### Reasoning/Thinking Support
+
+The implementation supports Mistral's reasoning feature via the `thinking` parameter:
+
+When `thinking=True`:
+- Sets `reasoning_effort="high"` in the API request
+- Handles the special response format (list of ThinkChunk/TextChunk objects)
+- Extracts and logs thinking traces using the standard logger
+- Returns only the final answer text (never the thinking content)
 
 ## Comparison: vibe CLI vs Mistral API
 

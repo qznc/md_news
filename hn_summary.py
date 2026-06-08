@@ -102,7 +102,9 @@ def generate_hn_summary() -> str:
     urls_text = fetch_url_contents(urls)
 
     # Step 3: Generate summary with fetched content
-    summary = generate_summary(SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text)
+    summary = generate_summary(
+        SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, thinking=False
+    )
 
     return summary
 
