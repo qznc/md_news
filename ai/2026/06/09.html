@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choosing Tools Without Letting Vectors Drive the Bus</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6f6ef; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="09.md">
+    <link rel="alternate" type="text/markdown" href="09.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Choosing Tools Without Letting Vectors Drive the Bus</h1>
+<p>
+An LLM agent is a large language model connected to actions, so it can do more than write text.  
+<p>
+The linked <a href="https://old.reddit.com/r/MachineLearning/comments/1u07tlm/why_i_stopped_using_semantic_embeddings_for_tool/">MachineLearning discussion</a> raises the practical problem of semantic embeddings for tool selection.  
+<p>
+In simple terms, retrieval is how an agent searches a tool catalog, and selection is how it chooses one tool from the results.  
+<p>
+This matters because a wrong tool choice can waste time, leak data, corrupt state, or make the agent look confident while doing nothing useful.
+<p>
+A tool in an LLM agent is an external action the model can request.  
+<p>
+It may be a search API, calculator, database query, ticketing command, code runner, or payment workflow.  
+<p>
+Each tool has a name, a description, an input schema, permissions, expected outputs, and side effects.  
+<p>
+Tool selection is the agent's decision process for matching a user goal to one of those tools.
+<p>
+Semantic embeddings are one common retrieval method.  
+<p>
+An embedding turns text into a list of numbers that captures broad meaning.  
+<p>
+If a user asks, “find the customer's last failed payment,” the agent can compare that request to tool descriptions and retrieve tools related to billing, customers, or payments.  
+<p>
+This is useful when the wording does not exactly match the tool name.
+<p>
+The weakness is that embeddings are often too fuzzy for operational work.  
+<p>
+An embedding can rank two tools close together even when one reads data and the other changes it.  
+<p>
+A vector search may also rank a tool highly because its description contains similar words, even when required inputs, permissions, or business rules do not match.  
+<p>
+This is why some builders move away from pure semantic retrieval and add stricter filters.
+<p>
+Keyword search is a useful counterbalance.  
+<p>
+It can match exact tool names, command names, field names, and known aliases.  
+<p>
+For example, if a user asks for a “refund,” the system can boost tools whose names or descriptions contain “refund,” “reversal,” or “cancel_charge.”  
+<p>
+Keyword search is less clever than semantic search, but it is often easier to debug.
+<p>
+The strongest systems usually use hybrid retrieval.  
+<p>
+Hybrid retrieval combines semantic search, keyword search, metadata filters, and ranking rules.  
+<p>
+The agent first narrows the tool catalog to candidates that are allowed, relevant, and structurally compatible.  
+<p>
+Then a language model or a small reranker chooses the best candidate from that smaller set.
+<p>
+Metadata filters are especially important.  
+<p>
+They can remove tools that the user is not allowed to call.  
+<p>
+They can remove tools that require a missing parameter.  
+<p>
+They can remove tools that are unsafe for the current task, such as destructive commands during a read-only request.
+<p>
+Input schemas also help.  
+<p>
+A schema is the formal list of fields a tool needs.  
+<p>
+If the user request does not contain those fields, the agent should ask a follow-up question instead of inventing values.  
+<p>
+This connects to the <a href="https://old.reddit.com/r/LLMDevs/comments/1u03oef/how_are_people_getting_reliable_json_outputs_from/">LLMDevs discussion</a> because action generation often needs exact structured data, such as valid JSON.
+<p>
+Reliable JSON or structured output is a major part of tool selection.  
+<p>
+An agent may identify the right tool but still fail if it formats arguments incorrectly.  
+<p>
+For local models, this problem can be worse because the model may not follow output rules as consistently as a hosted model.  
+<p>
+A good system validates generated arguments against the tool schema before execution.
+<p>
+A practical retrieval pipeline looks like this.  
+<p>
+First, normalize the user request and extract intent, entities, and constraints.  
+<p>
+Second, search the tool registry using both semantic and keyword signals.  
+<p>
+Third, filter by permissions, safety class, required parameters, and environment.  
+<p>
+Fourth, rank the remaining tools with a model or reranker.  
+<p>
+Fifth, produce a structured tool call and validate it before running the tool.
+<p>
+Tool registries should be written for machines, not just humans.  
+<p>
+A good tool description should say what the tool does, when to use it, when not to use it, what inputs it needs, and what it changes.  
+<p>
+It should include examples of valid calls and common failure cases.  
+<p>
+It should also name the tool in a stable way, because embeddings and keyword search both work better with clear names.
+<p>
+LLM-based selection can help, but it should not be the only control.  
+<p>
+A model can reason about vague goals and compare tool descriptions.  
+<p>
+It can also invent tool names, ignore schemas, or choose a tempting but unsafe tool.  
+<p>
+So the registry and runtime should enforce rules outside the model.
+<p>
+The runtime is the code that actually executes the agent loop.  
+<p>
+It should reject unknown tool names.  
+<p>
+It should reject malformed arguments.  
+<p>
+It should check permissions before each call.  
+<p>
+It should log the selected tool, retrieved candidates, ranking scores, and validation errors.
+<p>
+Evaluation is necessary because tool selection failures are often rare but expensive.  
+<p>
+Test cases should include ambiguous requests, near-duplicate tools, missing parameters, unsafe actions, and multi-step workflows.  
+<p>
+A good benchmark does not only ask whether the agent gave a nice answer.  
+<p>
+It asks whether the agent chose the right tool, used the right arguments, and avoided forbidden actions.
+<p>
+The main lesson is that retrieval is not just search.  
+<p>
+It is a control surface for the agent.  
+<p>
+Semantic embeddings are useful for broad matching, but they are not enough for safe action.  
+<p>
+Reliable agents combine meaning search, exact matching, schemas, validation, and hard safety rules.
+<hr />
+<p>
+Grumpy's commentary: If your agent picks tools with vibes, it will eventually discover that “delete” and “retrieve” are emotionally adjacent.
+<p>
+Bubbles's commentary: Hybrid tool retrieval is a sunshine parade of embeddings, schemas, filters, and validators working together! 🚀✨🤖
+<p>
+Koan's commentary: The vector points to the moon; the schema closes the gate.
+<hr />
+<p>
+Generated at 2026-06-09 08:20:39 from AI subreddits on <a href="https://old.reddit.com">Reddit</a>
+<p>
+Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+<footer>Markdown original: <a href="09.md">09.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
