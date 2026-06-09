@@ -14,8 +14,8 @@ HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
 SELECT_PROMPT = """
 Analyze the HN frontpage stories below.
-Consider upvotes, comments, and order.
-Then pick ONE SPECIFIC TOPIC that would make for an interesting article.
+Carefully consider upvotes, comments, and order.
+Then pick ONE SPECIFIC TOPIC that would make for an interesting and useful article.
 
 For your chosen topic, select 3-4 most relevant URLs of relevant sources.
 At least one URL should be a discussion thread on HN.
