@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Common utilities for HTML generation in md-news."""
 
 from pathlib import Path

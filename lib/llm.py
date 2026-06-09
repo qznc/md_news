@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """LLM utilities for md-news."""
 
 import json
@@ -10,7 +9,7 @@ from lib.logging import logger
 
 MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 DEFAULT_MODEL = "mistral-medium-latest"
-DEFAULT_MAX_TOKENS = 512
+DEFAULT_MAX_TOKENS = 1024
 DEFAULT_TEMPERATURE = 0.3
 
 # Models that support reasoning_effort
@@ -209,7 +208,7 @@ def run_llm_openrouter(prompt: str, thinking: bool = False) -> str:
         "max_tokens": DEFAULT_MAX_TOKENS,
         "reasoning": {"enabled": thinking},
     }
-    logger.debug(f"Prepared Openrouter API request data: {data}")
+    # logger.debug(f"Prepared Openrouter API request data: {data}")
     url = "https://openrouter.ai/api/v1/responses"
     logger.debug(f"Prepared Openrouter API request to: {url}")
     req = urllib.request.Request(
@@ -224,14 +223,23 @@ def run_llm_openrouter(prompt: str, thinking: bool = False) -> str:
             decoded = json.loads(body.decode("utf-8"))
             logger.error(f"Openrouter API {decoded}")
         raise e
+    logger.debug("Openrouter API full response: %s", json.dumps(res, indent=2))
     res_model = res.get("model", "unknown")
     res_provider = res.get("provider", "unknown")
     logger.debug(f"Openrouter API response from {res_model} (provider: {res_provider})")
     res_usage = res.get("usage", {})
-    res_prompt_tokens = res_usage.get("prompt_tokens", "unknown")
-    res_completion_tokens = res_usage.get("completion_tokens", "unknown")
+    res_prompt_tokens = res_usage.get("input_tokens", "unknown")
+    res_completion_tokens = res_usage.get("output_tokens", "unknown")
     logger.debug(f"prompt={res_prompt_tokens}, completion={res_completion_tokens}")
-    return res["choices"][0]["message"]["content"]
+    for output in res["output"]:
+        type = output.get("type", "unknown")
+        logger.debug("Consider output type '%s'", type)
+        if type in ("reasoning", "reasoning_text"):
+            continue
+        logger.debug("output = %s", json.dumps(output, indent=2))
+        text = output["content"][0]["text"].strip()
+        return text
+    raise Exception("not message response")
 
 
 run_llm = run_llm_openrouter

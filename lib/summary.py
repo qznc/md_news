@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Summary validation utilities for md-news."""
 
 import json
@@ -98,22 +97,31 @@ def select_topic_and_urls(
 def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
     """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
     if not summary:
+        logger.debug("summary proposal is None")
         return False
     if not summary.strip():
+        logger.debug("summary proposal is empty")
         return False
     if len(summary) < 200:
+        logger.debug("summary proposal is too short")
         return False
     if not summary.lstrip().startswith("# "):
+        logger.debug("summary proposal does not start with Markdown h1")
         return False
     if "[" not in summary or "](" not in summary:
+        logger.debug("summary proposal does not contain a Markdown link")
         return False
     if "---" not in summary:
+        logger.debug("summary proposal does not contain ---")
         return False
     if "Grumpy's commentary:" not in summary:
+        logger.debug("summary proposal misses Grumpy")
         return False
     if "Bubbles's commentary:" not in summary:
+        logger.debug("summary proposal misses Bubbles")
         return False
     if summary.count("\n\n") < 2:
+        logger.debug("summary proposal lacks parapgraphs")
         return False
     return True
 
@@ -149,6 +157,8 @@ def generate_summary(
         with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
             f.write(p)
         summary = run_llm(p, thinking=thinking)
+        with open(f"{tmp_dir}/_4_summary.txt", "w") as f:
+            f.write(summary)
         if is_valid_summary(summary, topic):
             return summary
         logger.error(f"Invalid summary on attempt {attempt}")

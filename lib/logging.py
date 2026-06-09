@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Logging configuration for md-news.
 
 This module sets up logging that writes to both stderr and _tmp/logs directory.

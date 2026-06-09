@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
 """Hacker News API utilities for md-news."""
 
 import json
 from typing import Any, Dict, List, Optional
-from urllib.error import URLError, HTTPError
-from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 COMMENT_MAX_LENGTH = 1000
 

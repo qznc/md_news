@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Markdown to HTML conversion utilities for md-news."""
 
 import re

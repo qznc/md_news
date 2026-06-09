@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
 """Reddit utilities for md-news."""
 
 import time
 from typing import Any, Dict, List
-from urllib.error import URLError, HTTPError
-from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 FEED_BASE = "https://www.reddit.com"
 
@@ -35,8 +34,8 @@ def _fetch_url(url: str, timeout: int = 30) -> str:
 
 def _parse_rss_feed(xml_content: str) -> List[Dict[str, Any]]:
     """Parse Reddit RSS feed into a list of story dicts."""
-    import xml.etree.ElementTree as ET
     import html
+    import xml.etree.ElementTree as ET
 
     namespaces = {
         "atom": "http://www.w3.org/2005/Atom",

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Web utilities for md-news."""
 
 import subprocess
@@ -7,6 +6,9 @@ from typing import Optional
 from urllib.error import HTTPError
 
 from lib.logging import logger
+
+# Not avoid re-fetching on second attempts
+_CACHE = {}
 
 
 def _fetch_url_content1(url: str, max_lines: Optional[int] = None) -> str:
@@ -55,36 +57,20 @@ def _fetch_url_content2(url: str, max_lines: Optional[int] = None) -> str:
     return "\n".join(lines[:max_lines])
 
 
-def fetch_url_contents(urls: list[str]) -> str:
-    """Fetch content from all URLs and format them for prompts.
-
-    Args:
-        urls: List of URLs to fetch
-
-    Returns:
-        A concatenated string of all URL contents formatted as:
-        "URL: {url}\nContent:\n{content}\n\n" for each URL
-    """
-    url_contents = []
-    for url in urls:
-        try:
-            content = _fetch_url_content2(url)
-        except HTTPError as e:
-            logger.debug(f"Skipping {url} cause {e}")
-            continue
-        url_contents.append(f"URL: {url}\nContent:\n{content}\n")
-
-    return "\n\n".join(url_contents)
-
-
 def fetch_urls(urls: list[str]) -> dict[str, str]:
     ret = {}
     for url in urls:
-        logger.info(f"Fetching: {url}")
-        try:
-            content = _fetch_url_content2(url)
-            ret[url] = content
-        except HTTPError as e:
-            logger.debug(f"Skipping {url} cause {e}")
-            continue
+        if " " in url:
+            i = url.index(" ")
+            url = url[:i]
+        content = _CACHE.get(url, None)
+        if not content:
+            logger.info(f"Fetching: {url}")
+            try:
+                content = _fetch_url_content2(url)
+                _CACHE[url] = content
+                ret[url] = content
+            except HTTPError as e:
+                logger.debug(f"Skipping {url} cause {e}")
+                continue
     return ret
