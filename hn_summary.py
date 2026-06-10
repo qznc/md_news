@@ -3,12 +3,16 @@
 Generate a Markdown article from HN frontpage data using LLM.
 """
 
-from datetime import datetime
 from typing import Any, Dict, List
 
 from hn_frontpage import get_frontpage_output
 from lib.logging import logger
-from lib.summary import format_url_contents, generate_summary, select_topic_and_urls
+from lib.summary import (
+    format_url_contents,
+    gen_footer,
+    generate_summary,
+    select_topic_and_urls,
+)
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 
@@ -82,7 +86,7 @@ def format_stories_for_prompt(stories: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
-def generate_hn_summary() -> str:
+def generate_hn_summary() -> tuple[str, str, str]:
     """
     Generate a Markdown article from HN frontpage data using the LLM.
     """
@@ -92,25 +96,33 @@ def generate_hn_summary() -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     stories_text = get_frontpage_output()
-    selection = select_topic_and_urls(SELECT_PROMPT, stories_text, tmp_dir)
+    selection, select_model = select_topic_and_urls(
+        SELECT_PROMPT, stories_text, tmp_dir
+    )
 
-    topic = selection.get("topic")
-    urls_dict = selection.get("urls", {})
+    topic_obj = selection.get("topic")
+    topic = topic_obj if isinstance(topic_obj, str) else "Untitled Topic"
+    urls_dict = selection.get("urls")
+    if not isinstance(urls_dict, dict):
+        urls_dict = {}
 
     # Step 2: Format URL contents
     urls_text = format_url_contents(urls_dict)
 
     # Step 3: Generate summary with fetched content
-    summary = generate_summary(
+    summary, summary_model = generate_summary(
         SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, thinking=False
     )
 
-    return summary
+    return summary, select_model, summary_model
 
 
 if __name__ == "__main__":
-    summary = generate_hn_summary()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    footer = f"\n---\n\nGenerated at {timestamp} from [Hacker News]({HN_FRONTPAGE_URL})\n\nLicensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
+    summary, select_model, summary_model = generate_hn_summary()
+    footer = gen_footer(
+        f"[Hacker News]({HN_FRONTPAGE_URL})",
+        select_model,
+        summary_model,
+    )
     logger.info(f"Generated summary:\n{summary + footer}")
     print(summary + footer)

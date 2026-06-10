@@ -104,7 +104,7 @@ def run_llm_mistral(
     max_tokens: int = DEFAULT_MAX_TOKENS,
     temperature: float = DEFAULT_TEMPERATURE,
     thinking: bool = False,
-) -> str:
+) -> tuple[str, str]:
     """Run the LLM with the given prompt.
 
     Args:
@@ -117,7 +117,7 @@ def run_llm_mistral(
                   Automatically uses a reasoning-compatible model if needed.
 
     Returns:
-        The LLM output as a string, or an error message if it fails.
+        A tuple of (LLM output string, model name).
     """
     try:
         # If thinking is enabled and current model doesn't support reasoning, switch to a compatible one
@@ -134,14 +134,14 @@ def run_llm_mistral(
 
         if "choices" not in response or not response["choices"]:
             logger.error(f"Invalid API response: {response}")
-            return "Error: Invalid API response"
+            return "Error: Invalid API response", effective_model
 
         choice = response["choices"][0]
         content = choice.get("message", {}).get("content", "")
 
         if not content:
             logger.error(f"Empty response from API: {response}")
-            return "Error: Empty response from API"
+            return "Error: Empty response from API", effective_model
 
         # Handle reasoning response format
         if thinking and isinstance(content, list):
@@ -171,29 +171,29 @@ def run_llm_mistral(
             if thinking_text:
                 logger.info(f"LLM thinking: {thinking_text}")
 
-            return final_text
+            return final_text, effective_model
         elif isinstance(content, list):
             # Handle non-thinking list format (shouldn't happen but be safe)
             logger.error(f"Unexpected list content without thinking: {content}")
-            return "Error: Unexpected response format"
+            return "Error: Unexpected response format", effective_model
 
-        return content
+        return content, effective_model
 
     except ValueError as e:
         logger.error(f"Mistral API configuration error: {e}")
-        return f"Configuration error: {e}"
+        return f"Configuration error: {e}", model
     except urllib.error.HTTPError as e:
         logger.error(f"Mistral API HTTP error: {e.code} - {e.reason}")
-        return f"API error: HTTP {e.code} - {e.reason}"
+        return f"API error: HTTP {e.code} - {e.reason}", model
     except urllib.error.URLError as e:
         logger.error(f"Mistral API connection error: {e.reason}")
-        return f"Connection error: {e.reason}"
+        return f"Connection error: {e.reason}", model
     except Exception as e:
         logger.error(f"Error running Mistral API: {e}")
-        return f"Error generating text: {e}"
+        return f"Error generating text: {e}", model
 
 
-def run_llm_openrouter(prompt: str, thinking: bool = False) -> str:
+def run_llm_openrouter(prompt: str, thinking: bool = False) -> tuple[str, str]:
     """Openrouter API"""
     api_key = _ENV.get("OPENROUTER_API_KEY")
     if not api_key:
@@ -238,7 +238,7 @@ def run_llm_openrouter(prompt: str, thinking: bool = False) -> str:
             continue
         logger.debug("output = %s", json.dumps(output, indent=2))
         text = output["content"][0]["text"].strip()
-        return text
+        return text, res_model
     raise Exception("not message response")
 
 
