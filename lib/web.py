@@ -6,7 +6,7 @@ from typing import Optional
 from urllib.error import HTTPError
 
 from lib.logging import logger
-from lib.websites import reddit
+from lib.websites import hackernews, reddit
 
 # Not avoid re-fetching on second attempts
 _CACHE = {}
@@ -65,6 +65,13 @@ def _is_reddit(url: str) -> bool:
     return host == "reddit.com" or host.endswith(".reddit.com")
 
 
+def _is_hackernews(url: str) -> bool:
+    from urllib.parse import urlparse
+
+    host = urlparse(url).netloc
+    return host in ("news.ycombinator.com", "ycombinator.com")
+
+
 def fetch_urls(urls: list[str]) -> dict[str, str]:
     ret = {}
     for url in urls:
@@ -77,6 +84,8 @@ def fetch_urls(urls: list[str]) -> dict[str, str]:
             try:
                 if _is_reddit(url):
                     content = reddit.fetch(url)
+                elif _is_hackernews(url):
+                    content = hackernews.fetch(url)
                 else:
                     content = _fetch_url_content2(url)
                 _CACHE[url] = content
