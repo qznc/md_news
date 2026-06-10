@@ -124,5 +124,4 @@ if __name__ == "__main__":
         select_model,
         summary_model,
     )
-    logger.info(f"Generated summary:\n{summary + footer}")
     print(summary + footer)

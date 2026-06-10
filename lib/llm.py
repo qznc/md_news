@@ -223,7 +223,8 @@ def run_llm_openrouter(prompt: str, thinking: bool = False) -> tuple[str, str]:
             decoded = json.loads(body.decode("utf-8"))
             logger.error(f"Openrouter API {decoded}")
         raise e
-    logger.debug("Openrouter API full response: %s", json.dumps(res, indent=2))
+    # logger.debug("Openrouter API full response: %s", json.dumps(res, indent=2))
+    logger.debug("Openrouter API full response bytes: %d", len(res))
     res_model = res.get("model", "unknown")
     res_provider = res.get("provider", "unknown")
     logger.debug(f"Openrouter API response from {res_model} (provider: {res_provider})")
