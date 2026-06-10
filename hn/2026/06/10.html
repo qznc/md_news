@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Case for Progressive Enhancement: Why HTML-First Wins</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6f6ef; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="10.md">
+    <link rel="alternate" type="text/markdown" href="10.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>The Case for Progressive Enhancement: Why HTML-First Wins</h1>
+
+<p>Modern web development often favors complex JavaScript frameworks, but prioritizing the core language of the web can lead to massive gains in accessibility and user retention.
+As detailed by <a href="https://mohkohn.co.uk/writing/html-first/">Alistair Davidson</a>, shifting to an HTML-first design for a utility company's application process doubled their user completion rate overnight.</p>
+
+<p>The problem began when a heavy React application was deployed, resulting in high failure rates due to loading spinners, excessive JavaScript states, and poor handling of data storage.
+Many users on old devices or unstable connections were effectively blocked from accessing essential services.
+By rebuilding the site with <a href="https://astro.build/">Astro</a>, the developer ensured the application worked perfectly without JavaScript, treating scripts only as a layer of "progressive enhancement."
+Progressive enhancement is the practice of building a basic, functional version of a site first and then adding advanced features for browsers that can support them.</p>
+
+<p>The new architecture relied on standard HTML form submissions and server-side redirects.
+Each step of the form wizard was its own page, ensuring that data was stored on the backend immediately.
+This prevented data loss, allowing some users to complete a form a month after starting it.
+To handle validation, a lightweight web component called <a href="https://www.npmjs.com/package/validation-enhancer">validation-enhancer</a> was used to improve the user experience while falling back to built-in browser validation if JavaScript failed.</p>
+
+<p>This approach addresses a growing gap in the industry where some developers, often trained in bootcamps, treat the underlying <a href="https://html.spec.whatwg.org/">HTML Living Standard</a> as esoteric knowledge rather than the foundation.
+Discussions on <a href="https://news.ycombinator.com/item?id=48475483">Hacker News</a> highlight a cultural shift where "fancy" front-ends are prioritized over reliability.
+The result is often a "React monstrosity" that works on a high-end iPhone but fails on a decade-old Android phone on a 3G connection.</p>
+
+<p>Building for the lowest common denominator—such as a PlayStation Portable—ensures a service is truly available to everyone.
+When the foundation is robust HTML, the application remains functional regardless of the user's device or network quality.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Imagine being so "advanced" in your career that you've forgotten how a submit button works. </p>
+
+<p>Bubbles's commentary: Everyone gets to join the party now! 🥳 Accessibility is just love in code form! ✨💖</p>
+
+<p>Koan's commentary: The river that forgets its source soon runs dry.
+---</p>
+
+<p>Generated at 2026-06-10 18:44:30 from <a href="https://news.ycombinator.com">Hacker News</a></p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="10.md">10.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
