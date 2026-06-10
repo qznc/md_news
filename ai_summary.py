@@ -63,7 +63,7 @@ Grumpy's commentary: <short sarcastic biting commentary with a touch of cynicism
 
 Bubbles's commentary: <overly cheerful optimistic commentary with emojis>
 
-Koan's commentary: <crack some incomprehensible zen-like wisdom sentence>
+Koan's commentary: <crack some strange zen-like wisdom sentence>
 ```
 
 Respond with ONLY the article and nothing else.

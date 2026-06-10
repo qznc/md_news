@@ -10,7 +10,6 @@ from lib.logging import logger
 MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 DEFAULT_MODEL = "mistral-medium-latest"
 DEFAULT_MAX_TOKENS = 1024
-DEFAULT_TEMPERATURE = 0.3
 
 # Models that support reasoning_effort
 REASONING_MODELS = ["mistral-small-latest", "mistral-medium-3.5", "mistral-medium-3-5"]
@@ -102,7 +101,6 @@ def run_llm_mistral(
     prompt: str,
     model: str = DEFAULT_MODEL,
     max_tokens: int = DEFAULT_MAX_TOKENS,
-    temperature: float = DEFAULT_TEMPERATURE,
     thinking: bool = False,
 ) -> tuple[str, str]:
     """Run the LLM with the given prompt.
