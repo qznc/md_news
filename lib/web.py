@@ -6,6 +6,7 @@ from typing import Optional
 from urllib.error import HTTPError
 
 from lib.logging import logger
+from lib.websites import reddit
 
 # Not avoid re-fetching on second attempts
 _CACHE = {}
@@ -57,6 +58,13 @@ def _fetch_url_content2(url: str, max_lines: Optional[int] = None) -> str:
     return "\n".join(lines[:max_lines])
 
 
+def _is_reddit(url: str) -> bool:
+    from urllib.parse import urlparse
+
+    host = urlparse(url).netloc
+    return host == "reddit.com" or host.endswith(".reddit.com")
+
+
 def fetch_urls(urls: list[str]) -> dict[str, str]:
     ret = {}
     for url in urls:
@@ -67,7 +75,10 @@ def fetch_urls(urls: list[str]) -> dict[str, str]:
         if not content:
             logger.info(f"Fetching: {url}")
             try:
-                content = _fetch_url_content2(url)
+                if _is_reddit(url):
+                    content = reddit.fetch(url)
+                else:
+                    content = _fetch_url_content2(url)
                 _CACHE[url] = content
                 ret[url] = content
             except HTTPError as e:
