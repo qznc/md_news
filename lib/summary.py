@@ -81,18 +81,17 @@ def select_topic_and_urls(
 
         url_contents_dict = fetch_urls(urls)
 
-        # If we have at least 3 successful URLs, return the result
-        if len(url_contents_dict) >= 3:
+        # minimum successful URLs necessary
+        if len(url_contents_dict) >= 2:
+            logger.info(f"Selected topic: {topic}")
             return {"topic": topic, "urls": url_contents_dict}, select_model
         else:
             logger.error(
-                f"Fewer than 3 URLs succeeded (got {len(url_contents_dict)}) on attempt {attempt}"
+                f"Too few URLs succeeded (got {len(url_contents_dict)}) on attempt {attempt}"
             )
             continue
 
-    raise RuntimeError(
-        "Failed to select topic and URLs with at least 3 fetchable URLs after 3 attempts"
-    )
+    raise RuntimeError("Failed to select topic")
 
 
 def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:

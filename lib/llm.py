@@ -235,7 +235,7 @@ def run_llm_openrouter(prompt: str, thinking: bool = False) -> tuple[str, str]:
         logger.debug("Consider output type '%s'", type)
         if type in ("reasoning", "reasoning_text"):
             continue
-        logger.debug("output = %s", json.dumps(output, indent=2))
+        # logger.debug("output = %s", json.dumps(output, indent=2))
         text = output["content"][0]["text"].strip()
         return text, res_model
     raise Exception("not message response")

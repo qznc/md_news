@@ -56,7 +56,7 @@ Use the fetched content from these URLs as your source material:
 <one paragraph: summary explaining the relevance of [the topic](central url) and why it's interesting, without repeating the title.>
 
 <multiple paragraphs expanding the summary providing context and explanation.
-[Reference sources from above](some url) with Markdown links.
+Reference all [sources from above](some url) with Markdown links.
 Use simple language, avoid jargon, and explain terms.>
 
 ---
