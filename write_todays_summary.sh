@@ -16,5 +16,6 @@ summarize() {
 
 summarize "hn" "hn_summary.py"
 summarize "ai" "ai_summary.py"
+summarize "de" "de_summary.py"
 ./to_html.py
 ./gen_index.py

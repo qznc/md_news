@@ -47,7 +47,7 @@ def select_topic_and_urls(
     select_prompt = select_prompt_template.format(posts_text=posts_text)
 
     for attempt in range(1, 4):
-        logger.info(f"Step 1 attempt {attempt}/3")
+        logger.info(f"Step 1 selection attempt {attempt}/3")
         with open(f"{tmp_dir}/_1_select_prompt.txt", "w") as f:
             f.write(select_prompt)
         try:
@@ -146,8 +146,8 @@ def generate_summary(
     """
     summary_prompt = summary_prompt_template.format(topic=topic, url_contents=urls_text)
 
-    for attempt in range(1, 4):
-        logger.info(f"Step 2 attempt {attempt}/3")
+    for attempt in range(1, 5):
+        logger.info(f"Step 2 summary attempt {attempt}/3")
         appendix = (
             f"\n\n(This is attempt {attempt}. The previous summary was invalid. Try harder!)"
             if attempt >= 2
