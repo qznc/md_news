@@ -94,36 +94,26 @@ def select_topic_and_urls(
     raise RuntimeError("Failed to select topic")
 
 
-def is_valid_summary(summary: str, topic: Optional[str] = None) -> bool:
-    """Check if summary is valid: non-empty, starts with #, has links, contains --- separator, has both commentaries, and mentions topic."""
+def _summary_error(summary: str) -> str | None:
+    """Return reason why summary is invalid"""
     if not summary:
-        logger.debug("summary proposal is None")
-        return False
+        return "no summary"
     if not summary.strip():
-        logger.debug("summary proposal is empty")
-        return False
+        return "empty summary"
     if len(summary) < 200:
-        logger.debug("summary proposal is too short")
-        return False
+        return "summary too short"
     if not summary.lstrip().startswith("# "):
-        logger.debug("summary proposal does not start with Markdown h1")
-        return False
+        return "summary does not start with Markdown h1 '#'"
     if "[" not in summary or "](" not in summary:
-        logger.debug("summary proposal does not contain a Markdown link")
-        return False
+        return "summary has no [Markdown](url) link"
     if "---" not in summary:
-        logger.debug("summary proposal does not contain ---")
-        return False
-    if "Grumpy's commentary:" not in summary:
-        logger.debug("summary proposal misses Grumpy")
-        return False
-    if "Bubbles's commentary:" not in summary:
-        logger.debug("summary proposal misses Bubbles")
-        return False
+        return "summary does not contain ---"
+    for name in ("Grumpy", "Bubbles", "Koan"):
+        if name not in summary:
+            return "summary proposal misses " + name
     if summary.count("\n\n") < 2:
-        logger.debug("summary proposal lacks parapgraphs")
-        return False
-    return True
+        return "summary lacks parapgraphs"
+    return None
 
 
 def generate_summary(
@@ -145,23 +135,23 @@ def generate_summary(
     Retries up to 3 times if the summary is invalid.
     """
     summary_prompt = summary_prompt_template.format(topic=topic, url_contents=urls_text)
+    err = None
 
     for attempt in range(1, 5):
         logger.info(f"Step 2 summary attempt {attempt}/3")
-        appendix = (
-            f"\n\n(This is attempt {attempt}. The previous summary was invalid. Try harder!)"
-            if attempt >= 2
-            else ""
-        )
+        appendix = ""
+        if attempt >= 2:
+            appendix = f"\n\n(This is attempt {attempt}. The previous summary was invalid: {err} Try harder!)"
         p = summary_prompt + appendix
         with open(f"{tmp_dir}/_3_summary_prompt.txt", "w") as f:
             f.write(p)
         summary, model = run_llm(p, thinking=thinking)
         with open(f"{tmp_dir}/_4_summary.txt", "w") as f:
             f.write(summary)
-        if is_valid_summary(summary, topic):
+        err = _summary_error(summary)
+        if not err:
             return summary, model
-        logger.error(f"Invalid summary on attempt {attempt}")
+        logger.error(f"Invalid summary on attempt {attempt}: {err}")
     raise Exception("No more attempts")
 
 
