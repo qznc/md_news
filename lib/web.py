@@ -44,8 +44,10 @@ def _fetch_url_content2(url: str, max_lines: Optional[int] = None) -> str:
     if max_lines is None:
         max_lines = MAX_LINES
 
+    cmd = ["lynx", "-dump", "-list_inline", url]
+    cmd = ["www2md", url]
     result = subprocess.run(
-        ["lynx", "-dump", "-list_inline", url],
+        cmd,
         capture_output=True,
         text=True,
         timeout=60,
