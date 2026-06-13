@@ -8,6 +8,8 @@ from urllib.error import HTTPError
 from lib.logging import logger
 from lib.websites import hackernews, reddit
 
+MAX_LINES = 300
+
 # Not avoid re-fetching on second attempts
 _CACHE = {}
 
@@ -16,7 +18,7 @@ def _fetch_url_content1(url: str, max_lines: Optional[int] = None) -> str:
     """Fetch via urllib2, limited to max_lines lines."""
 
     if max_lines is None:
-        max_lines = 200
+        max_lines = MAX_LINES
 
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
     headers = {"User-Agent": user_agent}
@@ -34,13 +36,13 @@ def _fetch_url_content2(url: str, max_lines: Optional[int] = None) -> str:
 
     Args:
         url: The URL to fetch
-        max_lines: Maximum number of lines to return (default: 200)
+        max_lines: Maximum number of lines to return
 
     Returns:
         The fetched content as a string, or an error message if fetching fails.
     """
     if max_lines is None:
-        max_lines = 200
+        max_lines = MAX_LINES
 
     result = subprocess.run(
         ["lynx", "-dump", "-list_inline", url],
