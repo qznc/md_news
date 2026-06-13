@@ -45,6 +45,7 @@ Use the content from these URLs as sources:
 ## Requirements:
 
 - Use correct Markdown syntax
+- Link texts must be unique and meaningful on its own for accessability.
 - Newlines after every sentence.
 - Keep the tone terse, professional, and informative.
 

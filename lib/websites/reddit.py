@@ -2,7 +2,7 @@
 
 import json
 import re
-import urllib.parse
+import time
 import urllib.request
 from http.cookiejar import CookieJar
 from urllib.error import HTTPError
@@ -11,6 +11,8 @@ USER_AGENT = "Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1"
 
 # Matches post URLs like /r/sub/comments/id/slug/
 _POST_RE = re.compile(r"/r/\w+/comments/")
+
+_COOKE_JAR = CookieJar()
 
 
 def _normalize_url(url: str) -> str:
@@ -34,9 +36,8 @@ def _html_url(url: str) -> str:
 
 
 def _build_opener() -> tuple[urllib.request.OpenerDirector, CookieJar]:
-    jar = CookieJar()
-    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-    return opener, jar
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(_COOKE_JAR))
+    return opener, _COOKE_JAR
 
 
 def _parse_listing(data: dict) -> list[dict]:
@@ -111,6 +112,8 @@ def _fetch(url: str) -> list[dict]:
     except HTTPError:
         pass
 
+    time.sleep(0.1)  # Reddit access is rate-limited!
+
     req = urllib.request.Request(json_url, headers={"User-Agent": USER_AGENT})
     try:
         with opener.open(req, timeout=30) as resp:
@@ -119,6 +122,8 @@ def _fetch(url: str) -> list[dict]:
         print(f"Error fetching {json_url}: {e.code} {e.reason}")
         return []
 
+    time.sleep(0.5)  # Reddit access is rate-limited!
+
     if is_post and isinstance(data, list):
         return _parse_post(data)
     elif isinstance(data, dict):
@@ -126,9 +131,9 @@ def _fetch(url: str) -> list[dict]:
 
     return data
 
+
 def fetch(url: str) -> str:
-    """Fetch the HTML page and return it as a string.
-    """
+    """Fetch the HTML page and return it as a string."""
     data = _fetch(url)
     # serialize to text Markdown-style
     text = ""
@@ -136,7 +141,7 @@ def fetch(url: str) -> str:
         text += f"## {post['title']}\n"
         text += f"url: {post['url']}\n"
         text += f"> {post['selftext']}\n"
-        for comment in post.get('comments', []):
+        for comment in post.get("comments", []):
             text += f"\ncomment by {comment['author']}:\n{comment['body']}\n"
         text += "\n"
     return text

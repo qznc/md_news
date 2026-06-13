@@ -138,7 +138,7 @@ def generate_summary(
     err = None
 
     for attempt in range(1, 5):
-        logger.info(f"Step 2 summary attempt {attempt}/3")
+        logger.info(f"Step 2 summary attempt {attempt}")
         appendix = ""
         if attempt >= 2:
             appendix = f"\n\n(This is attempt {attempt}. The previous summary was invalid: {err} Try harder!)"

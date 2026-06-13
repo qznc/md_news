@@ -48,6 +48,7 @@ Use the fetched content from these URLs as your source material:
 
 - Use proper Markdown formatting.
 - Use line breaks after each sentence.
+- Link texts must be unique and meaningful on its own for accessability.
 - Keep the tone terse, professional, and informative.
 
 ```Article template:
