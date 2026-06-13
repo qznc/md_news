@@ -225,7 +225,7 @@ def run_llm_openrouter(prompt: str, thinking: bool = False) -> tuple[str, str]:
     logger.debug("Openrouter API full response bytes: %d", len(res))
     res_model = res.get("model", "unknown")
     res_provider = res.get("provider", "unknown")
-    logger.debug(f"Openrouter API response from {res_model} (provider: {res_provider})")
+    logger.info(f"Openrouter API response from {res_model} (provider: {res_provider})")
     res_usage = res.get("usage", {})
     res_prompt_tokens = res_usage.get("input_tokens", "unknown")
     res_completion_tokens = res_usage.get("output_tokens", "unknown")

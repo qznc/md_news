@@ -85,12 +85,10 @@ def main():
         title = out_dir.name.upper().replace("-", " ")
         logger.info(f"Scanning for articles in {out_dir}...")
         articles = find_articles(out_dir)
-        logger.info(f"Found {len(articles)} article(s)")
+        logger.debug(f"Found {len(articles)} article(s)")
         with open(out_dir / "index.html", "w", encoding="utf-8") as f:
             f.write(generate_html_index(articles, title))
         logger.info(f"Generated index for {out_dir}")
-
-    logger.info("Done!")
 
 
 if __name__ == "__main__":

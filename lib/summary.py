@@ -26,7 +26,7 @@ def format_url_contents(urls_dict: Dict[str, str]) -> str:
 
 
 def select_topic_and_urls(
-    select_prompt_template: str, posts_text: str, tmp_dir: str
+    select_prompt_template: str, posts_text: str, tmp_dir: str, tagesschau_text: str = ""
 ) -> tuple[Dict[str, Any], str]:
     """Use LLM to select a topic and URLs from posts.
 
@@ -34,6 +34,7 @@ def select_topic_and_urls(
         select_prompt_template: The template string for the selection prompt
         posts_text: The text of posts to analyze
         tmp_dir: Temporary directory for debugging files
+        tagesschau_text: Additional text from Tagesschau RSS feed (optional)
 
     Retries up to 3 times if the response is invalid.
     Failed URLs are filtered out as long as at least 3 successful URLs remain.
@@ -44,7 +45,7 @@ def select_topic_and_urls(
         RuntimeError: If all attempts fail or if fewer than 3 URLs can be fetched.
     """
 
-    select_prompt = select_prompt_template.format(posts_text=posts_text)
+    select_prompt = select_prompt_template.format(posts_text=posts_text, tagesschau_text=tagesschau_text)
 
     for attempt in range(1, 4):
         logger.info(f"Step 1 selection attempt {attempt}/3")
