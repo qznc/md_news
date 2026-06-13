@@ -6,6 +6,7 @@ import time
 import urllib.request
 from http.cookiejar import CookieJar
 from urllib.error import HTTPError
+from urllib.parse import quote
 
 USER_AGENT = "Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1"
 
@@ -23,7 +24,8 @@ def _normalize_url(url: str) -> str:
     url = url.rstrip("/")
     if not url.endswith(".json"):
         url += ".json"
-    return url
+    # URL-encode non-ASCII characters, keeping URL-safe characters intact
+    return quote(url, safe=":/?#[]@!$&'()*+,;=")
 
 
 def _html_url(url: str) -> str:
@@ -32,7 +34,8 @@ def _html_url(url: str) -> str:
     if "old.reddit.com" not in url:
         url = url.replace("reddit.com", "old.reddit.com")
     url = url.rstrip("/") + "/"
-    return url
+    # URL-encode non-ASCII characters, keeping URL-safe characters intact
+    return quote(url, safe=":/?#[]@!$&'()*+,;=")
 
 
 def _build_opener() -> tuple[urllib.request.OpenerDirector, CookieJar]:

@@ -7,6 +7,7 @@ import urllib.parse
 import urllib.request
 from typing import cast
 from urllib.error import HTTPError
+from urllib.parse import quote
 
 
 class _HTMLToText(html.parser.HTMLParser):
@@ -56,7 +57,9 @@ def _item_url(item_id: int) -> str:
 
 
 def _fetch_json(url: str) -> object:
-    req = urllib.request.Request(url)
+    # URL-encode non-ASCII characters
+    encoded_url = quote(url, safe=":/?#[]@!$&'()*+,;=")
+    req = urllib.request.Request(encoded_url)
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.load(resp)
 
