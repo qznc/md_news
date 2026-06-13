@@ -123,8 +123,6 @@ def fetch_tagesschau_feed() -> str:
                 entry_lines = [f"- {title_text}"]
                 if url:
                     entry_lines.append(f"  URL: {url}")
-                if published_text:
-                    entry_lines.append(f"  Published: {published_text}")
                 if content_text:
                     entry_lines.append(f"  Summary: {content_text}")
                 entries.append("\n".join(entry_lines))
@@ -151,7 +149,8 @@ def generate_de_summary() -> tuple[str, str, str]:
 
     posts_text = get_de_subreddits_output()
     tagesschau_text = fetch_tagesschau_feed()
-    selection, select_model = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir, tagesschau_text=tagesschau_text)
+    prompt = SELECT_PROMPT.format(posts_text=posts_text, tagesschau_text=tagesschau_text)
+    selection, select_model = select_topic_and_urls(prompt, tmp_dir)
 
     topic_obj = selection.get("topic")
     topic = topic_obj if isinstance(topic_obj, str) else "Unbenannter Titel"

@@ -86,7 +86,8 @@ def generate_ai_summary() -> tuple[str, str, str]:
     os.makedirs(tmp_dir, exist_ok=True)
 
     posts_text = get_ai_subreddits_output()
-    selection, select_model = select_topic_and_urls(SELECT_PROMPT, posts_text, tmp_dir)
+    prompt = SELECT_PROMPT.format(posts_text=posts_text)
+    selection, select_model = select_topic_and_urls(prompt, tmp_dir)
 
     topic_obj = selection.get("topic")
     topic = topic_obj if isinstance(topic_obj, str) else "Untitled Topic"

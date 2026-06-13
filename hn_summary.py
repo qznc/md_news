@@ -97,9 +97,8 @@ def generate_hn_summary() -> tuple[str, str, str]:
     os.makedirs(tmp_dir, exist_ok=True)
 
     stories_text = get_frontpage_output()
-    selection, select_model = select_topic_and_urls(
-        SELECT_PROMPT, stories_text, tmp_dir
-    )
+    prompt = SELECT_PROMPT.format(posts_text=stories_text)
+    selection, select_model = select_topic_and_urls(prompt, tmp_dir)
 
     topic_obj = selection.get("topic")
     topic = topic_obj if isinstance(topic_obj, str) else "Untitled Topic"
