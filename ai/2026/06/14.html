@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balancing Safety and Success in Tool‑Using AI Agents</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="14.md">
+    <link rel="alternate" type="text/markdown" href="14.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Balancing Safety and Success in Tool‑Using AI Agents</h1>
+
+<p>Agent safety is becoming a central concern as large language models (LLMs) are equipped with tool‑use capabilities.  
+A recent study shows that simply measuring task completion can hide violations of policy or safety constraints.  
+The authors separate outcomes into <strong>safe success</strong>, <strong>unsafe success</strong>, and <strong>failure</strong>, and explore how verification changes the balance between them.  
+At the same time, new infrastructure such as the <strong>Omnigent meta‑harness</strong> provides a policy‑driven layer that can enforce safety rules across heterogeneous agents.  </p>
+
+<p>The <strong>Verifier Tax</strong> concept demonstrates that adding verification reduces unsafe successes but also lowers overall task completion as the planning horizon grows.  
+The analysis uses the <strong>τ‑bench</strong> benchmark suite for tool‑use scenarios and proposes a two‑tier verification architecture: first a deterministic policy or tool check, then an LLM‑based verifier for contextual judgments.  
+The main takeaway is a horizon‑dependent trade‑off: longer‑horizon tasks incur higher verification costs, which the authors label a “tax” on success.  
+Full details appear in the <a href="https://dl.acm.org/doi/full/10.1145/3786335.3813160">paper on safety evaluation for tool‑using agents</a> presented at ACM CAIS 2026.  </p>
+
+<p>To operationalize these ideas, Databricks released <strong>Omnigent</strong>, an open‑source meta‑harness that sits above individual agent harnesses such as Claude Code, Codex, and Pi.  
+Omnigent standardizes the interface to agents, enabling composition, policy enforcement, and real‑time collaboration without relying on brittle prompt‑based guardrails.  
+Policies can pause an agent after spending a certain cost threshold, require human approval before executing risky actions, and inject secrets only at controlled egress points.  
+These capabilities directly address the verification layer described in the verifier‑tax study by providing deterministic checks before the LLM verifier is invoked.  
+Read the official announcement in the <a href="https://www.databricks.com/blog/introducing-omnigent-meta-harness-combine-control-and-share-your-agents">Databricks blog post on Omnigent</a>.  </p>
+
+<p>The open‑source repository offers examples such as <strong>Polly</strong>, which delegates coding tasks to parallel sub‑agents, and <strong>Debby</strong>, which runs multiple LLMs in debate mode.  
+Because Omnigent logs every policy decision, approval, and tool execution, it also creates an audit trail useful for compliance standards like SOC 2.  
+The community discussion highlights the shift from “policies not prompts” as a way to avoid shadow AI and maintain traceability, a point echoed in the verifier‑tax paper’s emphasis on explicit verification steps.  
+Explore the codebase on GitHub at the <a href="https://github.com/omnigent-ai/omnigent">Omnigent meta‑harness project</a>.  </p>
+
+<p>Together, the verifier‑tax framework and the Omnigent platform illustrate a converging direction: safety verification becomes a first‑class component of agent design, and the cost of that safety—measured in reduced success rates for long‑horizon tasks—must be managed through composable, policy‑driven architectures.  </p>
+
+<hr />
+
+<p>Grumpy's commentary: Sure, let’s pay a “tax” on every smart move an AI makes, because nothing says progress like slowing down to double‑check every benign command.  </p>
+
+<p>Bubbles's commentary: Wow! 🎉 With Omnigent we can have safe, happy agents that share cookies and high‑fives across every device—safety never looked so sparkly!  </p>
+
+<p>Koan's commentary: A river that checks every stone before flowing still reaches the sea; the journey is safer, though the current may linger.</p>
+
+<hr />
+
+<p>Generated at 2026-06-14 17:21:56 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nvidia/nemotron-3-super-120b-a12b-20230311:free and openai/gpt-oss-120b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="14.md">14.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
