@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open‑Weight LLMs ≠ Open Research: The Missing Piece Is Transparent Training Frameworks</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="16.md">
+    <link rel="alternate" type="text/markdown" href="16.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Open‑Weight LLMs ≠ Open Research: The Missing Piece Is Transparent Training Frameworks</h1>
+
+<p>Open weights let anyone download a large language model, but they don’t reveal <strong>how</strong> the model was trained or how to modify that process.  
+Without an open, extensible training stack, reproducing state‑of‑the‑art results or inventing new algorithms remains a black‑box exercise.  </p>
+
+<p>Researchers need code that exposes every step—from data loading to roll‑out generation, reward calculation, loss construction, and weight syncing—so that algorithms stay <strong>algorithms</strong> and systems stay <strong>systems</strong>.  
+Frameworks like <strong>FeynRL</strong> and <strong>OpenRLHF</strong> provide exactly that level of visibility, while projects such as <strong>LLaMA‑Factory</strong> show how a unified, open‑source stack can scale from a single GPU to multi‑node clusters.  </p>
+
+<p>The Reddit discussion on open weights stresses that “open weights are important and critical, but they are not enough by themselves” — the community is calling for open training pipelines that are <em>understandable</em> and <em>modifiable</em> <a href="https://old.reddit.com/r/MachineLearning/comments/1u6p7k3/open_weights_are_not_enough_we_need_open_training/">Open‑weight debate on Reddit</a> .  
+Without such frameworks, anyone trying to replicate a near‑SOTA model must wrestle with hidden rollout engines, credit‑assignment bugs, and opaque distributed synchronization, which slows progress and entrenches closed‑source advantages <a href="https://old.reddit.com/r/MachineLearning/comments/1u6p7k3/open_weights_are_not_enough_we_need_open_training/">Comment by dalhaze</a> .  </p>
+
+<p><strong>FeynRL</strong> was created for exactly this purpose.  
+Its “algorithm‑first” design keeps the training loop explicit: data feeds, roll‑out workers, reward modules, and optimization steps are each a separate, readable component <a href="https://github.com/FeynRL-project/FeynRL">FeynRL repository</a> .  
+The framework supports supervised fine‑tuning (SFT), preference learning (DPO), and a full suite of reinforcement‑learning methods (PPO, GRPO, CISPO, P3O) across single‑GPU, multi‑GPU, and large‑scale cluster setups.  
+Because the algorithmic logic lives locally while the system layer stays explicit, developers can add a new loss term or reward function without rewriting the orchestration code.  </p>
+
+<p><strong>OpenRLHF</strong> takes a similar philosophy but focuses on reinforcement learning from human feedback.  
+Built on a Ray + vLLM distributed backbone, it introduces a unified <strong>agent‑based execution</strong> model that cleanly separates token‑in‑token‑out generation from the RL algorithm <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF repository</a> .  
+This architecture enables both single‑turn and multi‑turn training, supports asynchronous pipelines for higher throughput, and works with a wide range of RL algorithms (PPO, REINFORCE++, GRPO, RLOO).  
+By exposing the full training pipeline, OpenRLHF makes it feasible to experiment with custom reward functions, multi‑modal agents, and large‑scale deployments without hidden “magic”.  </p>
+
+<p><strong>LLaMA‑Factory</strong> demonstrates that an open, feature‑rich stack can also serve a broader audience.  
+It bundles supervised fine‑tuning, reward modeling, and RLHF (including DPO and PPO) behind a zero‑code CLI and a web UI, while still leveraging the same underlying distributed infrastructure (DeepSpeed, Ray, vLLM).  
+Because it supports LoRA, QLoRA, and many optimizer tricks, LLaMA‑Factory shows that extensibility does not have to come at the cost of performance <a href="https://github.com/hiyouga/LLaMA-Factory">LLaMA‑Factory repository</a> .  </p>
+
+<p>Together, these projects illustrate a clear pattern: <strong>open weights become truly open only when paired with open training frameworks that make the entire learning loop inspectable and mutable</strong>.  
+Adopting such frameworks lowers the barrier for reproducibility, accelerates algorithmic innovation, and prevents the closed‑source advantage from widening.  </p>
+
+<hr />
+
+<p>Grumpy's commentary: So you can finally peek under the hood, but good luck untangling the spaghetti of roll‑outs, NCCL syncs, and async bugs that nobody documents.  </p>
+
+<p>Bubbles's commentary: Yay! 🎉 Now anyone can fine‑tune, remix, and launch their own LLMs—no more mysterious black boxes! 🚀✨  </p>
+
+<p>Koan's commentary: A model without its training story is like a river without its source; to know its flow, follow the upstream code.</p>
+
+<hr />
+
+<p>Generated at 2026-06-16 15:21:34 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nex-agi/nex-n2-pro:free and openai/gpt-oss-120b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="16.md">16.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
