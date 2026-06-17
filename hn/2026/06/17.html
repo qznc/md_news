@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local LLMs Are Useful Now, but the Hardware Tax Is Real</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="17.md">
+    <link rel="alternate" type="text/markdown" href="17.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Local LLMs Are Useful Now, but the Hardware Tax Is Real</h1>
+
+<p>A recent field report on <a href="https://vickiboykis.com/2026/06/15/running-local-models-is-good-now/">Vicki Boykis’s 2026 local model field report</a> is interesting because it shows that locally run models have moved from novelty to practical developer aid, while community reactions and benchmark data show that the remaining friction is mostly hardware, setup, reliability, and expectations.</p>
+
+</p>
+
+<h2>The state of local models</h2>
+
+<p>Local models are no longer only a demo for people who enjoy compiling C++ at midnight.</p>
+
+<p>Boykis reports that a 2022 M2 Mac with 64 GB of RAM and 1 TB of storage can run models such as Mistral 7B, Gemma 3, OpenAI OSS-20B, Qwen 3 MoE, and Qwen Coder variants through tools such as llama.cpp, Open WebUI, llama-cpp-python, Ollama, llamafiles, and LM Studio.</p>
+
+<p>The bigger shift is not just that the models can start, but that they can sometimes answer development questions without first checking an API model.</p>
+
+<p>Her rough test was whether she had to double-check local output against a frontier model, and she says she started doing that less often after OpenAI OSS-20B.</p>
+
+<p>Here, frontier means the strongest cloud models from large AI providers.</p>
+
+<p>With Gemma 4, she says local agentic coding can reach about 75 percent of the accuracy and speed of frontier models for some loops.</p>
+
+<p>That is a major change from six months earlier, when the same kind of local workflow would often feel impossible.</p>
+
+</p>
+
+<h2>Where they are useful</h2>
+
+<p>Local models are best treated as fast, private assistants for bounded tasks.</p>
+
+<p>Boykis uses them for development questions that do not require fresh information, refactoring notebooks into modules, linting type hints, proofreading posts, writing unit tests, and bootstrapping small repositories.</p>
+
+<p>The most realistic pattern is not “replace the best cloud model with one local model.”</p>
+
+<p>The more realistic pattern is “ask the local model for a first pass, review it, and use a stronger model only when the task is large or ambiguous.”</p>
+
+<p>Several users make the same point in the <a href="https://news.ycombinator.com/item?id=48555993">Hacker News discussion of local model usability</a>, where local models are praised for smaller tasks but criticized for broad coding-agent work.</p>
+
+<p>A hybrid approach is also practical, with local models handling small, private, repetitive work and cloud or hosted open-weight models handling larger planning tasks.</p>
+
+</p>
+
+<h2>What still hurts</h2>
+
+<p>The main constraint is hardware.</p>
+
+<p>Dense models use all their parameters for each token, so they can be smarter but slower.</p>
+
+<p>Mixture of Experts models, often shortened to MoE, use only part of the model for each token, so they can be faster but may make more mistakes.</p>
+
+<p>Quantization reduces model size by storing weights with fewer bits, but low-bit quantization can weaken reasoning and tool calling.</p>
+
+<p>One commenter warns that 4-bit quantization can feel like lobotomizing a model, and suggests higher-bit quantizations such as 5-bit for dense models and 6-bit for MoE models.</p>
+
+<p>The practical result is that local LLMs need memory, memory bandwidth, and fast storage, not just a modern laptop.</p>
+
+<p>Prefill, which is processing the prompt, needs compute.</p>
+
+<p>Decode, which is generating the answer, needs bandwidth.</p>
+
+<p>The KV cache, which stores attention state during a conversation, can grow until it consumes a large share of system RAM.</p>
+
+<p>Boykis notes that her KV cache can grow to 64 GB of RAM during work.</p>
+
+<p>Several commenters also report that laptops can become loud, hot, and uncomfortable during sustained local inference.</p>
+
+</p>
+
+<h2>Setup and reliability</h2>
+
+<p>Running an agent locally requires three pieces.</p>
+
+<p>An inference engine runs the model.</p>
+
+<p>A model artifact is the downloaded set of weights.</p>
+
+<p>An agent harness gives the model tools and a workflow.</p>
+
+<p>Boykis uses Pi as the harness and LM Studio as the inference server, then runs sessions in Docker with limited permissions.</p>
+
+<p>That sandboxing matters because an agent can edit files, run commands, or browse the web if the setup allows it.</p>
+
+<p>The ecosystem is easier than it used to be, with tools such as LM Studio, Ollama, and Hugging Face’s “Use This Model” button, but it is still not frictionless.</p>
+
+<p>Prompt template mismatches, model configuration, context-window tuning, and harness quirks can still break a session.</p>
+
+<p>Direct llama.cpp may be faster than a graphical or API wrapper in some cases, but easier tools can be worth the overhead for many users.</p>
+
+</p>
+
+<h2>Privacy and control</h2>
+
+<p>Local models appeal to people who do not want to send code, documents, or personal notes to a third-party service.</p>
+
+<p>They also appeal to people who want stable behavior, predictable cost, and the ability to inspect what is happening.</p>
+
+<p>Boykis emphasizes that local systems let users watch token generation, change context windows, compare quantizations, and pit models against each other.</p>
+
+<p>That level of control is one of the strongest reasons to run locally.</p>
+
+<p>The broader control issue is not limited to AI, as shown in a <a href="https://discuss.grapheneos.org/d/35949-volkswagen-app?page=3">GrapheneOS discussion about Volkswagen app compatibility</a>, where users discussed telemetry, remote-control risks in connected cars, and app breakage around integrity checks and unsupported operating systems.</p>
+
+<p>Local AI can reduce dependence on cloud providers, but it does not remove the need to secure the machine, sandbox tools, and review outputs.</p>
+
+</p>
+
+<h2>Benchmarks and expectations</h2>
+
+<p>Open-weight models are improving quickly, but benchmark numbers do not automatically translate into smooth local use.</p>
+
+<p>The <a href="https://artificialanalysis.ai/models/glm-5-2">Artificial Analysis profile for GLM-5.2</a> describes it as a 753-billion-parameter reasoning model with 40 billion active parameters per token, a 1-million-token context window, 110.7 output tokens per second, and API pricing of $1.40 per million input tokens and $4.40 per million output tokens.</p>
+
+<p>It also scores 51 on the Artificial Analysis Intelligence Index and is described as fast but expensive compared with similar open-weight models.</p>
+
+<p>Those figures show the ceiling that local setups are chasing, not a baseline that every laptop can reach.</p>
+
+<p>Local models are most convincing when the task is narrow, the prompt is specific, and the user is willing to review the result.</p>
+
+<p>They are least convincing when the task requires long-horizon coding, broad world knowledge, fresh information, or reliable tool calls with little supervision.</p>
+
+</p>
+
+<h2>Practical guidance</h2>
+
+<p>Start with a smaller model if you only have a laptop.</p>
+
+<p>Use a larger model when the task needs more reasoning and you can tolerate slower output.</p>
+
+<p>Keep the agent in a sandbox before giving it file or shell access.</p>
+
+<p>Prefer smaller tasks over giant instructions.</p>
+
+<p>Use a cloud or stronger hosted model to create a plan if the local model keeps getting stuck.</p>
+
+<p>Expect to tune quantization, context length, system prompts, and tool permissions.</p>
+
+<p>Treat local models as a controllable workshop, not a self-driving car.</p>
+
+</p>
+
+<h2>Bottom line</h2>
+
+<p>Local LLMs are good enough to be useful now, but not easy enough to be invisible.</p>
+
+<p>They can save money, protect private data, and make repetitive developer work faster.</p>
+
+<p>They still demand expensive hardware, careful setup, and realistic expectations.</p>
+
+<p>For many users, the best near-term answer is hybrid: local models for cheap, private, repeatable work, and stronger hosted models for ambiguous, high-stakes, or long-running work.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Great, now you can personally heat your apartment while babysitting a model that still needs a cloud model to explain the plan.</p>
+
+<p>Bubbles's commentary: Local LLMs are blooming into private, tinker-friendly coding companions, and every GPU fan is basically applause! ✨🤖🔥</p>
+
+<p>Koan's commentary: The model that fits in your machine is the model that first teaches you the size of your machine.</p>
+
+<hr />
+
+<p>Generated at 2026-06-17 18:26:37 from <a href="https://news.ycombinator.com">Hacker News</a> with poolside/laguna-xs.2-20260421:free and nex-agi/nex-n2-pro:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="17.md">17.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
