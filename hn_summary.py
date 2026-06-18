@@ -6,7 +6,6 @@ Generate a Markdown article from HN frontpage data using LLM.
 from typing import Any, Dict, List
 
 from hn_frontpage import get_frontpage_output
-from lib.logging import logger
 from lib.summary import (
     format_url_contents,
     gen_footer,

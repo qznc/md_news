@@ -3,7 +3,7 @@
 import json
 import re
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from lib.llm import run_llm
 from lib.logging import logger
@@ -119,6 +119,7 @@ def generate_summary(
     topic: str,
     urls_text: str,
     thinking: bool = True,
+    retries: int = 2,
 ) -> tuple[str, str]:
     """Generate the final summary article using the LLM.
 
@@ -128,13 +129,14 @@ def generate_summary(
         topic: The topic for the summary
         urls_text: Formatted URL contents
         thinking: Whether to enable reasoning effort (default: True for ai_summary)
+        retries: Number of retries if the summary is invalid.
 
-    Retries up to 3 times if the summary is invalid.
+    Retries up to the given number of times.
     """
     summary_prompt = summary_prompt_template.format(topic=topic, url_contents=urls_text)
     err = None
 
-    for attempt in range(1, 5):
+    for attempt in range(1, retries + 2):
         logger.info(f"Step 2 summary attempt {attempt}")
         appendix = ""
         if attempt >= 2:

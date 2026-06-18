@@ -4,7 +4,7 @@ Script to fetch top posts from r/de (German) subreddit.
 """
 
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from lib.logging import logger
 from lib.reddit_utils import REQUEST_DELAY, get_subreddit_top

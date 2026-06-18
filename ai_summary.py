@@ -3,7 +3,6 @@
 Generate a Markdown article from AI subreddits data using LLM.
 """
 
-from lib.logging import logger
 from lib.summary import (
     format_url_contents,
     gen_footer,

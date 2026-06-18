@@ -160,7 +160,7 @@ def generate_de_summary() -> tuple[str, str, str]:
 
     urls_text = format_url_contents(urls_dict)
     summary, summary_model = generate_summary(
-        SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text
+        SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, retries=6
     )
 
     return summary, select_model, summary_model
