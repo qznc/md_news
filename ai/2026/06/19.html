@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust‑Powered Safe, High‑Performance AI Inference on GPUs</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="19.md">
+    <link rel="alternate" type="text/markdown" href="19.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Rust‑Powered Safe, High‑Performance AI Inference on GPUs</h1>
+
+<p>Rust brings memory safety and zero‑cost abstractions to systems programming, and modern AI workloads demand the same guarantees on the GPU.  
+The recent <strong>arXiv paper</strong> <a href="https://arxiv.org/abs/2606.15991">“Fearless Concurrency on the GPU”</a> demonstrates how Rust can be extended to write GPU kernels without abandoning ownership rules.  
+This makes it possible to build inference engines that are both fast and provably free of data‑race bugs.  </p>
+
+<p>The core of the approach is <strong>cuTile Rust</strong>, an open‑source library that tiles tensors and enforces Rust’s ownership discipline across the host‑device boundary <a href="https://github.com/nvlabs/cutile-rs">[cuTile Rust repository</a>].  
+Before a kernel launch, mutable output tensors are split into disjoint pieces, ensuring each GPU thread works on a unique region.  
+Immutable inputs are shared safely, and the launch API retains the host‑side ownership contract while the GPU work proceeds asynchronously.  </p>
+
+<p>Performance measurements show that the safety layer adds no measurable overhead.  
+On an NVIDIA B200 GPU, cuTile Rust achieves 7 TB/s for element‑wise operations and 2 PFlop/s for GEMM, reaching 96 % of cuBLAS throughput <a href="https://arxiv.org/abs/2606.15991">[arXiv paper</a>].  
+A production‑grade inference engine called <strong>Grout</strong> built with cuTile Rust decodes Qwen‑3 models at 171 tokens/s for the 4 B variant on an RTX 5090 and 82 tokens/s for the 32 B variant on the B200, matching state‑of‑the‑art systems such as vLLM <a href="https://github.com/nvlabs/cutile-rs">[cuTile Rust repository</a>].  </p>
+
+<p>Beyond raw kernels, integrating Rust‑based inference with high‑level training pipelines is straightforward.  
+The Hugging Face Transformers library offers a suite of learning‑rate schedulers and the Adafactor optimizer <a href="https://huggingface.co/docs/transformers/main_classes/optimizer_schedules">[Hugging Face optimizer schedules</a>].  
+These components can be called from Rust via FFI or through the emerging `candle` ecosystem, allowing the same safety guarantees to span both training and serving phases.  </p>
+
+<p>The combination of Rust’s compile‑time checks, cuTile’s tile‑level memory safety, and proven AI‑specific performance creates a compelling stack for developers who need both reliability and speed in production inference workloads.  </p>
+
+<hr />
+
+<p>Grumpy's commentary: Rust finally lets you chase GPU bugs with the same zeal you reserve for existential dread—because nothing says fun like ownership across thousands of threads.  </p>
+
+<p>Bubbles's commentary: 🎉🚀 Rust + GPUs = unstoppable AI rockets! Safety and speed together make every inference a celebration! 🌟✨  </p>
+
+<p>Koan's commentary: A tile split the tensor, yet the whole remains—both secure and swift, like a river that never forgets its source.</p>
+
+<hr />
+
+<p>Generated at 2026-06-19 18:08:55 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with poolside/laguna-m.1-20260312:free and openai/gpt-oss-120b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="19.md">19.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
