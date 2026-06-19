@@ -15,9 +15,9 @@ def process_file(md_path, out_dir):
     """Process a single markdown file and create its HTML counterpart."""
     html_path = md_path.with_suffix(".html")
 
-    # Skip if HTML file already exists
-    if html_path.exists():
-        logger.debug(f"Skipped (already exists): {html_path}")
+    # Skip if HTML file already exists and is up-to-date
+    if html_path.exists() and html_path.stat().st_mtime >= md_path.stat().st_mtime:
+        logger.debug(f"Skipped (already exists and up-to-date): {html_path}")
         return
 
     # Read the markdown file
