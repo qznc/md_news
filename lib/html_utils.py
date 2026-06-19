@@ -6,6 +6,7 @@ from typing import Optional
 COMMON_CSS = """
     body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
     h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
     footer { font-size: 12pt; }
 """
 
