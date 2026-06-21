@@ -110,7 +110,7 @@ def generate_hn_summary() -> tuple[str, str, str]:
 
     # Step 3: Generate summary with fetched content
     summary, summary_model = generate_summary(
-        SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, thinking=False
+        SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, thinking=False, retries=3
     )
 
     return summary, select_model, summary_model
