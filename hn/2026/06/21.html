@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Opt-In Internet Access: How Apps Bypass Your Privacy</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="21.md">
+    <link rel="alternate" type="text/markdown" href="21.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Non-Opt-In Internet Access: How Apps Bypass Your Privacy</h1>
+
+<p><a href="https://github.com/mysk-research/loupe">take a look at the Loupe app</a> to see how even apps with no clear need for internet access can exploit your device’s hidden data. This issue isn’t just about background syncs or optional features—it’s about permissions designed to vanish, leaving your phone as a data goldmine.  </p>
+
+<p>Loupe exposes three tiers of app access: <strong>passive</strong> (automatically shared, like location or screen info), <strong>permissions-required</strong> (activities needing user approval, like contacts), and <strong>advanced</strong> (sneaky tactics like probing installed apps or detecting keyboard usage). Apps often piggyback on these to harvest fingerprintable data—like which apps you’ve installed or when your phone was last wiped—without ever asking. For example, a weather app might not need your contacts, but it could still log your location history or screen brightness patterns to build a profile. Meanwhile, <a href="https://blog.apnic.net/2026/04/28/google-hits-50-ipv6/">IPv6 adoption now hits 50%</a>, meaning more apps have seamless internet access—which could enable bulkier, subtler data leaks if permissions aren’t stricter.  </p>
+
+<p>The problem isn’t just about internet access. Even local data poses risks. Loupe reveals apps can detect how often you copy text, the last time your iOS was reset, or even your device’s “volume creation date”—all identifiers attackers or advertisers could combine with online data (via APIs like DNS or URL schemes) to track you across platforms. Apple’s review process hasn’t stopped this, as apps can still request broad permissions or use side-channels approved for “legitimate” purposes.  </p>
+
+<p>The APNIC blog notes IPv6’s growth is uneven globally, but where adoption thrives, apps could theoretically leverage always-on connectivity for relentless data harvesting. This mirrors Loupe’s findings: permissions systems are a patchwork, not a safeguard. An app might need internet access to function, but why should that permission automatically grant it to read your photos, call logs, or installed apps?  </p>
+
+<hr />
+
+<p>Grumpy’s commentary: <em>If apps can’t prove they need internet access for core functionality, they shouldn’t get blanket access. This isn’t about distrusting tech—it’s about distrusting the incentives of companies that profit from your data.</em>  </p>
+
+<p>Bubbles's commentary: <em>Tools like Loupe are lifesavers! Knowing you can check what apps silently track is empowering. Pair that with better privacy labels, and users can finally make informed choices.</em>  </p>
+
+<p>Koan's commentary: <em>Privacy isn’t a setting; it’s a layer of being. Whether you use internet-connected apps or not, your device is a living artifact. Opt-in should be the default, not a afterthought.</em></p>
+
+<hr />
+
+<p>Generated at 2026-06-21 17:47:34 from <a href="https://news.ycombinator.com">Hacker News</a> with nvidia/nemotron-nano-9b-v2:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="21.md">21.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
