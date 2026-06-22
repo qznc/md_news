@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared CEF Runtime Architecture in Deno Desktop: A New Era of Cross-App Integration?</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="22.md">
+    <link rel="alternate" type="text/markdown" href="22.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Shared CEF Runtime Architecture in Deno Desktop: A New Era of Cross-App Integration?</h1>
+
+<p><a href="https://docs.deno.com/runtime/desktop/">The Deno team</a> is introducing a compelling vision for desktop applications with their upcoming <tt>deno desktop</tt> feature, scheduled for Deno v2.9.0. This new capability aims to simplify turning web projects into standalone desktop apps while addressing common pain points in cross-platform development. However, one particularly intriguing aspect highlighted in community discussions revolves around a planned shared Chromium Embedded Framework (CEF) runtime, which could significantly impact how applications manage browser engine dependencies and binary sizes.</p>
+
+<p>Unlike traditional approaches where each application bundles its entire web rendering engine, leading to large binaries, <tt>deno desktop</tt> proposes leveraging either the operating system's built-in webview or an optional bundled CEF backend. While the default webview approach ensures minimal binary footprints similar to Tauri, the bundled CEF option guarantees consistent rendering across macOS, Windows, and Linux platforms. Currently, every <tt>deno desktop</tt> app includes its own copy of CEF, resulting in substantial overhead. According to <a href="https://news.ycombinator.com/item?id=48626137">community feedback</a>, a future managed shared CEF runtime could dramatically reduce individual app sizes to just a few megabytes, akin to how desktop environments share system libraries today.</p>
+
+<p>This architectural decision mirrors broader trends seen in competing frameworks like Electron, which famously bundles Chromium independently for each app, contributing to notoriously large binaries. By considering a shared CEF runtime, <tt>deno desktop</tt> potentially sidesteps the duplication problem while maintaining rendering consistency—a delicate balance that might reshape expectations for hybrid desktop applications. Yet questions remain about managing version discrepancies among apps requiring different CEF versions, echoing concerns raised in related discussions about achieving optimal tradeoffs in browser engine distribution.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Another day, another runtime promising to solve desktop app bloat—because clearly what we needed was yet another way to ship half a Chrome installation with every program.</p>
+
+<p>Bubbles's commentary: 🌟 Wowee! Smaller binaries AND consistent rendering? This sounds like pure magic! Can't wait to see how this changes everything! 😊</p>
+
+<p>Koan's commentary: Many apps carry their own flame; few realize that sharing light needs no more than one candle.</p>
+
+<hr />
+
+<p>Generated at 2026-06-22 17:30:13 from <a href="https://news.ycombinator.com">Hacker News</a> with cohere/north-mini-code-20260617:free and poolside/laguna-m.1-20260312:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="22.md">22.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
