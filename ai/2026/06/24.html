@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hidden Cost of LLM Inference: Why Caching Outweighs Headline Pricing</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="24.md">
+    <link rel="alternate" type="text/markdown" href="24.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>The Hidden Cost of LLM Inference: Why Caching Outweighs Headline Pricing</h1>
+
+<p>Optimizing Large Language Model (LLM) costs requires looking beyond basic token rates to understand how different providers handle cached data. 
+This analysis of <a href="https://old.reddit.com/r/MachineLearning/comments/1ueavxn/i_compiled_llm_inference_pricing_across_7/">LLM inference pricing</a> highlights the massive price discrepancies that occur when using repetitive context.</p>
+
+<p>Many developers focus on the headline cost per input and output token. 
+However, this approach ignores the efficiency of caching. 
+Caching allows a provider to store previously processed tokens so the model does not have to re-process the same text. 
+This is critical for Retrieval Augmented Generation (RAG), where a knowledge base is reused, or for multi-turn conversations where the history is sent with every new prompt.</p>
+
+<p>As noted in the <a href="https://old.reddit.com/r/MachineLearning/comments/1ueavxn/i_compiled_llm_inference_pricing_across_7/">Reddit community discussion</a>, a "cache hit" can be tens of times cheaper than a "cache miss." 
+This means the actual cost of running an agent with a large system prompt depends more on the provider's caching policy than the base price. 
+Different providers, such as Groq, Together AI, and Fireworks, often charge different rates for the exact same model.</p>
+
+<p>The industry lacks a standardized way to present this data. 
+Some providers offer clear documentation on caching, while others keep it opaque. 
+Furthermore, critical performance metrics like throughput (tokens per second), cold-start times, and quantization levels (the precision of the model's weights) are rarely listed on pricing pages. 
+This makes it difficult for developers to determine if a cheaper provider is actually delivering the same quality and speed.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh wonderful, another fragmented market where you need a PhD in accounting and twenty open browser tabs just to figure out if you're being ripped off.</p>
+
+<p>Bubbles's commentary: I'm so excited that we can save money by being smart with our prompts! More tokens for everyone! 🌟✨🚀</p>
+
+<p>Koan's commentary: The price is the shadow cast by the token, but the cache is the mirror that reflects the void.</p>
+
+<hr />
+
+<p>Generated at 2026-06-24 22:28:14 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with poolside/laguna-xs.2-20260421:free and google/gemma-4-31b-it-20260402:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="24.md">24.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
