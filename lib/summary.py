@@ -25,9 +25,7 @@ def format_url_contents(urls_dict: Dict[str, str]) -> str:
     return "\n\n".join(url_contents)
 
 
-def select_topic_and_urls(
-    prompt: str, tmp_dir: str
-) -> tuple[Dict[str, Any], str]:
+def select_topic_and_urls(prompt: str, tmp_dir: str) -> tuple[Dict[str, Any], str]:
     """Use LLM to select a topic and URLs from posts.
 
     Args:
@@ -103,11 +101,6 @@ def _summary_error(summary: str) -> str | None:
         return "summary does not start with Markdown h1 '#'"
     if "[" not in summary or "](" not in summary:
         return "summary has no [Markdown](url) link"
-    if "---" not in summary:
-        return "summary does not contain ---"
-    for name in ("Grumpy", "Bubbles", "Koan"):
-        if name not in summary:
-            return "summary proposal misses " + name
     if summary.count("\n\n") < 2:
         return "summary lacks parapgraphs"
     return None
@@ -154,12 +147,65 @@ def generate_summary(
     raise Exception("No more attempts")
 
 
-def gen_footer(source_info: str, select_model: str, summary_model: str) -> str:
+def _commentaries_error(commentaries: str) -> str | None:
+    """Return reason why commentaries are invalid"""
+    for name in ("Grumpy", "Bubbles", "Koan"):
+        if name not in commentaries:
+            return "commentaries miss " + name
+    return None
+
+
+def generate_commentaries(
+    commentary_prompt_template: str,
+    tmp_dir: str,
+    article: str,
+    thinking: bool = False,
+    retries: int = 2,
+) -> tuple[str, str]:
+    """Generate commentaries for the given article using the LLM.
+
+    Args:
+        commentary_prompt_template: The template string for the commentary prompt
+        tmp_dir: Temporary directory for debugging files
+        article: The generated article
+        thinking: Whether to enable reasoning effort
+        retries: Number of retries if the output is invalid.
+    """
+    prompt = commentary_prompt_template.format(article=article)
+    err = None
+
+    for attempt in range(1, retries + 2):
+        logger.info(f"Step 3 commentary attempt {attempt}")
+        appendix = ""
+        if attempt >= 2:
+            appendix = f"\n\n(This is attempt {attempt}. The previous output was invalid: {err} Try harder!)"
+        p = prompt + appendix
+        with open(f"{tmp_dir}/_5_commentary_prompt.txt", "w") as f:
+            f.write(p)
+        commentaries, model = run_llm(p, thinking=thinking)
+        with open(f"{tmp_dir}/_6_commentary.txt", "w") as f:
+            f.write(commentaries)
+        err = _commentaries_error(commentaries)
+        if not err:
+            return commentaries, model
+        logger.error(f"Invalid commentaries on attempt {attempt}: {err}")
+    raise Exception("No more attempts")
+
+
+def gen_footer(source_info: str, *models: str) -> str:
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    if select_model == summary_model:
-        models_str = f"with {select_model}"
+
+    unique_models = []
+    for m in models:
+        if m and m not in unique_models:
+            unique_models.append(m)
+
+    if len(unique_models) == 1:
+        models_str = f"with {unique_models[0]}"
+    elif len(unique_models) > 1:
+        models_str = f"with {', '.join(unique_models[:-1])} and {unique_models[-1]}"
     else:
-        models_str = f"with {select_model} and {summary_model}"
+        models_str = ""
 
     return (
         f"\n\n---\n\n"

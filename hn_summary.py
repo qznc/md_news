@@ -11,6 +11,7 @@ from lib.summary import (
     gen_footer,
     generate_summary,
     select_topic_and_urls,
+    generate_commentaries,
 )
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
@@ -18,7 +19,7 @@ HN_FRONTPAGE_URL = "https://news.ycombinator.com"
 SELECT_PROMPT = """
 Analyze the HN frontpage stories below.
 Carefully consider upvotes, comments, and order.
-Then pick ONE SPECIFIC TOPIC that would make for an interesting and useful article.
+Then pick ONE SPECIFIC TOPIC that would make for an engaging and useful article.
 
 For your chosen topic, select 3-4 most relevant URLs of relevant sources.
 At least one URL should be a discussion thread on HN.
@@ -38,6 +39,7 @@ Do NOT include any other text, explanations, or markdown. Just the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write a Markdown article about the topic: {topic}
+Focus on the Hacker News discussion.
 
 Use the fetched content from these URLs as your source material:
 
@@ -58,17 +60,25 @@ Use the fetched content from these URLs as your source material:
 <multiple paragraphs expanding the summary providing context and explanation.
 Reference all [sources from above](some url) with Markdown links.
 Use simple language, avoid jargon, and explain terms.>
+```
 
----
+Respond with only the article and nothing else.
+"""
+
+COMMENTARY_PROMPT_TEMPLATE = """
+Read the following article and write three short commentaries from the perspective of three different characters.
+
+```Article
+{article}
+```
+
+Respond with ONLY the three commentaries in the exact following format:
 
 Grumpy's commentary: <short sarcastic biting commentary with a touch of cynicism>
 
 Bubbles's commentary: <overly cheerful optimistic commentary with emojis>
 
 Koan's commentary: <crack some weird zen-like wisdom sentence>
-```
-
-Respond with only the article and nothing else.
 """
 
 
@@ -86,7 +96,7 @@ def format_stories_for_prompt(stories: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
-def generate_hn_summary() -> tuple[str, str, str]:
+def generate_hn_summary() -> tuple[str, str, str, str]:
     """
     Generate a Markdown article from HN frontpage data using the LLM.
     """
@@ -113,14 +123,24 @@ def generate_hn_summary() -> tuple[str, str, str]:
         SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, thinking=False, retries=3
     )
 
-    return summary, select_model, summary_model
+    commentaries, commentary_model = generate_commentaries(
+        COMMENTARY_PROMPT_TEMPLATE, tmp_dir, summary, thinking=False, retries=2
+    )
+
+    return (
+        summary + "\n\n---\n\n" + commentaries,
+        select_model,
+        summary_model,
+        commentary_model,
+    )
 
 
 if __name__ == "__main__":
-    summary, select_model, summary_model = generate_hn_summary()
+    summary, select_model, summary_model, commentary_model = generate_hn_summary()
     footer = gen_footer(
         f"[Hacker News]({HN_FRONTPAGE_URL})",
         select_model,
         summary_model,
+        commentary_model,
     )
     print(summary + footer)

@@ -8,6 +8,7 @@ from lib.summary import (
     gen_footer,
     generate_summary,
     select_topic_and_urls,
+    generate_commentaries,
 )
 from reddit_ai import get_ai_subreddits_output
 
@@ -36,6 +37,7 @@ Do NOT include any other text, explanations, or markdown. Just the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write a Markdown article about the topic: {topic}
+Focus on the Reddit discussion.
 
 Use the fetched content from these URLs as your source material:
 
@@ -56,21 +58,29 @@ Use the fetched content from these URLs as your source material:
 <multiple paragraphs expanding the summary providing context and explanation.
 Reference all [sources from above](some url) with Markdown links.
 Use simple language, avoid jargon, and explain terms.>
+```
 
----
+Respond with ONLY the article and nothing else.
+"""
+
+COMMENTARY_PROMPT_TEMPLATE = """
+Read the following article and write three short commentaries from the perspective of three different characters.
+
+```Article
+{article}
+```
+
+Respond with ONLY the three commentaries in the exact following format:
 
 Grumpy's commentary: <short sarcastic biting commentary with a touch of cynicism>
 
 Bubbles's commentary: <overly cheerful optimistic commentary with emojis>
 
 Koan's commentary: <crack some strange zen-like wisdom sentence>
-```
-
-Respond with ONLY the article and nothing else.
 """
 
 
-def generate_ai_summary() -> tuple[str, str, str]:
+def generate_ai_summary() -> tuple[str, str, str, str]:
     """
     Generate a Markdown article from AI subreddits data using the LLM.
 
@@ -99,14 +109,24 @@ def generate_ai_summary() -> tuple[str, str, str]:
         SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, retries=3
     )
 
-    return summary, select_model, summary_model
+    commentaries, commentary_model = generate_commentaries(
+        COMMENTARY_PROMPT_TEMPLATE, tmp_dir, summary, thinking=True, retries=2
+    )
+
+    return (
+        summary + "\n\n---\n\n" + commentaries,
+        select_model,
+        summary_model,
+        commentary_model,
+    )
 
 
 if __name__ == "__main__":
-    summary, select_model, summary_model = generate_ai_summary()
+    summary, select_model, summary_model, commentary_model = generate_ai_summary()
     footer = gen_footer(
         f"AI subreddits on [Reddit]({REDIT_FRONTPAGE_URL})",
         select_model,
         summary_model,
+        commentary_model,
     )
     print(summary + footer)

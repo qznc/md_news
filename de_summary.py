@@ -13,6 +13,7 @@ from lib.summary import (
     gen_footer,
     generate_summary,
     select_topic_and_urls,
+    generate_commentaries,
 )
 from reddit_de import get_de_subreddits_output
 
@@ -21,7 +22,7 @@ TAGESSCHAU_FEED_URL = "https://www.tagesschau.de/index~atom.xml"
 
 SELECT_PROMPT = """
 Analyse the following submissions to the r/de subreddit AND the latest news from Tagesschau for relevance and usefulness.
-Specify a SINGLE SPECIFIC topic for an interesting article in German.
+Specify a SINGLE SPECIFIC topic for an engaging article in German.
 
 Also, select 3-5 relevant URLs from the sources.
 At least one URL from reddit and one not.
@@ -44,7 +45,8 @@ Add no further text, explanation, or markdown. Only the JSON.
 """
 
 SUMMARY_PROMPT_TEMPLATE = """
-Write a German article using Markdown syntax about: {topic}
+Write an engaging German article using Markdown syntax about: {topic}
+Focus on the Reddit discussion.
 
 Use the content from these URLs as sources:
 
@@ -65,17 +67,25 @@ Use the content from these URLs as sources:
 <multiple paragraphs expanding the summary providing context and explanation.
 Reference all [sources from above](some url) with Markdown links.
 Use simple language, avoid jargon, and explain terms.>
+```
 
----
+Respond only with the article and nothing else.
+"""
+
+COMMENTARY_PROMPT_TEMPLATE = """
+Lies den folgenden Artikel und schreibe drei kurze Kommentare aus der Perspektive von drei verschiedenen Charakteren.
+
+```Artikel
+{article}
+```
+
+Antworte NUR mit den drei Kommentaren in genau diesem Format:
 
 Grumpys Kommentar: <kurzer sarkastischer, beißender Kommentar mit einer Prise Zynismus>
 
 Bubbles' Kommentar: <übertrieben fröhlicher, optimistischer Kommentar mit Emojis>
 
 Koans Kommentar: <ein seltsamer, zen-ähnlicher Weisheitsspruch>
-```
-
-Respond only with the article and nothing else.
 """
 
 
@@ -107,8 +117,6 @@ def fetch_tagesschau_feed() -> str:
                     break
 
             # Get published date - tagesschau uses dc:date
-            published = entry.find("dc:date", namespaces)
-            published_text = published.text if published is not None else ""
 
             # Get summary - tagesschau uses summary with type="text/html"
             summary = entry.find("atom:summary", namespaces)
@@ -138,7 +146,7 @@ def fetch_tagesschau_feed() -> str:
         return "Tagesschau feed unavailable"
 
 
-def generate_de_summary() -> tuple[str, str, str]:
+def generate_de_summary() -> tuple[str, str, str, str]:
     """
     Generate a Markdown article from German subreddits data using the LLM.
     """
@@ -149,7 +157,9 @@ def generate_de_summary() -> tuple[str, str, str]:
 
     posts_text = get_de_subreddits_output()
     tagesschau_text = fetch_tagesschau_feed()
-    prompt = SELECT_PROMPT.format(posts_text=posts_text, tagesschau_text=tagesschau_text)
+    prompt = SELECT_PROMPT.format(
+        posts_text=posts_text, tagesschau_text=tagesschau_text
+    )
     selection, select_model = select_topic_and_urls(prompt, tmp_dir)
 
     topic_obj = selection.get("topic")
@@ -163,14 +173,24 @@ def generate_de_summary() -> tuple[str, str, str]:
         SUMMARY_PROMPT_TEMPLATE, tmp_dir, topic, urls_text, retries=6
     )
 
-    return summary, select_model, summary_model
+    commentaries, commentary_model = generate_commentaries(
+        COMMENTARY_PROMPT_TEMPLATE, tmp_dir, summary, thinking=True, retries=2
+    )
+
+    return (
+        summary + "\n\n---\n\n" + commentaries,
+        select_model,
+        summary_model,
+        commentary_model,
+    )
 
 
 if __name__ == "__main__":
-    summary, select_model, summary_model = generate_de_summary()
+    summary, select_model, summary_model, commentary_model = generate_de_summary()
     footer = gen_footer(
         f"Deutschsprachige Communities auf [Reddit]({REDIT_FRONTPAGE_URL})",
         select_model,
         summary_model,
+        commentary_model,
     )
     print(summary + footer)

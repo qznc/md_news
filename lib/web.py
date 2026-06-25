@@ -2,6 +2,7 @@
 
 import subprocess
 import urllib.request
+import email.message
 from typing import Optional
 from urllib.error import HTTPError
 
@@ -57,7 +58,9 @@ def _fetch_url_content2(url: str, max_lines: Optional[int] = None) -> str:
         logger.warning(
             f"lynx returned {result.returncode} for {url}. stderr: {result.stderr}"
         )
-        raise HTTPError(url, result.returncode, "lynx error", None, None)
+        raise HTTPError(
+            url, result.returncode, "lynx error", email.message.Message(), None
+        )
     lines = result.stdout.splitlines()
     return "\n".join(lines[:max_lines])
 

@@ -101,6 +101,7 @@ def run_llm_mistral(
     prompt: str,
     model: str = DEFAULT_MODEL,
     max_tokens: int = DEFAULT_MAX_TOKENS,
+    temperature: float = 0.3,
     thinking: bool = False,
 ) -> tuple[str, str]:
     """Run the LLM with the given prompt.
