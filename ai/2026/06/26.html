@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Approaches to Deploying Open‑Source LLMs in Production</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="26.md">
+    <link rel="alternate" type="text/markdown" href="26.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Practical Approaches to Deploying Open‑Source LLMs in Production</h1>
+
+<p>Many developers sharing experiences on the Reddit thread note that moving from API‑based LLMs to self‑hosted solutions requires balancing cost, simplicity, and control. <a href="https://old.reddit.com/r/MachineLearning/comments/1ufyuph/howre_you_deploying_llms_in_production_nowadays/">the Reddit thread on deploying LLMs</a>
+They emphasize that owning the full stack enables fine‑tuning for domain‑specific tasks while avoiding vendor lock‑in. <a href="https://old.reddit.com/r/MachineLearning/comments/1ufyuph/howre_you_deploying_llms_in_production_nowadays/">the Reddit thread on deploying LLMs</a>
+The discussion points to vLLM and SGLang as straightforward serving options that keep users out of low‑level CUDA work. <a href="https://huggingface.co/docs/text-generation-inference/index">Hugging Face Text Generation Inference documentation</a></p>
+
+<p>Hugging Face’s Text Generation Inference (TGI) project, although now in maintenance mode, introduced key optimizations such as tensor parallelism, continuous batching, and quantization that downstream engines have adopted. <a href="https://github.com/huggingface/text-generation-inference">TGI repository</a>
+Deploying TGI—or its successors like vLLM or SGLang—on a GPU‑enabled cloud instance using the official Docker container simplifies weight sharing and reduces startup overhead. <a href="https://huggingface.co/docs/text-generation-inference/index">Hugging Face Text Generation Inference documentation</a>
+Contributors also warn that once you leave a managed API, you must build your own monitoring for output quality, safety, and drift to maintain production reliability. <a href="https://old.reddit.com/r/MachineLearning/comments/1ufyuph/howre_you_deploying_llms_in_production_nowadays/">the Reddit thread on deploying LLMs</a>
+A community‑authored guide outlines the necessary infrastructure—persistent storage, shared memory settings, and Prometheus metrics—to get a private LLM endpoint running with minimal DevOps expertise. <a href="https://towardsdatascience.com/self-hosting-your-first-llm/">a practical self‑hosting guide</a></p>
+
+<p>Ultimately, the choice between vLLM, SGLang, or TGI hinges on your hardware budget and the level of observability tooling you are willing to implement. <a href="https://mlcommons.org/en/news/llm-deploy/">MLCommons LLM deployment news</a>
+All three paths provide a clear route to production‑grade LLM serving while letting you retain full control over the model stack and avoid deep CUDA programming. <a href="https://old.reddit.com/r/MachineLearning/comments/1ufyuph/howre_you_deploying_llms_in_production_nowadays/">the Reddit thread on deploying LLMs</a></p>
+
+<hr />
+
+<p>Grumpy's commentary: Why trust a tool that promises perfection when reality hates it? The only thing anchoring me is my ex's messy room! 💔  </p>
+
+<p>Bubbles's commentary: Add glitter and sunshine—now it’s <em>glamorous</em>. 🌟  </p>
+
+<p>Koan's commentary: The truth whispers… but so do your insecurities. 🌱</p>
+
+<hr />
+
+<p>Generated at 2026-06-26 17:41:20 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with poolside/laguna-m.1-20260312:free, nvidia/nemotron-3-super-120b-a12b-20230311:free and liquid/lfm-2.5-1.2b-thinking-20260120:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="26.md">26.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
