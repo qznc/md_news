@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 import re
 import time
 import urllib.request
@@ -14,6 +15,7 @@ USER_AGENT = "Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1"
 _POST_RE = re.compile(r"/r/\w+/comments/")
 
 _COOKE_JAR = CookieJar()
+_LOG = logging.getLogger(__name__)
 
 
 def _normalize_url(url: str) -> str:
@@ -122,7 +124,7 @@ def _fetch(url: str) -> list[dict]:
         with opener.open(req, timeout=30) as resp:
             data = json.load(resp)
     except HTTPError as e:
-        print(f"Error fetching {json_url}: {e.code} {e.reason}")
+        _LOG.error(f"Error fetching {json_url}: {e.code} {e.reason}")
         return []
 
     time.sleep(0.5)  # Reddit access is rate-limited!

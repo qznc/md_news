@@ -152,6 +152,9 @@ def _commentaries_error(commentaries: str) -> str | None:
     for name in ("Grumpy", "Bubbles", "Koan"):
         if name not in commentaries:
             return "commentaries miss " + name
+    count_par_seps = commentaries.count("\n\n")
+    if count_par_seps < 2:
+        return "commentaries must be separated by double newlines"
     return None
 
 
