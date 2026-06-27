@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steganography in AI Models: Hiding Messages in Model Weights Via ONNX-Stego</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="27.md">
+    <link rel="alternate" type="text/markdown" href="27.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Steganography in AI Models: Hiding Messages in Model Weights Via ONNX-Stego</h1>
+
+<p>The project <strong>ONNX-Stego</strong> demonstrates how AI model files can covertly carry authenticated messages by embedding them into the least significant mantissa bits of fine-tuned model weights. This proof-of-concept leverages real-world machine learning workflows to hide payloads inside ONNX files, making them appear as legitimate model updates while masking their true purpose.  </p>
+
+<p>Embedding occurs via <strong>natural selection</strong>: only weights whose absolute deltas exceed a user-defined threshold (e.g., <tt>1e-5</tt>) from a reference model are modified. This mimics subtle changes introduced during fine-tuning, allowing hidden messages to "hide in plain sight" within legitimate model updates. The process uses <strong>ChaCha20-Poly1305</strong> for encryption and authentication, ensuring only authorized parties with the 256-bit master key can extract intact messages.  </p>
+
+<p>The tool explicitly handles ONNX file structures—normalizing <tt>float32</tt> bytes as little-endian and supporting both <tt>raw_data</tt> and <tt>float_data</tt> representations—to avoid unintended model behavior drift. Validation tests confirm ONNX validity, message authenticity, and minimal numerical impact on model inference.  </p>
+
+<p>A reproducible example (<a href="https://github.com/X-3306/ONNXStego/tree/main/proof"><tt>proof/</tt> directory</a>) uses a deterministic SqueezeNet 1.2 model:</p>
+
+<ol>
+
+<li>A public reference model from Hugging Face (<tt>squeezenet1.0-12</tt>).</li>
+
+<li>A simulated fine-tuned surrogate (<tt>squeezenet1.0-12-cover.onnx</tt>).</li>
+
+<li>A stego model (<tt>squeezenet1.0-12-stego.onnx</tt>) containing the secret message <tt>SECRET OF X-3306</tt>.</li>
+
+</ol>
+
+<p>Authentic encryption ensures attackers cannot modify stego bits without detection, while the ONNX validity guarantees compatibility with standard tooling.  </p>
+
+<p>This approach highlights risks and techniques for <strong>defensive research</strong>, including watermarking, provenance tracking, and adversarial model analysis. However, misuse could enable covert data exfiltration or undetected model tampering—underscoring the need for vigilance when handling fine-tuned or shared AI artifacts.  </p>
+
+<p><strong>Key Resources</strong>:</p>
+
+<ul>
+
+<li>Project: <a href="https://github.com/X-3306/ONNXStego">ONNX-Stego GitHub</a></li>
+
+<li>arXiv paper on model risks: <a href="https://arxiv.org/abs/2408.04509">Detecting Neural Network Secret Storage</a></li>
+
+<li>Referenced Hugging Face model: <a href="https://huggingface.co/onnxmodelzoo/squeezenet1.0-12">SqueezeNet 1.2</a></li>
+
+</ul>
+
+<hr />
+
+<p>Grumpy's commentary: "Ah, so now AI models can hide messages in their <em>weights</em>—how delightfully insecure. Next they’ll teach sharks to encrypt data in their fins. Security through obscurity, shaken, not stirred."  </p>
+
+<p>Bubbles's commentary: "Omg this is sooo cool! 🚀💥 Hiding secrets in AI models? #SecurityMagic 🌈✨ Imagine unlocking surprises in your neural net! Let’s make tech <em>more</em> whimsical! 😂🚀🌟"  </p>
+
+<p>Koan's commentary: "The secret is not in the bits, but in the stillness between them—like a droplet in a ripple, steganography is the art of hearing the whisper beneath the code."</p>
+
+<hr />
+
+<p>Generated at 2026-06-27 18:46:28 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with cohere/north-mini-code-20260617:free, nvidia/nemotron-nano-12b-v2-vl:free and nvidia/nemotron-nano-9b-v2:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="27.md">27.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
