@@ -37,7 +37,7 @@ Do NOT include any other text, explanations, or markdown. Just the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write a Markdown article about the topic: {topic}
-Focus on the Reddit discussion.
+Focus on the pros and cons of the discussion.
 
 Use the fetched content from these URLs as your source material:
 
@@ -76,7 +76,7 @@ Grumpy's commentary: <short sarcastic biting commentary with a touch of cynicism
 
 Bubbles's commentary: <overly cheerful optimistic commentary with emojis>
 
-Koan's commentary: <crack some strange zen-like wisdom sentence>
+Koan's commentary: <crack some strange zen-like wisdom sentence, but keep it very brief>
 """
 
 

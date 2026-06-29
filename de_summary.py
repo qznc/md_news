@@ -46,7 +46,7 @@ Add no further text, explanation, or markdown. Only the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write an engaging German article using Markdown syntax about: {topic}
-Focus on the Reddit discussion.
+Focus on the pros and cons of the Reddit discussion.
 
 Use the content from these URLs as sources:
 
@@ -85,7 +85,7 @@ Grumpys Kommentar: <kurzer sarkastischer, beißender Kommentar mit einer Prise Z
 
 Bubbles' Kommentar: <übertrieben fröhlicher, optimistischer Kommentar mit Emojis>
 
-Koans Kommentar: <ein seltsamer, zen-ähnlicher Weisheitsspruch>
+Koans Kommentar: <ein sehr kurzer, seltsamer, zen-ähnlicher Weisheitsspruch>
 """
 
 
