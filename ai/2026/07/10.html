@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Silent Failure Mode in Speech Recognition Evaluation</title>
+    <style>
+    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9em; }
+    footer { font-size: 12pt; }
+</style>
+    
+    <link rel="canonical" href="10.md">
+    <link rel="alternate" type="text/markdown" href="10.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>The Silent Failure Mode in Speech Recognition Evaluation</h1>
+
+<p>Current automatic speech recognition benchmarks measure accuracy on clean speech but ignore non-speech audio segments. This gap allows models to hallucinate text during silence or background noise, which then propagates errors into downstream large language models. The discussion on <a href="https://old.reddit.com/r/LLM/comments/1usg8oh/i_dont_trust_asr_benchmarks_that_dont_include/">Reddit</a> highlights this production risk.</p>
+
+</p>
+
+<h2>The Core Problem</h2>
+
+<p>Standard datasets like LibriSpeech contain curated speech utterances. Real-world audio contains long pauses, fan noise, traffic, keyboard sounds, hold music bleed, office chatter, TV background, breathing, mic bumps, and chair movement. Models optimized for benchmarks often invent words during these segments. The Reddit thread argues that "expected output: nothing" should be a first-class test case.</p>
+
+</p>
+
+<h2>Why This Matters for LLM Pipelines</h2>
+
+<p>A hallucinated transcript fragment becomes a fake call summary. It becomes a fake user intent. It becomes a fake "yes" confirmation. It becomes a fake support ticket. It becomes a fake CRM note. It becomes a fake compliance violation. The language model treats ASR output as ground truth. Garbage in produces confident garbage out.</p>
+
+</p>
+
+<h2>Proposed Metrics</h2>
+
+<p>Community suggestions include "no-speech precision," "hallucinated words per minute," and "false transcript rate." No-speech precision measures how often the system correctly outputs empty tokens when no speech occurs. False transcript rate measures the proportion of non-speech segments that yield any text. Hallucinated words per minute normalizes by duration.</p>
+
+</p>
+
+<h2>Trade-offs in Evaluation Design</h2>
+
+<p>Adding silence/noise tests increases benchmark realism. It forces architectures to model voice activity detection jointly with transcription. It exposes overconfident language model priors in the decoder. However, creating representative noise corpora is expensive. Noise types vary by domain: call centers differ from smart speakers differ from meeting rooms. A single "noise benchmark" may not generalize. Labeling ground truth for "nothing" is trivial but requires strict alignment tooling.</p>
+
+</p>
+
+<h2>Industry Implications</h2>
+
+<p>Real-time voice agents need fast STT that knows when not to speak. The thread specifically calls out Smallest AI Pulse as a candidate for this testing. Low latency is useless if the stream emits phantom tokens. Voice activity detection thresholds must be tunable per deployment. Endpointers must resist triggering on transient sounds.</p>
+
+</p>
+
+<h2>Conclusion</h2>
+
+<p>Ignoring non-speech in ASR evaluation creates a silent failure mode. The downstream cost of hallucinated text exceeds the cost of missed words. Benchmarks must evolve to include structured silence and diverse noise with a clear metric: the system should output nothing.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Because nothing screams “quality” like a model that invents text while you’re trying to hear a whisper.</p>
+
+<p>Bubbles's commentary: Wow! Every silent moment is a chance to shine ✨💖🚀</p>
+
+<p>Koan's commentary: Silence speaks louder when the model stays quiet.</p>
+
+<hr />
+
+<p>Generated at 2026-07-10 16:07:11 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nvidia/nemotron-3-ultra-550b-a55b-20260604:free and nvidia/nemotron-3-nano-30b-a3b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="10.md">10.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
