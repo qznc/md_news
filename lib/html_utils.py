@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import Optional
 
 COMMON_CSS = """
-    body { font-size: 18pt; line-height: 1.6; max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
     h1 { line-height: 1.2; }
-    tt, code { font-size: 0.9em; }
-    footer { font-size: 12pt; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
 """
 
 
