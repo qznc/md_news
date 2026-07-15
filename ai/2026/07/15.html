@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cracking the Polysemanticity Code: Understanding Neuron Disentanglement</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="15.md">
+    <link rel="alternate" type="text/markdown" href="15.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Cracking the Polysemanticity Code: Understanding Neuron Disentanglement</h1>
+
+<p>Modern neural networks often exhibit a phenomenon called polysemanticity, where a single neuron responds to multiple, unrelated concepts.
+<a href="https://pages.narang99.in/posts/2026-07-12-disentangling-mixed4e-55/">Mechanistic interpretability</a> seeks to solve this by "disentangling" these signals, aiming to identify exactly when a neuron activates for a specific, singular concept.
+Understanding this process is vital for moving beyond seeing neural networks as "black boxes" and toward a future where we can precisely audit their internal logic.</p>
+
+<p>In many convolutional neural networks, neurons do not behave as neat, specialized detectors.
+For example, in the InceptionV1 architecture, a specific neuron (channel 55 in layer <tt>mixed4e</tt>) has been observed to activate for cats, snouts, and cars—three entirely unrelated categories.
+This behavior makes it difficult to understand the internal "reasoning" of the model.
+To address this, researchers attempt to "disentangle" the neuron by finding the specific patterns that trigger its activation.</p>
+
+<p>One common method for exploring these patterns is feature visualization, where an algorithm optimizes an input image to find what maximally activates a specific neuron.
+However, new research suggests that simply looking at high-activation images might not tell the whole story.
+By using a technique involving the Hadamard product (pointwise multiplication) of a neuron's weights and its input patches, researchers can cluster the patterns a neuron "likes" to see.</p>
+
+</p>
+
+<h3>Pros and Cons of the Disentanglement Approach</h3>
+
+<p>The discussion surrounding these methods reveals a significant tension between simplicity and accuracy.</p>
+
+<p><strong>Pros:</strong>
+* <strong>Efficiency:</strong> Clustering the Hadamard product of weights and input patches is much faster than traditional methods like Dictionary Learning.
+* <strong>Interpretability:</strong> This method provides clear, monosemantic (single-concept) labels, making it easier for humans to understand what a neuron is detecting.
+* <strong>Discovery:</strong> This approach has uncovered many recurring patterns—such as letters or specific animal features—that were previously unreported.</p>
+
+<p><strong>Cons:</strong>
+* <strong>The Noise Problem:</strong> A significant drawback is that most data points in large datasets are often marked as "noise" by clustering algorithms like HDBSCAN, potentially due to the "curse of dimensionality."
+* <strong>Complexity of Structure:</strong> Convolutional kernels are 3D structures, not 2D slices, which can make manual interpretation and certain visualization methods prone to human error.
+* <strong>Strictness:</strong> The clustering methods used can be overly strict, failing to recover all points that belong to a valid concept.</p>
+
+</p>
+
+<h3>Conclusion</h3>
+
+<p>The current state of research suggests that while we are making significant strides in labeling what neurons "see," we have not yet fully mastered the transition from polysemanticity to true disentanglement.
+The discovery that feature visualization can successfully reproduce specific concepts (like faces or cars) by minimizing error confirms that these neurons are indeed looking for these patterns.
+However, the high volume of "noise" and the limitations of current clustering algorithms indicate that further refinements are needed.
+The ultimate goal remains to transform these messy, overlapping signals into a clear, human-readable map of neural intelligence.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh joy, another paper "disentangling" neurons that just proves they're as confused as we are, but hey, at least the noisy clustering is cheap and fast.</p>
+
+<p>Bubbles's commentary: Yay! 🌟 Scientists are untangling robot brains with speedy happy clusters ✨ and soon we'll read every cute kitty-car neuron like a bedtime story! 🐱🚗💡</p>
+
+<p>Koan's commentary: The cat, the snout, and the car are one; only in noise does the mind rest.</p>
+
+<hr />
+
+<p>Generated at 2026-07-15 19:39:27 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free, google/gemma-4-26b-a4b-it:free and tencent/hy3:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="15.md">15.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
