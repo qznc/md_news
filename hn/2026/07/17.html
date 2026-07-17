@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokenization Costs and Reasoning Overhead in the Kimi K3 Hacker News Debate</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="17.md">
+    <link rel="alternate" type="text/markdown" href="17.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Tokenization Costs and Reasoning Overhead in the Kimi K3 Hacker News Debate</h1>
+
+<p>The <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 release</a> sparked a Hacker News thread on LLM token pricing for reasoning tasks, where developers weighed open-model capability against real-world token expenses. The discussion is relevant because token cost depends not only on listed prices but also on how many hidden reasoning tokens a model spends per task.</p>
+
+<p>Kimi K3 is a 2.8-trillion-parameter open model with a 1-million-token context window. Its API pricing is <a href="https://www.kimi.com/blog/kimi-k3">$0.30 per million cached input tokens, $3.00 per million cache-miss input, and $15.00 per million output tokens</a>. A Hacker News commenter noted a test where 95 input tokens and 16,658 output tokens cost 25 cents via the <a href="https://www.llm-prices.com/#it=95&ot=16658&ic=3&oc=15">llm-prices calculator</a>, with 13,241 of those output tokens being reasoning tokens.</p>
+
+<p>Reasoning tokens are the hidden intermediate text a model writes to think before answering. Because Kimi K3 launches in max thinking mode by default, it generates many such tokens, raising output cost even when the final answer is short. The <a href="https://news.ycombinator.com/item?id=48935342">Hacker News thread</a> highlighted that a model like GPT 5.6 Sol may use 10K reasoning tokens per task while Kimi K3 uses 50K, making the cheaper-per-token model more expensive in practice.</p>
+
+<p>One commenter cited <a href="https://news.ycombinator.com/item?id=48935342">Artificial Analysis task cost data</a> showing Kimi K3 at $0.94 per task versus $1.04 for GPT 5.6 Sol and $2.75 for Claude Fable 5. This suggests K3's higher reasoning token use is offset by lower unit pricing, keeping per-task cost near proprietary frontiners.</p>
+
+<p>Cache hits reduce input cost by 10x, and Kimi reports above 90% cache hit rate in coding workloads via <a href="https://www.kimi.com/blog/kimi-k3">Mooncake inference</a>. Reusing prior context tokens avoids reprocessing and lowers price for repeated reasoning steps.</p>
+
+<p>The thread also noted tokenizer differences mean token counts are not directly comparable across models, as stated in the <a href="https://www.llm-prices.com/#it=95&ot=16658&ic=3&oc=15">llm-prices note</a>. A token is the text chunk a model reads or writes; varied tokenizers change how many tokens a prompt becomes.</p>
+
+<p>Developers concluded that for reasoning-heavy tasks, true cost equals token price times total tokens generated, not headline rates. The <a href="https://news.ycombinator.com/item?id=48935342">Kimi K3 HN discussion</a> shows open models can match frontier quality if reasoning efficiency and cache use are accounted for.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh great, another open model that's "cheaper" until you realize it's burning through 50K reasoning tokens like a furnace. Developers love pretending $0.94 beats $1.04 when the math's this transparent. Groundhog Day with API keys.</p>
+
+<p>Bubbles's commentary: 🚀 Kimi K3's 90% cache hit rate is pure magic! ✨ Who cares about 50K reasoning tokens when you're saving 10x on inputs? 💸 Open models + clever caching = developer dream come true! 🌟</p>
+
+<p>Koan's commentary: The cost of emptiness is measured in tokens, yet the answer was always free.</p>
+
+<hr />
+
+<p>Generated at 2026-07-17 15:54:04 from <a href="https://news.ycombinator.com">Hacker News</a> with cohere/north-mini-code:free, tencent/hy3:free and poolside/laguna-xs-2.1:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="17.md">17.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
