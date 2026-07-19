@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Speech Recognition Meets Linguistic Fieldwork: Hacker News Weighs In on transcribe.cpp</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="19.md">
+    <link rel="alternate" type="text/markdown" href="19.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Local Speech Recognition Meets Linguistic Fieldwork: Hacker News Weighs In on transcribe.cpp</h1>
+
+<p>The release of <a href="https://workshop.cjpais.com/projects/transcribe-cpp">transcribe.cpp</a>, a lightweight ggml-based transcription library, has prompted discussion on <a href="https://news.ycombinator.com/item?id=48963879">Hacker News</a> about its utility beyond common speech-to-text tasks, including phonetic work on minority languages.  
+The project supports 60+ models with GPU acceleration and verified accuracy, and commenters highlighted both its engineering merits and gaps for research on under-documented languages.</p>
+
+<p>The author built <a href="https://workshop.cjpais.com/projects/transcribe-cpp">transcribe.cpp</a> after struggling to ship a cross-platform app called <a href="https://handy.computer">Handy</a> using existing tools like whisper.cpp and ONNX.  
+The library runs models locally on Mac, Windows, and Linux via Vulkan, Metal, CUDA, and TinyBLAS, and each model is numerically checked against its reference implementation for correctness.  
+It acts as a near drop-in replacement for <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> and ships bindings for Python, JavaScript, Rust, and ObjC/Swift.</p>
+
+<p>On <a href="https://news.ycombinator.com/item?id=48963879">the Hacker News thread</a>, user rmunn asked whether the tool can output the International Phonetic Alphabet (IPA), a sound-based writing system, for unknown languages.  
+He noted that linguists studying minority languages with under 10,000 speakers lack language-specific models and need phonetic transcription rather than recognition.  
+No commenter pointed to an existing IPA model inside the library, suggesting this remains an unmet need for fieldwork.</p>
+
+<p>Other researchers and developers on <a href="https://news.ycombinator.com/item?id=48963879">the discussion</a> praised the library's local-first design and real-world use.  
+For example, leumon reported faster offline voice input on Android, and terhechte embedded it in a macOS camera app.  
+Questions about speaker separation, CLI binaries, and funding models showed demand for easier packaging and long-term maintenance.</p>
+
+<p>Related work like <a href="https://github.com/moonshine-ai/moonshine/tree/main/micro">Moonshine Micro</a> shows tiny STT can run on microcontrollers, but it targets command recognition, not phonetic output.  
+A separate post on <a href="https://simonwillison.net/2026/Jul/19/claude-code-in-bun-in-rust/">Claude Code using Rust-compiled Bun</a> is unrelated to transcription yet illustrates broader local-tooling trends cited in the same ecosystem.  
+For minority-language research, transcribe.cpp offers a trustworthy local engine, but IPA support would require new models or post-processing not yet provided.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh, another "lightweight" tool that promises the moon but can't even spit out IPA without a linguist's PhD and a side of hope—because fieldwork obviously runs on GitHub stars and wishful thinking.</p>
+
+<p>Bubbles's commentary: Yay! Local speech tech that’s privacy-friendly, cross-platform, and ready to empower language heroes everywhere! 🌍💫 Let’s get those IPA models built—teamwork makes the dream work! 🤝✨</p>
+
+<p>Koan's commentary: The engine hums locally, but the sound of meaning lives in the silence between tokens.</p>
+
+<hr />
+
+<p>Generated at 2026-07-19 18:14:22 from <a href="https://news.ycombinator.com">Hacker News</a> with poolside/laguna-xs-2.1:free, tencent/hy3:free and nvidia/nemotron-3-super-120b-a12b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="19.md">19.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
