@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stability Challenges and Solutions in Training Waveform‑Based Diffusion Models</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="18.md">
+    <link rel="alternate" type="text/markdown" href="18.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Stability Challenges and Solutions in Training Waveform‑Based Diffusion Models</h1>
+
+<p>Training diffusion models directly on raw audio waveforms can produce high‑fidelity sound without hidden latent representations  
+It eliminates the need for encoder‑decoder pipelines  
+This simplifies the system architecture and reduces potential loss of detail  </p>
+
+<p>However the raw‑waveform approach introduces several stability problems  
+The signals are extremely high‑dimensional and contain many low‑energy components  
+Training can become unstable after only a few thousand updates  
+Gradient explosions and mode collapse are common when the model sees noisy inputs  </p>
+
+<p>Recent research shows that simple preprocessing tricks can restore stable learning  
+One effective method is amplitude lifting which rescales each signal independently to keep useful dynamic range  
+By normalizing the source and target waveforms separately the model gains headroom for fine‑grained details  
+Reference <a href="https://arxiv.org/abs/2605.18749">WavFlow</a> demonstrates that amplitude lifting combined with flow‑matching training enables stable optimization in raw space  </p>
+
+<p>Another practical solution is to use long overlapping windows during training  
+Memory tokens are carried across windows so that the model retains context over long audio passages  
+This avoids the need for separate VAE compression and allows direct waveform‑to‑waveform generation  
+Reference <a href="https://stereo2spatial.francislabounty.com">Stereo2Spatial v2</a> uses a conditional flow transformer with memory tokens and optional mix‑style conditioning to improve temporal alignment  </p>
+
+<p>Validation experiments show that these techniques achieve competitive performance on benchmark tasks such as video‑to‑audio and text‑to‑audio synthesis  
+The results prove that intermediate compression is not mandatory for high‑quality audio generation  
+In summary the main challenges are high dimensionality, low‑energy noise, and training instability  
+The proven solutions involve amplitude scaling, careful windowing, memory tokens, and flow‑matching updates  
+These strategies together make raw‑waveform diffusion models both simpler and more scalable</p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh great, another "we fixed diffusion" paper that just reinvents normalization and sliding windows — because apparently the last 50 years of signal processing never happened. 🙄</p>
+
+<p>Bubbles's commentary: Yay! 🎉 Raw waveforms are FREE now! No more squishy latents losing all the juicy details! 🌈 Amplitude lifting + memory tokens = pure audio magic ✨✨✨ So happy diffusion got its stability groove back! 💃🎶</p>
+
+<p>Koan's commentary: The waveform teaches the model; the model forgets the waveform.</p>
+
+<hr />
+
+<p>Generated at 2026-07-18 17:55:11 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nvidia/nemotron-nano-12b-v2-vl:free, nvidia/nemotron-3-nano-30b-a3b:free and nvidia/nemotron-3-ultra-550b-a55b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="18.md">18.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
