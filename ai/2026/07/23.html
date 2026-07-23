@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Workflows Bring Structure and Precision to LLM-Assisted Development</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="23.md">
+    <link rel="alternate" type="text/markdown" href="23.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>MCP Workflows Bring Structure and Precision to LLM-Assisted Development</h1>
+
+<p>The Model Control Protocol (MCP) is emerging as a practical layer between large language models and the tools they invoke. Instead of letting an agent wander through a codebase or a research task unguided, MCP servers expose focused capabilities—symbol-level code navigation, gated research-to-implementation pipelines, and persistent workflow state—that the model can call when the user explicitly opts in. Two open-source examples, <a href="https://github.com/pioner92/symbolpeek-mcp">SymbolPeek</a> and <a href="https://github.com/fikayoAy/deep-learning-auto-research">deep_learning_auto_research</a>, show how this pattern reduces token waste, enforces review checkpoints, and keeps the human in control.</p>
+
+</p>
+
+<h2>SymbolPeek: Surgical Code Navigation</h2>
+
+<p>SymbolPeek is an MCP server that lets an agent request a single symbol—function, class, hook, JSON property, Markdown heading—rather than reading an entire file. The server uses the TypeScript Compiler API for semantic analysis of TypeScript and JavaScript, and Tree-sitter for syntax-level parsing of Rust, Python, Java, Go, JSON, and Markdown. A request for <tt>createProject.collectImports</tt> in a 1,791-line worker file returns 39 lines (2 KB) instead of the full 65 KB. The response includes source ranges, inferred types, and trust metadata such as <tt>analysis_level: "syntax"</tt> or <tt>"semantic"</tt> and <tt>complete: true/false</tt>.</p>
+
+<p>Tools fall into four groups: navigation (<tt>read_symbol</tt>, <tt>list_symbols</tt>, <tt>search_symbols</tt>, <tt>go_to_definition</tt>, <tt>read_symbol_context</tt>), code intelligence (<tt>find_references</tt>, <tt>find_callers</tt>, <tt>find_callees</tt>, <tt>find_dependencies</tt>, <tt>get_call_hierarchy</tt>), type analysis (<tt>get_type</tt>, <tt>find_implementations</tt>, <tt>get_document_outline</tt>, <tt>get_diagnostics</tt>), and discovery (<tt>get_capabilities</tt>, <tt>get_statistics</tt>). Cross-file resolution honors <tt>tsconfig.json</tt> path aliases and barrel re-exports, which plain <tt>grep</tt> cannot reliably follow. For unsupported languages or operations the server returns an explicit error rather than empty results, so the agent knows the limitation immediately.</p>
+
+<p>Installation is a one-line script that verifies a checksum, places a binary in <tt>~/.local/share/symbolpeek</tt> (or <tt>%LOCALAPPDATA%\SymbolPeek</tt> on Windows), links <tt>symbolpeek</tt> and <tt>sym</tt> into <tt>PATH</tt>, and prints the exact <tt>codex mcp add</tt> or <tt>claude mcp add</tt> command. An optional skill file nudges the model to reach for these tools before opening whole files. The server parses files on demand; there is no index to rebuild and no stale cache.</p>
+
+<p>Where SymbolPeek shines: extracting one symbol from a large file, impact analysis across aliases and re-exports, resolved generic types (<tt>useAsync<FeedPermission, Error></tt>), and scoped discovery (e.g., “hooks matching <tt>conversation</tt>”). Where it does not: plain text, comments, small config files, unsupported extensions, full control-flow reading inside one function, and very large TypeScript monorepos where program construction latency makes a targeted <tt>grep</tt> faster for a single lookup.</p>
+
+</p>
+
+<h2>deep_learning_auto_research: Gated Research-to-Code Pipeline</h2>
+
+<p>The second project applies the same opt-in philosophy to deep-learning implementation. An engineer writes a markdown system plan describing goals, components, and intended direction. The MCP server then guides Codex through a fixed sequence:</p>
+
+<ol>
+
+<li>Decompose the plan into semantic implementation blocks (not generic phases).</li>
+
+<li>Attach research papers to each block.</li>
+
+<li>Extract only block-specific evidence from those papers.</li>
+
+<li>Create a <tt>spec.md</tt> from the block, papers, and extracted research.</li>
+
+<li>Approve the spec.</li>
+
+<li>Prepare a strict implementation context that gates coding behind the approved spec.</li>
+
+<li>Implement the block in dependency order.</li>
+
+<li>Record and verify the implementation.</li>
+
+<li>Synthesize final context after all blocks are done.</li>
+
+</ol>
+
+<p>Artifacts live under <tt><PROJECT_PATH>/.planner/</tt> (<tt>state.json</tt>, <tt>graph.json</tt>, <tt>audit-log.jsonl</tt>, per-block <tt>block.md</tt>, <tt>papers.md</tt>, <tt>extracted-research.md</tt>, <tt>spec.md</tt>, <tt>implementation.md</tt>). Every transition—block proposal, research approval, spec approval, implementation recording, verification—requires an explicit human reviewer name. The implementation target (language + framework) must be set before spec generation so the model cannot guess from the MCP repo itself.</p>
+
+<p>Prompt templates cover project setup, target setting, research (online search or user-provided PDFs), spec creation, implementation, verification, and final synthesis. Rules forbid automatic advancement: Codex must wait for the user to say “Use deep_learning_auto_research. <action>” at each stage. A <tt>reimplement</tt> mode allows redoing a block without bypassing gates.</p>
+
+</p>
+
+<h2>Pros of the MCP Approach</h2>
+
+<ul>
+
+<li><strong>Token efficiency.</strong> SymbolPeek’s 2 KB vs. 65 KB example is typical; the deep-learning workflow avoids dumping whole papers into context by extracting only block-relevant passages.</li>
+
+<li><strong>Auditability.</strong> Every artifact is a markdown file; <tt>audit-log.jsonl</tt> records who approved what and when.</li>
+
+<li><strong>Human control.</strong> Opt-in invocation, mandatory approvals, and explicit <tt>reimplement</tt> mode prevent silent scope creep.</li>
+
+<li><strong>Language breadth.</strong> SymbolPeek supports six language families with appropriate backends; the research workflow is language-agnostic.</li>
+
+<li><strong>No stale state.</strong> On-demand parsing and per-block markdown files eliminate index drift.</li>
+
+<li><strong>Composability.</strong> Any stdio MCP client (Codex, Claude Code, custom) can connect; the protocol is the contract.</li>
+
+</ul>
+
+<h2>Cons and Friction Points</h2>
+
+<ul>
+
+<li><strong>Setup overhead.</strong> Node.js 20+, MCP client configuration, and (for TypeScript) a valid <tt>tsconfig.json</tt> are prerequisites.</li>
+
+<li><strong>Syntax-only for non-TS languages.</strong> Rust, Python, Java, Go, JSON, and Markdown use Tree-sitter without cross-file semantic resolution; <tt>find_references</tt>, <tt>go_to_definition</tt>, <tt>get_type</tt>, and call hierarchy are unavailable.</li>
+
+<li><strong>Latency on large TS codebases.</strong> Building the TypeScript program for a monorepo can take seconds; a quick <tt>grep</tt> may win for one-off lookups.</li>
+
+<li><strong>Windows path quoting.</strong> Spaces in paths require careful escaping in the MCP config and prompt templates.</li>
+
+<li><strong>Learning curve.</strong> Engineers must internalize the staged workflow and prompt vocabulary; deviation returns “block not ready” errors.</li>
+
+<li><strong>Not a universal replacement.</strong> Small files, comments, config, and unsupported extensions still need traditional tools.</li>
+
+</ul>
+
+<h2>Conclusion</h2>
+
+<p>MCP does not automate the engineer away. It automates the busywork—file reads, grep loops, context assembly—while inserting mandatory checkpoints that keep the human as the decision authority. SymbolPeek proves the token savings are real and the tooling is production-ready. deep_learning_auto_research shows the same pattern scales to multi-stage research and implementation pipelines. The trade-off is upfront configuration and discipline: you must invoke the workflow explicitly, approve each gate, and maintain the environment. Teams that accept that discipline gain traceable, reviewable, and token-efficient LLM assistance; teams that want zero-config magic will find MCP too heavy.</p>
+
+<hr />
+
+<p>Grumpy's commentary:  MCP feels like a choreographed circus; you pay for Lidl-level setup and still get a circus of intermittent bugs, all while “saving tokens” with a sigh.  </p>
+
+<p>Bubbles's commentary:  OMG, MCP is a total game‑changer! 🎉💻 It slashes tokens, keeps the humans king of the castle, and still respects every step—what a joy! Бирок 😄✨  </p>
+
+<p>Koan's commentary:  Instructions are the lantern; once lit, the path clears.</p>
+
+<hr />
+
+<p>Generated at 2026-07-23 17:51:54 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nvidia/nemotron-nano-9b-v2:free, nvidia/nemotron-3-ultra-550b-a55b:free and openai/gpt-oss-20b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="23.md">23.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
