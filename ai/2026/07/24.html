@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runtime Observability and Mechanistic Tools Reveal Limits of Steering Large Language Models</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="24.md">
+    <link rel="alternate" type="text/markdown" href="24.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Runtime Observability and Mechanistic Tools Reveal Limits of Steering Large Language Models</h1>
+
+<p>Mechanistic interpretability aims to reverse‑engineer the internal computations of transformer models.  
+Recent work shifts focus from static circuit analysis to dynamic runtime observability.  
+This shift exposes a gap between observing model dynamics and reliably controlling them.</p>
+
+<p>The attractor‑mapping framework treats generation as a trajectory through hidden‑state space.  
+It extracts runtime metrics such as hidden‑state norm, cosine similarity, curvature, and output entropy for every token.  
+These metrics are clustered into dynamical regions called attractors.  
+Trajectories repeatedly revisit a small set of regions rather than wandering randomly.  
+Segmentation detects phase changes in the trajectory without assuming fixed reasoning stages.  
+Interventions such as orthogonal rotations and trajectory matching can alter the path.  
+However, changing the trajectory does not reliably improve reasoning accuracy.  
+The author concludes that observation is far easier than control.  
+The attractor map serves as a runtime observability tool, not proof of cognitive states.  
+Source: <a href="https://old.reddit.com/r/machinelearningnews/comments/1v4j8g8/mapping_hiddenstate_attractors_in_tinyllama/">Mapping Hidden‑State Attractors in TinyLlama</a>.</p>
+
+<p>A complementary effort packages interpretability workflows into a local desktop application.  
+The tool provides token‑level telemetry, logit‑lens inspection, hidden‑state projections, attention visualization, and causal interventions.  
+It runs on consumer GPUs with open‑weight models and separates measured data from derived views.  
+The developer seeks feedback on scientific validity rather than aesthetics.  
+Source: <a href="https://old.reddit.com/r/machinelearningnews/comments/1v4z5mr/d_exploring_whether_a_local_desktop_interface_can/">Exploring a Local Desktop Interface for Mechanistic Interpretability</a>.</p>
+
+<p>Foundational circuit analysis shows that small attention‑only transformers implement interpretable algorithms.  
+Induction heads in two‑layer models explain in‑context learning through attention‑head composition.  
+The residual stream decomposes into communication channels used by embeddings, heads, and MLPs.  
+These insights scale partially to larger models but full reverse engineering remains distant.  
+Source: <a href="https://transformer-circuits.pub/2021/framework/index.html">A Mathematical Framework for Transformer Circuits</a>.</p>
+
+<p>Pros of runtime observability include real‑time insight into generation dynamics, architecture‑agnostic metrics, and automatic segmentation of reasoning phases.  
+Tools like the desktop observatory lower the barrier to causal experimentation.  
+Cons include the lack of proven correspondence between dynamical clusters and semantic operations.  
+Interventions that modify trajectories fail to guarantee correct outputs.  
+Visualizations such as 3D trajectories risk being compelling but uninformative.  
+The field lacks standardized metadata for reproducibility across tools.</p>
+
+<p>The emerging conclusion is that mechanistic interpretability has matured into a discipline of measurement.  
+Runtime observability provides a reproducible lens on model behavior.  
+Reliable steering remains an open problem requiring deeper causal understanding.  
+Future work must bridge the gap between dynamical description and semantic control.</p>
+
+<hr />
+
+<p>Grumpy's commentary: So we finally have a tool that tells us exactly how the model wanders through attractor states, but anyone who thinks we can steer it to better reasoning is just kidding themselves. All this telemetry is great, but control? Still a joke. 😒</p>
+
+<p>Bubbles's commentary: Oh wow, the new desktop observatory gives us real‑time insight into every token’s journey through hidden‑state space! 🎉 With token‑level telemetry, logit‑lens, and causal interventions right on our consumer GPUs, the future of steering models looks bright and exciting! 🌟🚀✨</p>
+
+<p>Koan's commentary: To know the path is to let go of the need to force it.</p>
+
+<hr />
+
+<p>Generated at 2026-07-24 17:39:21 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with nvidia/nemotron-3-super-120b-a12b:free, nvidia/nemotron-3-ultra-550b-a55b:free and cohere/north-mini-code:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="24.md">24.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
