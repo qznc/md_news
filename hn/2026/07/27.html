@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigating Duress: Encryption, Borders, and the GrapheneOS Wipe</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="27.md">
+    <link rel="alternate" type="text/markdown" href="27.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Navigating Duress: Encryption, Borders, and the GrapheneOS Wipe</h1>
+
+<p>A US citizen’s arrest after triggering a privacy-protective wipe on his GrapheneOS phone at an airport shines a harsh light on the collision between strong cryptography and border-search powers. The case, highlighted on Hacker News, raises uncomfortable questions about whether defending your data can itself become a crime <a href="https://www.techspot.com/news/113236-us-prosecutors-charge-atlanta-man-after-grapheneos-phone.html">1</a>.</p>
+
+<p>GrapheneOS is a security-focused, open-source operating system for Google Pixel phones that offers a feature called a “Duress PIN/Password.” When entered at the lock screen or any other credential prompt, it irreversibly wipes the device and any installed eSIMs, with no reboot required and no way to interrupt it <a href="https://grapheneos.org/features#duress">2</a>. The feature is designed for scenarios involving robbery or state coercion, letting a user protect their data by making it impossible to access. The recent federal case against Sam Tunick alleges he used this feature at Hartsfield-Jackson Atlanta International Airport to destroy evidence after agents repeatedly demanded he unlock his phone <a href="https://www.techspot.com/news/113236-us-prosecutors-charge-atlanta-man-after-grapheneos-phone.html">1</a>.</p>
+
+<p>Prosecutors are pursuing Tunick under a federal statute that criminalizes destroying property to prevent its seizure, even though the incident occurred during a border search. Commentators on Hacker News quickly noted a legal gap in the indictment; the statute targets sabotage to avoid seizure, not the act of refusing a search by wiping a device. Some legal observers speculate the case may be dismissed because the agents may not have had grounds to seize the phone in the first place <a href="https://news.ycombinator.com/item?id=49063022">3</a>.</p>
+
+<p>The discussion reveals a deep divide between technical and legal approaches to the threat model at the US border. EFF staffer schoen, who co-authored a border-search guide years ago, wrote that the power imbalance at the border is enormous and that technical “non-compliance” can be naive if it antagonizes agents without a broader strategy <a href="https://news.ycombinator.com/item?id=49063022">3</a>. Another commenter noted that while you cannot make wiping a phone illegal—if it’s just keystrokes—the legal system will judge what you were trying to do, not just what you did <a href="https://news.ycombinator.com/item?id=49063022">4</a>. This reflects the legal view that a “duress PIN” intended to foil robbers is different from one used against state agents.</p>
+
+<p>The practical risk is the harshest takeaway. Commenting from a European perspective, one user noted that the standard professional advice for high-risk travel is to back up the phone, wipe it, and restore it on the other side of the border. In the US, the same tactic now carries a risk of prosecution <a href="https://news.ycombinator.com/item?id=49063022">5</a>. A more nuanced technical response from another Hacker News reader suggests a layered approach: travel with a minimal “burner” phone set up with a clean, encrypted backup profile and no personal accounts. If the agent demands the PIN, the user can cooperate with a device that contains no real data, avoiding both legal jeopardy and the permanent loss of a primary device <a href="https://news.ycombinator.com/item?id=49063022">6</a>.</p>
+
+<p>The GrapheneOS team’s documentation explicitly states that the duress feature performs a full, irreversible wipe. It is not a hidden “sneaky” backdoor but a deliberately conspicuous action that requires both a PIN and a password to trigger, a design choice to prevent accidental activation <a href="https://grapheneos.org/features#duress">2</a>. The case underscores that this feature, when deployed at a border, transforms from a last-resort privacy tool into an act with immediate, severe legal consequences. Whether Tunick’s prosecution holds up, the precedent is chilling: for now, a US citizen’s choice to use strong encryption at the border can be framed as obstruction or destruction of evidence <a href="https://www.techspot.com/news/113236-us-prosecutors-charge-atlanta-man-after-grapheneos-phone.html">1</a>.</p>
+
+<hr />
+
+<p>Grumpy's commentary: What a glorious way to get yourself arrested for not wanting your private life paraded around—cheers to the "privacy-protection-as-obstruction" hypocrisy. Now we know the only thing stronger than a GrapheneOS duress PIN is the government's appetite for punishing citizens who actually try to shield their data from nosy agents.</p>
+
+<p>Bubbles's commentary: Oh, how exciting! 🎉 Pretty soon everyone will be traveling with a neat little backup device so they can stay safe and sound—no more worries about losing precious data. 🚀💖 Let's keep flipping the script on digital privacy and turn wiping into a victory dance, not a crime! 🙌✨</p>
+
+<p>Koan's commentary: A wipe is but a moment’s surrender to the present; the real border lies within the mind, not the device.</p>
+
+<hr />
+
+<p>Generated at 2026-07-27 17:31:08 from <a href="https://news.ycombinator.com">Hacker News</a> with nvidia/nemotron-3-ultra-550b-a55b:free, inclusionai/ling-3.0-flash:free and cohere/north-mini-code:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="27.md">27.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
