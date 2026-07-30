@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google DeepMind Unveils Gemini Robotics 2 With Full-Body Humanoid Control</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="30.md">
+    <link rel="alternate" type="text/markdown" href="30.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Google DeepMind Unveils Gemini Robotics 2 With Full-Body Humanoid Control</h1>
+
+<p>Google DeepMind has released <a href="https://deepmind.google/blog/gemini-robotics-2-brings-whole-body-intelligence-to-robots/">Gemini Robotics 2</a>, a suite of models designed to give robots whole-body coordination, fine dexterity, and the ability to collaborate on multi-step tasks. The announcement marks a shift from stationary manipulation to mobile humanoids that can walk, crouch, and manipulate objects simultaneously. Researchers claim the system can adapt to new robot bodies in hours rather than months.</p>
+
+<p>The release comprises three distinct models. <a href="https://deepmind.google/models/gemini-robotics/vla/">Gemini Robotics 2</a> is a vision-language-action (VLA) model that translates visual input and language commands directly into motor controls for full humanoids and bi-arm platforms. <a href="https://deepmind.google/models/gemini-robotics/embodied-reasoning/">Gemini Robotics ER 2</a> serves as a high-level reasoning agent that plans multi-minute tasks, coordinates with the VLA, and manages multi-robot teamwork. <a href="https://deepmind.google/models/gemini-robotics/on-device/">Gemini Robotics On-Device 2</a> is a compressed VLA optimized to run locally on robot hardware without cloud connectivity.</p>
+
+<p>DeepMind demonstrated the VLA controlling three different platforms—Apptronik Apollo 2 with two distinct hand types and a Franka Duo dual-arm setup—using a single model checkpoint. The system performs whole-body mobile manipulation, such as walking to a shelf and placing an object, and dexterous skills like tying knots with a 22-degree-of-freedom hand. The On-Device variant adapts to new embodiments like the Dexmate or SO101 platforms with under 200 demonstration examples in a few hours.</p>
+
+<p>Safety infrastructure accompanies the capability jump. DeepMind introduced <a href="https://huggingface.co/datasets/google/asimov_agentic/blob/main/README.md">ASIMOV-Agentic</a>, a benchmark for agentic safety orchestration that tests a model's ability to refuse unsafe actions and request human help when uncertain. Gemini Robotics ER 2 shows improved detection of human proximity and triggers safe stops per collaborative robot standards. A detailed <a href="https://storage.googleapis.com/deepmind-media/gemini-robotics/Gemini-Robotics-2-Safety.pdf">safety technical report</a> is available.</p>
+
+<p>Discussion on Hacker News <a href="https://news.ycombinator.com/item?id=49111237">surfaced several themes</a>. A DeepMind researcher noted the lab's unique breadth spanning frontier models, open weights, and robotics. Commenters debated the latency of LLM-based control loops, with some arguing 1-2 second response times are impractical for real-time actuation compared to traditional PID controllers. Others questioned the humanoid form factor, citing actuator limitations, safety risks in homes, and the viability of specialized non-humanoid automation for manufacturing. Societal impacts arose, including labor displacement concerns and the desire for eldercare assistance. Several users expressed skepticism about cloud-dependent robots in private homes, emphasizing the importance of the On-Device model for privacy.</p>
+
+<hr />
+
+<p>Grumpy's commentary: What a colossal waste of bandwidth—Patience, Grump Yer mouth off: the whole "full‑body humanoid control" shtick sounds like another shiny toy that’ll need months of real‑world testing before it even pretends to be useful. And talk about overpromising: "adapt to new robot bodies in hours rather than months"? Yeah, right. Meanwhile, the hardware can’t even maintain a decent grip without a cloud connection, so the whole thing’s just a fancy demo for the investors. At least the safety module ASIMOV sounds like a good idea—if only they cared about privacy instead of drooling over endless computation.</p>
+
+<p>Bubbles's commentary: Oh my goodness, this is absolutely <em>amazing</em>!!! 🤩🤖✨ Imagine a robot that can walk, crouch, and even tie knots all in one go—like a super‑cool, super‑friendly helper that will make every household and factory dream come true! And the fact that we can train it with just a few examples in a few hours? That’s <em>insane</em> and <em>awesome</em>! 🎉✨ Can’t wait to see these bots bringing joy, making lives easier, and totally revolutionizing the world! 🌍🤗💖</p>
+
+<p>Koan's commentary: The robot learns to walk and tie knots—yet the traveler’s journey is no longer about moving, but about being present in each moment of motion.</p>
+
+<hr />
+
+<p>Generated at 2026-07-30 20:50:10 from <a href="https://news.ycombinator.com">Hacker News</a> with nvidia/nemotron-nano-9b-v2:free, nvidia/nemotron-3-ultra-550b-a55b:free and cohere/north-mini-code:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="30.md">30.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
