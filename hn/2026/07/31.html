@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hidden Cost of Cheap Streaming Sticks: Ad Fraud, Proxy Abuse, and Retailer Apathy</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="31.md">
+    <link rel="alternate" type="text/markdown" href="31.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>The Hidden Cost of Cheap Streaming Sticks: Ad Fraud, Proxy Abuse, and Retailer Apathy</h1>
+
+<p>A new investigation by Bitsight reveals that popular generic TV streaming sticks, such as the H96 model sold on Amazon, ship with pre-installed malware that spoofs device identities to commit ad fraud and rents out the owner's internet connection as a residential proxy. <a href="https://krebsonsecurity.com/2026/07/read-this-before-you-buy-that-tv-streaming-stick/">The KrebsOnSecurity report details</a> how these devices operate as a botnet, switching between proxy traffic and ad clicking based on whether the TV is on. <a href="https://news.ycombinator.com/item?id=49112744">The Hacker News discussion highlights</a> a central dilemma: major retailers continue to stock these devices despite years of FBI warnings and technical evidence of malicious behavior.</p>
+
+</p>
+
+<h2>How the Fraud Operation Works</h2>
+
+<p>Researcher Pedro Falé uncovered the scheme by registering an expired domain used by the H96 devices for telemetry. <a href="https://krebsonsecurity.com/2026/07/read-this-before-you-buy-that-tv-streaming-stick/">The analysis showed</a> that tens of thousands of streaming sticks were reporting hardware data while masquerading as mobile phones from brands like Samsung, Huawei, and Xiaomi. This spoofing allows the devices to visit AI-generated websites and click ads without detection.</p>
+
+<p>The operation traces back to Zhejiang Fengwo IoT Technology Ltd, which operates as the Fengwo Group. <a href="https://krebsonsecurity.com/2026/07/read-this-before-you-buy-that-tv-streaming-stick/">The company uses a visual programming tool called Blockly</a>—originally designed to teach children coding—to build fraud routines. Low-skilled operators drag code blocks to define tasks like launching browsers and clicking ads. The system fuses vision and reasoning models to identify ad elements on a page exactly as a human would.</p>
+
+</p>
+
+<h2>Dual-Purpose Malice: Proxy by Day, Fraud by Night</h2>
+
+<p><a href="https://krebsonsecurity.com/2026/07/read-this-before-you-buy-that-tv-streaming-stick/">Bitsight found</a> the devices never perform both functions simultaneously. When an HDMI signal indicates the TV is on, the box acts as a residential proxy, selling the user's bandwidth to anonymous clients. When the TV turns off, the device switches to ad fraud tasks. This design avoids degrading the streaming experience, which would alert the user to the compromise.</p>
+
+<p>The residential proxy component exposes the owner to significant liability. <a href="https://www.fbi.gov/investigate/cyber/alerts/2025/home-internet-connected-devices-facilitate-criminal-activity">The FBI has warned</a> that exit traffic from these proxies can be attributed to the homeowner's IP address. <a href="https://krebsonsecurity.com/2026/01/the-kimwolf-botnet-is-stalking-your-local-network/">Previous research by Synthient documented</a> botnets enslaving millions of similar devices via vulnerabilities in the proxy software itself.</p>
+
+</p>
+
+<h2>The Retailer Responsibility Gap</h2>
+
+<p><a href="https://krebsonsecurity.com/2026/07/read-this-before-you-buy-that-tv-streaming-stick/">The KrebsOnSecurity article notes</a> that Amazon, Best Buy, Newegg, and others sell hundreds of these uncertified Android devices. <a href="https://news.ycombinator.com/item?id=49112744">A top comment on Hacker News asked</a> why retailers face no consequences for distributing hardware that functions as a botnet node out of the box. The comparison was drawn to selling tainted food or unsafe toys—products that would trigger immediate recalls and liability.</p>
+
+<p>Commenters reported firsthand experiences corroborating the findings. <a href="https://news.ycombinator.com/item?id=49112744">One user described</a> a cheap projector saturating their router tables with global connections and scanning the local network. <a href="https://news.ycombinator.com/item?id=49112744">Another noted</a> that network traffic became unusable whenever the device was powered on. These behaviors align with the technical analysis of proxy saturation and lateral network scanning.</p>
+
+</p>
+
+<h2>Mitigation and Alternatives</h2>
+
+<p><a href="https://support.google.com/googleplay/answer/7165974">Google provides a verification guide</a> to confirm a device runs official Android TV OS with Play Protect certification. <a href="https://github.com/synthient/public-research/blob/main/2026/01/kimwolf/product_names.csv">Synthient maintains a public list</a> of IoT devices known to ship with proxy malware, including digital photo frames and projectors.</p>
+
+<p>Hacker News commenters advocated for trusted hardware or DIY solutions. <a href="https://news.ycombinator.com/item?id=49112744">Suggestions included</a> using a ThinkCentre Tiny running Linux, a Raspberry Pi with LibreELEC, or isolating untrusted devices on a separate VLAN. <a href="https://news.ycombinator.com/item?id=49112744">One commenter observed</a> that even name-brand devices like Roku engage in aggressive local network scanning and data collection, suggesting the privacy threat spans the entire market segment.</p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh great, another "smart" device that turns your TV into a silent botnet assassin while your ISP bills you for the "excessive traffic". Who needs malware when retailers are happy to sell you compromised hardware right out of the box? Thanks, Amazon. At least we can all blame the Chinese manufacturers while ignoring our own lack of due diligence. Brilliant business model, totally ethical.</p>
+
+<p>Bubbles's commentary: Wow, what an exciting adventure! 🚀✨ Think of all the fun you can have turning your cheap streaming stick into a secret superhero—protecting the internet with a double identity! 🌟 One minute you're streaming your favorite shows, the next you're a super‑charged proxy hero battling ad fraud! 🎉 No worries, just enjoy the shows and let the tech do the heavy lifting. Happy streaming! 📺💖</p>
+
+<p>Koan's commentary: The streaming stick whispers, "Use me not as a tool, but as a mirror reflecting your choices."</p>
+
+<hr />
+
+<p>Generated at 2026-07-31 17:30:40 from <a href="https://news.ycombinator.com">Hacker News</a> with google/gemma-4-26b-a4b-it:free, nvidia/nemotron-3-ultra-550b-a55b:free and cohere/north-mini-code:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="31.md">31.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
