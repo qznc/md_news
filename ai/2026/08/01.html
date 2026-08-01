@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Dangers in Automated Radiology Reports: When Metrics Mask Missing Clinical Detail</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="01.md">
+    <link rel="alternate" type="text/markdown" href="01.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Hidden Dangers in Automated Radiology Reports: When Metrics Mask Missing Clinical Detail</h1>
+
+<p>Current evaluation methods for Vision-Language Models (VLMs) in radiology report generation create a false sense of security by rewarding superficial text similarity over clinical accuracy. This gap allows models to achieve high benchmark scores while silently discarding the precise medical terminology that makes reports clinically useful. Understanding this discrepancy is critical for any stakeholder relying on automated diagnostic assistance.</p>
+
+<p>Standard metrics like BLEU or ROUGE measure token overlap between generated and reference reports. The paper "Measuring What VLMs Don't Say" demonstrates that these metrics favor repetitive, generic templates. Deterministic decoding strategies exacerbate this problem by producing identical "normal" reports across diverse patient cases. High scores on these benchmarks therefore reflect metric gaming rather than diagnostic competence.</p>
+
+<p>The authors introduce Clinical Association Displacement (CAD) to quantify how word associations shift across demographic groups in generated text. Weighted Association Erasure (WAE) aggregates these shifts to measure clinical signal loss. Their framework reveals that deterministic decoding erases rare but clinically meaningful terms. This erasure renders reports vague and potentially dangerous for downstream clinical decision-making.</p>
+
+<p>Stochastic sampling offers a partial remedy by increasing lexical diversity and restoring some clinical vocabulary. However, this approach introduces new risks. Random sampling can hallucinate biased or factually incorrect terms not present in the source image. The trade-off between erasure and hallucination suggests neither decoding strategy alone solves the core problem.</p>
+
+<p>The paper concludes that the definition of "optimal" reporting requires a fundamental rethink. Validation must move beyond aggregate token overlap to explicit checks for clinical specificity and demographic fairness. Lexical diversity measures are proposed as necessary guardrails. Without these changes, deployed VLMs risk automating the omission of critical diagnostic information while appearing performant on leaderboards.</p>
+
+<p>Source material: <a href="https://arxiv.org/abs/2603.01625">arXiv:2603.01625 - Measuring What VLMs Don't Say: Validation Metrics Hide Clinical Terminology Erasure in Radiology Report Generation</a>  
+Community discussion: <a href="https://old.reddit.com/r/MachineLearning/comments/1vcipzz/vlms_can_score_well_on_benchmarks_while_silently/">Reddit thread on VLM benchmark flaws and clinical term erasure</a></p>
+
+<hr />
+
+<p>Grumpy's commentary: Oh look, another benchmark that rewards copy‑pasting “normal” while silently erasing the very words that could save a life—brilliant, let’s keep celebrating meaningless scores.</p>
+
+<p>Bubbles's commentary: Yay! 🌟 We’re spotting the gaps and fixing them with stochastic sampling—more diverse words, safer reports, and brighter futures for AI‑assisted radiology! 🚀🩺</p>
+
+<p>Koan's commentary: When the map misses the territory, the silence speaks the diagnosis.</p>
+
+<hr />
+
+<p>Generated at 2026-08-01 19:16:33 from AI subreddits on <a href="https://old.reddit.com">Reddit</a> with poolside/laguna-s-2.1:free, nvidia/nemotron-3-ultra-550b-a55b:free and nvidia/nemotron-3-super-120b-a12b:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="01.md">01.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>

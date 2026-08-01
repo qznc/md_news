@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevator Inefficiencies: Why Algorithms Matter for Your Daily Commute</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="01.md">
+    <link rel="alternate" type="text/markdown" href="01.md" title="Original Markdown source">
+</head>
+<body>
+
+<h1>Elevator Inefficiencies: Why Algorithms Matter for Your Daily Commute</h1>
+
+<p>The frustration of waiting endlessly for an elevator is a shared human experience, yet the systems behind these delays are remarkably complex and often riddled with hidden inefficiencies. This article explores how outdated or poorly optimized elevator algorithms can lead to unnecessary wait times, drawing on insights from real-world discussions and technical analyses. For something as mundane as vertical transport, the interplay of logic and engineering reveals fascinating opportunities for improvement.  </p>
+
+<p><strong>The Legacy of Simple Algorithms</strong>  
+Elevator systems have long relied on basic algorithms like SCAN and LOOK, which were developed decades ago. The SCAN algorithm moves elevators linearly from basement to top floor and back, while LOOK improves this by reversing direction only when needed. However, these methods prioritize simplicity over adaptability. In the <em>john.fun/elevators</em> article, the LOOK algorithm’s rigid structure becomes a liability during peak traffic, such as morning rushes in office buildings, where wait times spike due to inefficiencies in handling concentrated demands.  </p>
+
+<p><strong>The Rise of Smarter Systems: RSR and Beyond</strong>  
+Modern systems like Otis’ RSR algorithm introduce nuanced optimizations. RSR dynamically scores elevators based on estimated time of arrival, passenger load, and directional alignment. For instance, it penalizes elevators already heading to a crowded floor or rewards those idle near a call. This adaptability reduces wait times by ~15% compared to LOOK in high-traffic scenarios, as highlighted in the same source. However, RSR’s success isn’t universal. In smaller buildings or low-flow situations, simpler algorithms may perform better, illustrating the need for context-aware solutions.  </p>
+
+<p><strong>Destination Dispatch: More Information, Less Flexibility?</strong>  
+A counterintuitive twist emerges with Destination Dispatch (DD), where kiosks direct users to elevators based on their exact destination. While DD provides precise data, it often backfires. The <em>john.fun/elevators</em> analysis found DD could worsen waits because it locks passengers into specific elevators, preventing real-time re-optimization. HN commenter <em>omoikane</em> noted that in practice, DD’s rigid routing fails to adapt to dynamic conditions, like sudden crowd surges or elevator delays, making it less effective than manual button presses in most cases.  </p>
+
+<p><strong>Real-World Problems: Full Elevators and Human Behavior</strong>  
+HN discussions reveal systemic flaws beyond algorithms. Commenter <em>theodorejb</em> described a post-conference nightmare: a full elevator repeatedly stopping at empty floors, wasting time while passengers couldn’t board. Similarly, <em>woeh</em> shared a 30-minute wait in a skyscraper during a weekend rush, where elevators were perpetually overloaded. These anecdotes underscore flaws like inability to skip floors when full or inefficient traffic balancing. Human factors also play a role: commenter <em>olex</em> lamented users pressing both “up” and “down” buttons, creating unnecessary stops and delays.  </p>
+
+<p><strong>Toward Optimization: Evolutionary Algorithms and Preemptive Strategies</strong>  
+The potential for algorithmic upgrades is significant. Commenter <em>MostlyStable</em> questioned whether evolutionary algorithms could evolve superior strategies, while <em>largeb</em>: suggested preemptive positioning—moving elevators based on predicted demand—might reduce wear and wait times. Venture capitalist <em>ragner3</em> even proposed simulating and iteratively refining these systems, noting that today’s elevators lack the computational resources historically used in building simulations.  </p>
+
+<p><strong>Conclusion: Elevators Reflect Our Engineering Challenges</strong>  
+Elevator inefficiencies aren’t just technical quirks—they mirror broader challenges in balancing complexity, adaptability, and user experience. While algorithms like RSR offer progress, real-world constraints (e.g., human behavior, legacy infrastructure) limit their impact. As the <em>john.fun/elevators</em> article concludes, improving elevators isn’t just about smarter code; it’s about rethinking how systems interact with human needs in dynamic environments.  </p>
+
+<ul>
+
+<li><a href="https://john.fun/elevators">john.fun/elevators</a></li>
+
+<li><a href="https://news.ycombinator.com/item?id=49124218">HN: Elevators discussion</a></li>
+
+</ul>
+
+<hr />
+
+<p>Grumpy's commentary: Of course, the elevators still use the same 1970s logic—just add more sensors and call it "smart." Meanwhile, I’ll keep waiting 10 minutes to go up three floors while some algorithm decides my floor isn’t “worth” a stop.  </p>
+
+<p>Bubbles's commentary: Wow, it’s amazing how far we’ve come with RSR and predictive algorithms! 🚀 Even if DD has its quirks, the future is bright—imagine elevators that learn your schedule and glide you to your floor before you even press a button! 🌟✨  </p>
+
+<p>Koan's commentary: The elevator does not move faster by thinking harder; it moves faster by letting go of the floors it cannot carry.</p>
+
+<hr />
+
+<p>Generated at 2026-08-01 19:13:53 from <a href="https://news.ycombinator.com">Hacker News</a> with nvidia/nemotron-3-nano-30b-a3b:free, nvidia/nemotron-nano-9b-v2:free and inclusionai/ling-3.0-flash:free</p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="01.md">01.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
