@@ -11,9 +11,10 @@ from lib.logging import logger
 from lib.summary import (
     format_url_contents,
     gen_footer,
+    gen_models_str,
+    generate_commentaries,
     generate_summary,
     select_topic_and_urls,
-    generate_commentaries,
 )
 from reddit_de import get_de_subreddits_output
 
@@ -46,7 +47,7 @@ Add no further text, explanation, or markdown. Only the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write an engaging German article using Markdown syntax about: {topic}
-Focus on the pros and cons of the Reddit discussion.
+Focus on the pros and cons of the Reddit discussion and if there is a conclusion.
 
 Use the content from these URLs as sources:
 
@@ -187,10 +188,11 @@ def generate_de_summary() -> tuple[str, str, str, str]:
 
 if __name__ == "__main__":
     summary, select_model, summary_model, commentary_model = generate_de_summary()
+    header = gen_models_str(select_model, summary_model, commentary_model)
     footer = gen_footer(
         f"Deutschsprachige Communities auf [Reddit]({REDIT_FRONTPAGE_URL})",
         select_model,
         summary_model,
         commentary_model,
     )
-    print(summary + footer)
+    print(header + summary + footer)

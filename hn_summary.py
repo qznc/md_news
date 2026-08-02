@@ -9,9 +9,10 @@ from hn_frontpage import get_frontpage_output
 from lib.summary import (
     format_url_contents,
     gen_footer,
+    gen_models_str,
+    generate_commentaries,
     generate_summary,
     select_topic_and_urls,
-    generate_commentaries,
 )
 
 HN_FRONTPAGE_URL = "https://news.ycombinator.com"
@@ -137,10 +138,11 @@ def generate_hn_summary() -> tuple[str, str, str, str]:
 
 if __name__ == "__main__":
     summary, select_model, summary_model, commentary_model = generate_hn_summary()
+    header = gen_models_str(select_model, summary_model, commentary_model)
     footer = gen_footer(
         f"[Hacker News]({HN_FRONTPAGE_URL})",
         select_model,
         summary_model,
         commentary_model,
     )
-    print(summary + footer)
+    print(header + summary + footer)

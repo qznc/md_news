@@ -195,23 +195,26 @@ def generate_commentaries(
     raise Exception("No more attempts")
 
 
-def gen_footer(source_info: str, *models: str) -> str:
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+def gen_models_str(*models: str) -> str:
+    """Return a string representation of the models used."""
     unique_models = []
     for m in models:
         if m and m not in unique_models:
             unique_models.append(m)
 
     if len(unique_models) == 1:
-        models_str = f"with {unique_models[0]}"
+        return f"AI-generated with {unique_models[0]}\n\n"
     elif len(unique_models) > 1:
-        models_str = f"with {', '.join(unique_models[:-1])} and {unique_models[-1]}"
+        return f"AI-generated with {', '.join(unique_models[:-1])} and {unique_models[-1]}\n\n"
     else:
-        models_str = ""
+        return ""
+
+
+def gen_footer(source_info: str, *models: str) -> str:
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     return (
         f"\n\n---\n\n"
-        f"Generated at {timestamp} from {source_info} {models_str}\n\n"
+        f"Generated at {timestamp} from {source_info}\n\n"
         f"Licensed under [Creative Commons Zero](https://creativecommons.org/publicdomain/zero/1.0/) (CC0 1.0 Universal)"
     )

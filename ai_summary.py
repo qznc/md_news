@@ -6,9 +6,10 @@ Generate a Markdown article from AI subreddits data using LLM.
 from lib.summary import (
     format_url_contents,
     gen_footer,
+    gen_models_str,
+    generate_commentaries,
     generate_summary,
     select_topic_and_urls,
-    generate_commentaries,
 )
 from reddit_ai import get_ai_subreddits_output
 
@@ -37,7 +38,7 @@ Do NOT include any other text, explanations, or markdown. Just the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write a Markdown article about the topic: {topic}
-Focus on the pros and cons of the discussion.
+Focus on the pros and cons of the discussion and if there is a conclusion.
 
 Use the fetched content from these URLs as your source material:
 
@@ -123,10 +124,11 @@ def generate_ai_summary() -> tuple[str, str, str, str]:
 
 if __name__ == "__main__":
     summary, select_model, summary_model, commentary_model = generate_ai_summary()
+    header = gen_models_str(select_model, summary_model, commentary_model)
     footer = gen_footer(
         f"AI subreddits on [Reddit]({REDIT_FRONTPAGE_URL})",
         select_model,
         summary_model,
         commentary_model,
     )
-    print(summary + footer)
+    print(header + summary + footer)
