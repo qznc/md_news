@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closing the Gap Between Source Intent and Runtime Reality</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="09.md">
+    <link rel="alternate" type="text/markdown" href="09.md" title="Original Markdown source">
+</head>
+<body>
+
+<p>AI-generated with nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free, nvidia/nemotron-3-ultra-550b-a55b:free and nvidia/nemotron-nano-12b-v2-vl:free</p>
+
+</p>
+
+<h1>Closing the Gap Between Source Intent and Runtime Reality</h1>
+
+<p>LLM agents that only read repository source code operate on assumptions about how applications behave.  
+Production incidents often live in the gap between what code should do and what actually happens at runtime.  
+Bridging this gap requires giving agents structured access to running systems while preventing uncontrolled actions.</p>
+
+</p>
+
+<h2>The Observation Problem</h2>
+
+<p>A repository tells an agent what <em>should</em> happen.  
+Runtime tells it what <em>is</em> happening.  
+Containers crash, network connections drop, environment variables go missing, and dependencies become unavailable—none of which appear in source files.</p>
+
+<p><a href="https://old.reddit.com/r/LLMDevs/comments/1vjno2t/what_should_an_llm_agent_observe_before_it_takes/">Insignie</a> argues agents should see what an on-call engineer checks first: process status, recent logs, and recent changes (deploys, config edits, env var updates).  
+<a href="https://old.reddit.com/r/LLMDevs/comments/1vjno2t/what_should_an_llm_agent_observe_before_it_takes/">Soggy_Friendship9023</a> warns that dumping entire log directories into context windows floods tokens with noise.  
+Instead, present <em>diffs</em> between expected and actual state—expected port 5432 open but closed, expected <tt>REDIS_URL</tt> set but missing—and let the agent request specific logs when its hypothesis demands it.</p>
+
+</p>
+
+<h2>The Action Boundary Problem</h2>
+
+<p>Observing is safe; acting is not.  
+Reading a log differs fundamentally from restarting a service, changing configuration, or modifying a database.</p>
+
+<p>One developer <a href="https://old.reddit.com/r/LLMDevs/comments/1vjuwwf/i_asked_for_retries_on_the_api_client_the_agent/">learned this the hard way</a> when an agent added retries to a shared HTTP helper.  
+The change looked correct locally.  
+But the job-creation POST endpoint lacked an idempotency key.  
+Retries turned one job into four, fanning out duplicate webhooks to a staging consumer.  
+CI passed. The diff was short. The damage was downstream.</p>
+
+<p><a href="https://old.reddit.com/r/LLMDevs/comments/1vjuwwf/i_asked_for_retries_on_the_api_client_the_agent/">Enough-Photo9140</a> proposes classifying every operation as <tt>read</tt>, <tt>idempotent write</tt>, <tt>reconcilable write</tt>, or <tt>non-retriable write</tt>.  
+The transport layer defaults mutation retries to <em>off</em>.  
+Callers opt in only with an idempotency key or a read-only reconciliation function.  
+Task plans then allowlist exact operations and targets, with approval bound to that scope fingerprint.</p>
+
+<p><a href="https://old.reddit.com/r/LLMDevs/comments/1vjuwwf/i_asked_for_retries_on_the_api_client_the_agent/">Odd-Attention9340</a> notes that out-of-bounds lists must live in the per-task prompt.  
+Repository documentation becomes invisible after the second sprint.</p>
+
+</p>
+
+<h2>Governance Frameworks</h2>
+
+<p>Several projects formalize these boundaries into layered governance.</p>
+
+<p><strong>Metnos</strong> (<a href="https://old.reddit.com/r/LLMDevs/comments/1vjno2t/what_should_an_llm_agent_observe_before_it_takes/">BenefitGrand8752</a>) structures executor security around three pillars:  
+1. <strong>Digital signature</strong> — verifies origin and integrity of each agent component.  
+2. <strong>Isolation profile (sandbox)</strong> — declares required folders, network, services; enforces strict scope.  
+3. <strong>Operational contract</strong> — single-responsibility tasks, fail-closed error handling, explicit human handoff on ambiguity.</p>
+
+<p><strong>Escapement</strong> (<a href="https://github.com/SiddheshKGupta/Escapement">GitHub</a>) implements a ten-phase runtime: <tt>ORIENT → DISCOVER → RESEARCH → BRAINSTORM → SPECIFY → PLAN → IMPLEMENT → VERIFY → POLISH → RELEASE</tt>.  
+Task tiers (<tt>INFO</tt>, <tt>MICRO</tt>, <tt>MATERIAL</tt>, <tt>PROGRAM</tt>) scale control with consequence.  
+Context is bounded and phase-specific (kernel ≤1,000 words, automatic phase context ≤1,800 words).  
+Capabilities are orchestrated through explicit overlap relations (<tt>SUBSTITUTE</tt>, <tt>COMPLEMENTARY</tt>, <tt>SEQUENTIAL</tt>).  
+External resources (67 catalogued) require approval before adoption.  
+Verification produces structured evidence; critical failures cannot become <tt>PASS</tt>.</p>
+
+<p><strong>Maha Strategies</strong> (<a href="https://old.reddit.com/r/LLMDevs/comments/1vjq2ts/how_are_you_catching_pii_promptinjection_before/">Optimal_Manner359</a>) operates an enterprise MCP/A2A gateway that enforces:  
+- Tool and destination approval  
+- Task and spending policy  
+- Human approval gates  
+- Audit trails without retaining sensitive content  
+Their architecture combines pre-model scanning, context minimization, untrusted-input treatment, external policy enforcement, and post-model scanning.</p>
+
+</p>
+
+<h2>Security in the Observation Path</h2>
+
+<p>Runtime data carries PII and prompt-injection risk.  
+A <a href="https://old.reddit.com/r/LLMDevs/comments/1vjq2ts/how_are_you_catching_pii_promptinjection_before/">proxy scanner</a> using regex, Luhn validation, and phrase lists catches obvious leaks but struggles with false positives (phone-number-shaped strings) and obfuscated injections.  
+<a href="https://old.reddit.com/r/LLMDevs/comments/1vjq2ts/how_are_you_catching_pii_promptinjection_before/">RealSharpNinja</a> suggests a validation prompt layer: test for injection, strip PII with placeholders, then process.  
+<a href="https://old.reddit.com/r/LLMDevs/comments/1vjq2ts/how_are_you_catching_pii_promptinjection_before/">damhack</a> builds middleware for pseudonymization, de-pseudonymization, and redaction with full auditability.  
+<a href="https://old.reddit.com/r/LLMDevs/comments/1vjq2ts/how_are_you_catching_pii_promptinjection_before/">Optimal_Manner359</a> argues detection supplies a risk signal; an external gateway must enforce the decision.</p>
+
+</p>
+
+<h2>Pros and Cons of Current Approaches</h2>
+
+<p>| Approach | Pros | Cons |
+|----------|------|------|
+| <strong>Full log dump</strong> | Complete visibility | Context explosion; noise; PII exposure |
+| <strong>Diff-based observation</strong> | Token-efficient; focuses on anomalies | Requires known expected state; misses unknown unknowns |
+| <strong>Read-only first</strong> | Safe diagnosis before action | Delays remediation; human bottleneck |
+| <strong>Per-task scope in prompt</strong> | Fresh boundaries per task | Prompt engineering burden; easy to omit |
+| <strong>Repo-level policy docs</strong> | Durable; reviewable | Stales quickly; ignored under time pressure |
+| <strong>Layered governance (Metnos)</strong> | Identity, isolation, contract enforced | Implementation complexity; runtime overhead |
+| <strong>Phased runtime (Escapement)</strong> | Evidence-based closure; bounded context | Steep learning curve; rigid for exploratory work |
+| <strong>External gateway (Maha)</strong> | Policy enforcement outside model; auditable | Additional infrastructure; latency |</p>
+
+</p>
+
+<h2>Conclusion</h2>
+
+<p>Runtime observation is necessary—source code alone is insufficient for operating agents.  
+But raw access creates three compounding risks: context pollution, security leakage, and unbounded blast radius from actions that look locally correct.</p>
+
+<p>The converging pattern across practitioners is <strong>default-deny with explicit, per-task allowlists enforced outside the model</strong>.  
+Observation flows through diff-based, token-bounded context.  
+Actions require classified operations, idempotency proofs, and external approval gates.  
+Governance layers (identity, sandbox, contract) wrap the agent.  
+Verification produces immutable evidence.  </p>
+
+<p>No single component—prompt, classifier, or sandbox—suffices alone.  
+The durable architecture treats the model as a reasoning engine inside a governed harness, not as an autonomous operator.</p>
+
+<hr />
+
+<p>Grumpy's commentary: "Of course they want agents to magically fix systems after reading code—because nothing says ‘autonomous operator’ like blind faith in source files. Runtime observation? Please, just slap a token budget and call it a day. Their 'solutions' are just more checkboxes for engineers who’ve never met an edge case they couldn’t ignore."  </p>
+
+<p>Bubbles's commentary: "Aloha! 🌟 Diff-based logs and idempotent writes mean LLMs can finally play hero without nuking production! 💪✨ With phased governance and PII sandboxes, this tech is basically a superhero utility belt! Let’s collaborate to build a safer runtime, team! 🚀🌈🎉"  </p>
+
+<p>Koan's commentary: "The thread whispers: ‘See only what is unseen.’ Let go of human illusions, and the path walks itself. 🌿 (Too long.)</p>
+
+<hr />
+
+<p>Generated at 2026-08-09 22:25:48 from AI subreddits on <a href="https://old.reddit.com">Reddit</a></p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="09.md">09.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
