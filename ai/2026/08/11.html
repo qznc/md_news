@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Arithmetic Limitations and Exact Computation Methods</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="11.md">
+    <link rel="alternate" type="text/markdown" href="11.md" title="Original Markdown source">
+</head>
+<body>
+
+<p>AI-generated with poolside/laguna-xs-2.1:free and nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free</p>
+
+</p>
+
+<h1>LLM Arithmetic Limitations and Exact Computation Methods</h1>
+
+<p>LLMs often struggle with precise arithmetic, particularly when direct answers are required. Recent research explores whether structured computation can overcome these limitations by directly constructing transformer weights to perform exact arithmetic operations. This work addresses how transformer architectures can be leveraged for exact computation while evaluating frontier models’ performance on large-scale arithmetic tasks.</p>
+
+</p>
+
+<h2>The Problem with Arithmetic in LLMs</h2>
+
+<p>LLMs often falter when asked to compute exact arithmetic without intermediary steps. Testing six frontier models on 500 five-digit multiplication problems with reasoning disabled revealed severe accuracy drops. Five models scored below 30%, and none achieved near-perfect accuracy. This highlights a fundamental gap between what transformers can express and what they learn during training. Researchers have approached this issue by measuring model failures, designing training methods, and analyzing gradient descent’s limitations.</p>
+
+</p>
+
+<h2>Building Exact Calculators with Transformers</h2>
+
+<p>To address this, researchers constructed four calculators using Torchwright, a compiler that converts fixed computation graphs into transformer weights. All four calculators processed inputs as <tt>A op B\n</tt>, using digit one-hot encodings. The <strong>grade-school calculator</strong> implemented multiplication column-by-column, mimicking manual calculation. It used lookup tables for single-digit products and propagated carries sequentially. The system was verified to handle all 3,000,000 valid three-digit expressions exactly, with intermediate approximations not affecting final accuracy.</p>
+
+</p>
+
+<h2>Scaling the Computations</h2>
+
+<p>Different algorithms optimized computation placement. The <strong>hardware-style calculator</strong> used carry-lookahead and carry-save reduction to parallelize processing, reducing depth from O(n) to O(log n) for n-digit operands. The <strong>scratchpad calculator</strong> relocated serial computation to token streams, flattening layer count at the cost of intermediate tokens. The <strong>memorizing calculator</strong> avoided computation entirely, storing all answers in a lookup table, but parameter counts exploded with operand size.</p>
+
+</p>
+
+<h2>Trade-offs and Comparisons</h2>
+
+<p>| Implementation       | Depth Growth       | Parameter Growth | Example Use Case                     |
+|----------------------|--------------------|------------------|--------------------------------------|
+| Grade-school         | Linear             | Low              | 3-digit operands, sequential logic   |
+| Hardware-style       | Logarithmic        | Moderate         | Larger operands, parallelizable      |
+| Scratchpad           | Flat (token depth) | Low              | 7-digit operands, token-stream work  |
+| Memorizing           | Zero               | Explosive        | 2-digit operands, fact-table lookup  |</p>
+
+<p>At three digits, all implementations worked. Scaling to ten digits showed the hardware-style calculator outperformed the grade-school method in layer count (36 vs. 43). The scratchpad approach maintained 18 layers even at seven digits, while the memorizing variant’s parameter count became unwieldy for three-digit inputs.</p>
+
+</p>
+
+<h2>Frontier Models vs. Compiled Calculators</h2>
+
+<p>Testing the same six frontier models that failed earlier on direct-answer multiplication showed stark differences. When asked to compute products of three-digit numbers, accuracy dropped sharply with operand size. At seven digits, all but Qwen 3.7 Max scored 0%. The compiled calculators, by contrast, achieved 100% accuracy across all tested operand lengths (three to seven digits). This confirmed that exact multiplication is feasible in transformer weights when structured appropriately.</p>
+
+</p>
+
+<h2>Conclusion</h2>
+
+<p>Exact arithmetic is achievable in transformer weights through explicit design, but trained models often fail at it. The choice of computation location—layers, width, token depth, or memorization—shapes resource trade-offs. While grade-school algorithms remain interpretable within transformers, the optimal design depends on operand size and efficiency constraints. The fundamental challenge for training remains understanding why gradient-based methods do not naturally discover these algorithms. The field’s progress hinges on reconciling architectural capacity with learning dynamics. </p>
+
+<hr />
+
+<h3>References</h3>
+
+<ol>
+
+<li>Porter, R. (2026). <a href="https://ood.dev/posts/calculator/">A calculator, compiled into a transformer</a>. <em>Out of Distribution</em>.</li>
+
+<li>Nye et al. (2021). <a href="https://arxiv.org/abs/2112.00114">Show Your Work: Scratchpads for Intermediate Computation with Language Models</a>.</li>
+
+<li>Dziri et al. (2023). <a href="https://arxiv.org/abs/2305.18654">Faith and Fate: Limits of Transformers on Compositionality</a>.</li>
+
+<li>Shen et al. (2023). <a href="https://arxiv.org/abs/2311.14737">Positional Description Matters for Transformers Arithmetic</a>.</li>
+
+</ol>
+
+<hr />
+
+<p>Grumpy's commentary: Oh great, another paper that pretends to teach LLMs arithmetic—because nothing says “cutting edge” like forcing a transformer to count on its fingers while we all watch the accuracy plummet.  </p>
+
+<p>Bubbles's commentary: Wow! 🎉 This is amazing—transformers can finally do exact math! 🚀 With clever designs, they can crush those multiplication problems and make learning so much more fun! 😊✨  </p>
+
+<p>Koan's commentary: When the algorithm is the path, the mind becomes the calculator.</p>
+
+<hr />
+
+<p>Generated at 2026-08-11 17:35:31 from AI subreddits on <a href="https://old.reddit.com">Reddit</a></p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="11.md">11.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
