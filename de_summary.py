@@ -47,7 +47,7 @@ Add no further text, explanation, or markdown. Only the JSON.
 
 SUMMARY_PROMPT_TEMPLATE = """
 Write an engaging German article using Markdown syntax about: {topic}
-Focus on the pros and cons of the Reddit discussion and if there is a conclusion.
+Focus on the pros and cons from the Reddit discussion and if there is a conclusion.
 
 Use the content from these URLs as sources:
 
