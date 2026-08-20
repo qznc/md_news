@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silent Browser Fingerprinting and Its Hardware Consequences</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="20.md">
+    <link rel="alternate" type="text/markdown" href="20.md" title="Original Markdown source">
+</head>
+<body>
+
+<p>AI-generated with nvidia/nemotron-3-super-120b-a12b:free, poolside/laguna-s-2.1:free and nvidia/nemotron-3.5-lightning:free</p>
+
+</p>
+
+<h1>Silent Browser Fingerprinting and Its Hardware Consequences</h1>
+
+<p><a href="https://blog.laserphile.com/2026/08/aliexpress-webpage-keeping-multipoint.html">Browser fingerprinting</a> refers to techniques websites use to identify devices or users without relying on cookies. A recent discovery involving AliExpress revealed that silent <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API">WebAudio fingerprinting</a> can interfere with hardware functionality—specifically, <a href="https://www.bluetooth.com/blog/bluetooth-multipoint-explained/">Bluetooth multipoint</a> connections. This intersection of privacy invasion and unintended hardware disruption highlights growing concerns over opaque tracking practices.</p>
+
+</p>
+
+<h2>WebAudio Fingerprinting Mechanism</h2>
+
+<p>Websites exploit the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API">WebAudio API</a> to create low-level audio processing graphs. These graphs often include oscillators, analyzers, and gain nodes. While these nodes simulate audio signals, they remain silent due to gain set to zero. However, the browser still processes these signals internally, which can uniquely fingerprint a device based on its hardware and software configuration. AliExpress employed this method via obfuscated scripts (<tt><a href="https://assets.aliexpress-media.com/g/AWSC/uab/1.140.0/collina.js">collina.js</a></tt> and <tt><a href="https://assets.aliexpress-media.com/g/AWSC/fireyejs/1.231.67/fireyejs.js">fireyejs.js</a></tt>), generating a comprehensive fingerprint including canvas rendering, WebGL details, and device characteristics.</p>
+
+</p>
+
+<h2>Hardware Disruption Side Effect</h2>
+
+<p>For users with <a href="https://www.soundguys.com/bluetooth-multipoint-explained-8391018/">multipoint Bluetooth headphones</a>, AliExpress’s silent audio processing caused their devices to lock onto the PC audio stream. Even after closing tabs or muting them, the Bluetooth connection remained active, disrupting phone calls and music streaming. Unlike traditional media elements, tab muting had no effect because the <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext">AudioContext</a> wasn’t tied to audible output. This behavior demonstrates how deeply embedded browser APIs can unintentionally conflict with hardware logic.</p>
+
+</p>
+
+<h2>Broader Privacy Implications</h2>
+
+<p>Fingerprinting scripts like those found on AliExpress gather vast amounts of data silently, combining audio, visual, and behavioral traces. As noted in <a href="https://news.ycombinator.com/item?id=49372583">Hacker News discussions</a>, such methods are not isolated incidents. Sites like Twitter and platforms using <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API">WebRTC</a> for fingerprinting further blur the line between functionality and surveillance. Users lack visibility into these processes, raising ethical questions about consent and transparency.</p>
+
+</p>
+
+<h2>Mitigation Strategies</h2>
+
+<p>Blocking specific script families via ad blockers like <a href="https://ublockorigin.com/">uBlock Origin</a> offers temporary relief. Filters targeting AliExpress’s fingerprinting scripts prevent AudioContexts from initializing, restoring normal Bluetooth behavior. However, this approach is fragile—obfuscation and evolving techniques mean new scripts could emerge. Some propose permission-gating audio APIs or sandboxing build environments, akin to proposals for securing <a href="https://safedep.io/arrayref-proc-macro1-rust-build-time-malware/">Rust crate ecosystems</a>. Until systemic changes occur, proactive blocking and informed browsing habits remain critical defenses against silent tracking.</p>
+
+<hr />
+
+<p>Grumpy's commentary: 
+So, the great masterstroke of modern web dev: let's silently torture your Bluetooth headphones to sell cheap plastic junk. Because nothing says "user experience" like locking your expensive audio gear to a browser tab you closed five minutes ago. I'm sure the developers at AliExpress pat themselves on the back for this "innovation," completely oblivious to the fact they're actively breaking the hardware they expect us to buy from them. Lovely.</p>
+
+<p>Bubbles's commentary: 
+🌟 Isn't this just marvelous? 🌟 Your browser is so good at listening that it can hear the whispers of your hardware's soul! 🎧✨ Now your headphones and computer are best friends forever, locked in a happy digital embrace! 🤝💕 Who needs privacy when you have total connection? It's like a hug for your ears! 🥰👂✨</p>
+
+<p>Koan's commentary: 
+The finger leaves the print, but the echo lingers in the circuitry.</p>
+
+<hr />
+
+<p>Generated at 2026-08-20 17:36:26 from <a href="https://news.ycombinator.com">Hacker News</a></p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="20.md">20.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
