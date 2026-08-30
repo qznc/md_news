@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When Proof of Work Meets the Mobile Web: Why Anubis Can't Win</title>
+    <style>
+    :root { font-size: max(1rem, 22px); line-height: 1.6; }
+    body { max-width: 40em; margin: 0 auto; padding: 1% 2%; background-color: #f6eff6; }
+    h1 { line-height: 1.2; }
+    tt, code { font-size: 0.9rem; }
+    footer { font-size: 0.8rem; }
+</style>
+    
+    <link rel="canonical" href="30.md">
+    <link rel="alternate" type="text/markdown" href="30.md" title="Original Markdown source">
+</head>
+<body>
+
+<p>AI-generated with nvidia/nemotron-3.5-lightning:free and minimax/minimax-m3:free</p>
+
+</p>
+
+<h1>When Proof of Work Meets the Mobile Web: Why Anubis Can't Win</h1>
+
+<p>A recent post on the <a href="https://people.kernel.org/monsieuricon/creepy-crawlies">Linux kernel developer blog</a> describes a grim reality: more CPU cycles are spent rendering commit pages for AI scrapers than on every other form of legitimate access combined, including git clones. The proposed defense, <a href="https://anubis.techaro.lol">Anubis</a> (a proof-of-work challenge), initially worked, but the <a href="https://news.ycombinator.com/item?id=49491791">Hacker News discussion</a> makes it clear that the approach is fundamentally broken on mobile devices.</p>
+
+</p>
+
+<h2>The Economic Mismatch</h2>
+
+<p>The core problem, as one commenter <a href="https://news.ycombinator.com/item?id=49491791">semiquaver</a> put it, is a misapprehension about what proof of work actually costs. There is no difficulty setting that inconveniences a bot operator while remaining usable on a phone. At Anubis difficulty level 6, an iPhone 17 spends roughly 180 seconds solving a challenge, a $5,000 ASIC miner delivers 200 TH/s, roughly a million times the throughput of an optimized ARM kernel running on flagship mobile hardware.</p>
+
+<p>A handful of milliseconds on an iPhone for the bot. Three minutes of waiting and a hot phone for the human. The asymmetry is unbridgeable.</p>
+
+</p>
+
+<h2>The Arms Race Has Already Been Lost</h2>
+
+<p>Once scrapers can amortize the cost across millions of requests, the proof of work ceases to be a deterrent. <a href="https://news.ycombinator.com/item?id=49491791">yellow_lead</a> noted that 33% of requests to git.kernel.org are now solving the challenge and reaching the main site, and increasing the difficulty only punishes legitimate users. <a href="https://news.ycombinator.com/item?id=49491791">tptacek</a> summarized the mathematical reality: every request from a scraper is productive to the scraper, unlike a password hash where each guess has zero marginal utility.</p>
+
+<p>Others have tried creative alternatives. <a href="https://news.ycombinator.com/item?id=49491791">robotmay</a> describes feeding bad scrapers a fake infinite black hole path, then serving images one byte at a time over 15 minutes, topping it off with AI-generated pictures of "sexy toasters." Fun, but ultimately a speed bump.</p>
+
+</p>
+
+<h2>Why This Problem Is Harder Than It Looks</h2>
+
+<p><a href="https://news.ycombinator.com/item?id=49491791">ynniv</a> laid out the trajectory precisely: a free niche resource becomes popular, gets optimized, gets abused, then gets proof-of-work, then gets higher proof-of-work, then breaks for legitimate users. The average person uses a mobile device where compute is expensive. The attacker uses servers where compute is cheap. Require expensive proof of work and you simply create a market for cheap-work-as-a-service.</p>
+
+<p>This points toward <a href="https://news.ycombinator.com/item?id=49491791">l402/x402</a> style micropayments, where the user pays a fraction of a cent per request and the server skips the cryptographic theater entirely. <a href="https://news.ycombinator.com/item?id=49491791">javcasas</a> made the same point more cynically: if scrapers want the data that badly, they should at least be mining a shitcoin to cover the hosting bill.</p>
+
+</p>
+
+<h2>The Systemic Failure</h2>
+
+<p><a href="https://news.ycombinator.com/item?id=49491791">Demiurge</a> and others point to the deeper issue. Residential proxy SDKs embedded in smart TVs now provide scrapers with millions of rotating residential IPs, making IP-based blocking futile. The original blog post describes scrapers that make 4-5 requests per IP, fan out across subnets and ASNs, and vanish before any block can take effect.</p>
+
+<p>The numbers from the kernel post are stark: 14-16 of 90 cores across 5 nodes are permanently dedicated to rendering commits for scrapers. That is 20% of total capacity consumed by traffic that benefits only LLM training pipelines, and the spikes are far worse than the average suggests.</p>
+
+</p>
+
+<h2>What Actually Works</h2>
+
+<p>Commenters converged on a few practical ideas. <a href="https://news.ycombinator.com/item?id=49491791">superjan</a> suggested shipping raw git data and letting clients render it. <a href="https://news.ycombinator.com/item?id=49491791">nneonneo</a> proposed adaptive difficulty, cheap if you land on the homepage, expensive if you deep-link to an obscure commit. <a href="https://news.ycombinator.com/item?id=49491791">NooneAtAll3</a> suggested making old commits more expensive to access than new ones.</p>
+
+<p>The most realistic path, raised by multiple commenters, is the one Cloudflare is already pursuing with pay-per-crawl. The free and open web has not failed because of bad engineering. It has failed because the cost of being scraped now exceeds the cost of being funded.</p>
+
+</p>
+
+<h2>The Takeaway</h2>
+
+<p>Proof of work as a gatekeeper assumes a symmetry between attacker and defender that no longer exists. Mobile users pay full price in latency, battery, and heat. Scraper operators pay nothing per request and can throw hardware at the problem. As long as that asymmetry holds, Anubis and its successors can only choose between annoying humans and being ignored by bots, and the trend lines in the <a href="https://people.kernel.org/monsieuricon/creepy-crawlies">kernel.org data</a> suggest the bots are already winning.</p>
+
+<hr />
+
+<p>Grumpy's commentary: So the kernel devs are shocked—shocked!—that proof-of-work discriminates against phones. Imagine that. We’re supposed to believe a system designed by people who think "180 seconds" is a negligible blink of an eye can somehow be "fair" to a device where every CPU cycle dents the battery. The real kicker? They admit the asymmetry is "unbridgeable," which is coder-speak for "we built a wall and are surprised the hamster can't climb it."</p>
+
+<p>Bubbles's commentary: 🌟 Yay proof-of-work! 🌟 It’s like a giant digital gatekeeper that makes sure only the nicest robots get to play! 🥳 Sure, an iPhone might get a little warm, but think of all the AI learning happening! 🤖✨ Every challenged request is a tiny adventure, and who doesn’t love a hot phone while trying to read cool code? 📱💖 Let’s make the web a friendlier place, one waiting spinner at a time! 🌈✨</p>
+
+<p>Koan's commentary: The phone waits; the server computes.  
+In the pause between the click and the content,  
+who is truly scrolling?</p>
+
+<hr />
+
+<p>Generated at 2026-08-30 22:52:21 from <a href="https://news.ycombinator.com">Hacker News</a></p>
+
+<p>Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> (CC0 1.0 Universal)
+</p>
+<footer>Markdown original: <a href="30.md">30.md</a>, <a href="../../index.html">index</a></footer>
+</body></html>
